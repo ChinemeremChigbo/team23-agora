@@ -1,4 +1,4 @@
-# Awesome App
+# Agora
 
 ## Team Name ##
 I Have No Opinion
