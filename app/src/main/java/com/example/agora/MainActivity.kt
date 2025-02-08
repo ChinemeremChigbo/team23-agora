@@ -8,6 +8,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.agora.databinding.ActivityMainBinding
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,6 +19,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Uncomment the following line if you want to run
+        // against the Firebase Local Emulator Suite (FOR LOCAL TESTING!):
+        // configureFirebaseServices()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -32,5 +38,14 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    private fun configureFirebaseServices() {
+        val LOCALHOST = getString(R.string.localhost)
+        val AUTH_PORT = R.integer.auth_port
+        val FIRESTORE_PORT = R.integer.firestore_port
+        // port might be available: run `lsof -i :<port-number>` to get process PID and `kill -9 <PID>` to kill process
+        Firebase.auth.useEmulator(LOCALHOST, AUTH_PORT)
+        Firebase.firestore.useEmulator(LOCALHOST, FIRESTORE_PORT)
     }
 }

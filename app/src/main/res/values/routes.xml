@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="localhost">127.0.0.1</string>
+    <integer name="auth_port">9099</integer>
+    <integer name="firestore_port">8080</integer>
+    <integer name="pubsub_port">8085</integer>
+</resources>
