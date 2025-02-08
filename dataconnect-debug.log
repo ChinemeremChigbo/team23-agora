@@ -1,0 +1,12 @@
+I0206 22:16:07.617919   35599 load.go:37] Reloading schema and connectors...
+I0206 22:16:07.637928   35599 control.go:59] [/emulator/team23-awesome-app ab8b] UpdateResources(): done
+Schema: sources: schema/schema.gql [2088B] 
+Connector "default": sources: connector/mutations.gql [1233B] connector/queries.gql [1802B] 
+I0206 22:16:07.648270   35599 codegen.go:82] [connector "default" kotlinSdk] Generating sources into "/Users/samanthazhan/Documents/study/4B/cs446/team23-awesome-app/app/src/main/java/connectors/default"
+I0206 22:16:07.654421   35599 collector.go:107] schema extensions wrote into "/Users/samanthazhan/Documents/study/4B/cs446/team23-awesome-app/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [65151B] 
+I0206 22:16:07.654719   35599 collector.go:107] connector "default" kotlinSdk wrote into "/Users/samanthazhan/Documents/study/4B/cs446/team23-awesome-app/app/src/main/java/connectors/default"
+Generated sources: DefaultConnector.kt [8313B] DefaultConnectorKeys.kt [799B] DefaultConnectorEnums.kt [797B] 
+I0206 22:16:07.654762   35599 load.go:115] Finished reloading
+I0206 22:16:07.657366   35599 dev.go:95] Listening on address (HTTP + gRPC): 127.0.0.1:9399
+I0206 22:16:07.658019   35599 dev.go:95] Listening on address (HTTP + gRPC): [::1]:9399
