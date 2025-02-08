@@ -27,6 +27,9 @@ android {
             )
         }
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -76,8 +79,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core")
     // Optional - Add full set of material icons
     implementation("androidx.compose.material:material-icons-extended")
-    // Optional - Add window size utils
-    implementation("androidx.compose.material3.adaptive:adaptive")
 
     // Optional - Integration with activities
     implementation("androidx.activity:activity-compose:1.10.0")
