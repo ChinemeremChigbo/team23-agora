@@ -1,5 +1,6 @@
 package com.example.agora
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -8,9 +9,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.agora.databinding.ActivityMainBinding
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import com.example.agora.screens.auth.LoginActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +23,14 @@ class MainActivity : AppCompatActivity() {
         // Uncomment the following line if you want to run
         // against the Firebase Local Emulator Suite (FOR LOCAL TESTING!):
         // configureFirebaseServices()
+
+        // Check if user is logged in, redirect to LoginActivity if not
+        val auth = FirebaseAuth.getInstance()
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -50,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         val AUTH_PORT = r.getInteger(R.integer.auth_port)
         val FIRESTORE_PORT =  r.getInteger(R.integer.firestore_port)
         // port might be available: run `lsof -i :<port-number>` to get process PID and `kill -9 <PID>` to kill process
-        Firebase.auth.useEmulator(LOCALHOST, AUTH_PORT)
-        Firebase.firestore.useEmulator(LOCALHOST, FIRESTORE_PORT)
+        FirebaseAuth.getInstance().useEmulator(LOCALHOST, AUTH_PORT)
+        FirebaseFirestore.getInstance().useEmulator(LOCALHOST, FIRESTORE_PORT)
     }
 }
