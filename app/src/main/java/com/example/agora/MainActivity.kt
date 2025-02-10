@@ -45,9 +45,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureFirebaseServices() {
-        val LOCALHOST = getString(R.string.localhost)
-        val AUTH_PORT = R.integer.auth_port
-        val FIRESTORE_PORT = R.integer.firestore_port
+        val r = resources
+        val LOCALHOST = r.getString(R.string.localhost)
+        val AUTH_PORT = r.getInteger(R.integer.auth_port)
+        val FIRESTORE_PORT =  r.getInteger(R.integer.firestore_port)
         // port might be available: run `lsof -i :<port-number>` to get process PID and `kill -9 <PID>` to kill process
         Firebase.auth.useEmulator(LOCALHOST, AUTH_PORT)
         Firebase.firestore.useEmulator(LOCALHOST, FIRESTORE_PORT)
