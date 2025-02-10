@@ -19,7 +19,6 @@ local.properties
 .project
 .settings
 .classpath
-.idea
 
 # Ignore all Firebase debug logs
 *-debug.log
