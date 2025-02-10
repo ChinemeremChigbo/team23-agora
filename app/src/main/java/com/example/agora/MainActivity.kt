@@ -1,16 +1,17 @@
 package com.example.agora
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.agora.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,10 +46,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureFirebaseServices() {
-        val LOCALHOST = getString(R.string.localhost)
-        val AUTH_PORT = R.integer.auth_port
-        val FIRESTORE_PORT = R.integer.firestore_port
-        // port might be available: run `lsof -i :<port-number>` to get process PID and `kill -9 <PID>` to kill process
+        val r = resources
+        val LOCALHOST = r.getString(R.string.localhost)
+        val AUTH_PORT = r.getInteger(R.integer.auth_port)
+        val FIRESTORE_PORT =  r.getInteger(R.integer.firestore_port)
+        // port might not be available: run `lsof -i :<port-number>` to get process PID and `kill -9 <PID>` to kill process
         Firebase.auth.useEmulator(LOCALHOST, AUTH_PORT)
         Firebase.firestore.useEmulator(LOCALHOST, FIRESTORE_PORT)
     }
