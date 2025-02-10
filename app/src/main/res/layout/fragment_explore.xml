@@ -7,11 +7,17 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textNotifications"
+        android:id="@+id/textExplore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Notifications"
+        android:text="Explore"
         android:textSize="18sp"
         android:textStyle="bold"/>
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search Agora" />
 
 </LinearLayout>
