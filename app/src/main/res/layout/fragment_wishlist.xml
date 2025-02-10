@@ -7,10 +7,10 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textNotifications"
+        android:id="@+id/textWishlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Notifications"
+        android:text="Your Wishlist"
         android:textSize="18sp"
         android:textStyle="bold"/>
 
