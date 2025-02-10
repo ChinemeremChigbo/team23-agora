@@ -1,13 +1,13 @@
-package com.example.agora.screens.home
+package com.example.agora.screens.explore
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class HomeViewModel : ViewModel() {
+class ExploreViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+        value = "Explore"
     }
     val text: LiveData<String> = _text
 }

@@ -1,4 +1,4 @@
-package com.example.agora.screens.notifications
+package com.example.agora.screens.explore
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.agora.databinding.FragmentNotificationsBinding
+import com.example.agora.databinding.FragmentExploreBinding
 
-class NotificationsFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+class ExploreFragment : Fragment() {
+
+    private var _binding: FragmentExploreBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -18,12 +19,12 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel = ViewModelProvider(this).get(NotificationsViewModel::class.java)
+        val exploreViewModel = ViewModelProvider(this).get(ExploreViewModel::class.java)
 
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentExploreBinding.inflate(inflater, container, false)
 
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            binding.textNotifications.text = it
+        exploreViewModel.text.observe(viewLifecycleOwner) {
+            binding.textExplore.text = it
         }
 
         return binding.root
