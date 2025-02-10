@@ -1,4 +1,4 @@
-package com.example.agora.screens.notifications
+package com.example.agora.screens.wishlist
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.agora.databinding.FragmentNotificationsBinding
+import com.example.agora.databinding.FragmentWishlistBinding
 
-class NotificationsFragment : Fragment() {
+class WishlistFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+    private var _binding: FragmentWishlistBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -18,12 +18,12 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel = ViewModelProvider(this).get(NotificationsViewModel::class.java)
+        val wishlistViewModel = ViewModelProvider(this).get(WishlistViewModel::class.java)
 
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            binding.textNotifications.text = it
+        wishlistViewModel.text.observe(viewLifecycleOwner) {
+            binding.textWishlist.text = it
         }
 
         return binding.root

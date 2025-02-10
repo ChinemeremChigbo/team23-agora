@@ -1,4 +1,4 @@
-package com.example.agora.screens.notifications
+package com.example.agora.screens.post
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.agora.databinding.FragmentNotificationsBinding
+import com.example.agora.databinding.FragmentPostBinding
 
-class NotificationsFragment : Fragment() {
+class PostFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+    private var _binding: FragmentPostBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -18,12 +18,12 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel = ViewModelProvider(this).get(NotificationsViewModel::class.java)
+        val postViewModel = ViewModelProvider(this).get(PostViewModel::class.java)
 
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentPostBinding.inflate(inflater, container, false)
 
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            binding.textNotifications.text = it
+        postViewModel.text.observe(viewLifecycleOwner) {
+            binding.textPost.text = it
         }
 
         return binding.root
