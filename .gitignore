@@ -13,3 +13,12 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.apk
+*.aar
+*.zip
+.project
+.settings
+.classpath
+
+# Ignore all Firebase debug logs
+*-debug.log
