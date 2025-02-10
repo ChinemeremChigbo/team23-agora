@@ -1,4 +1,4 @@
-package com.example.agora.ui.notifications
+package com.example.agora.screens.notifications
 
 import android.os.Bundle
 import android.view.LayoutInflater
