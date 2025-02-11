@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class InboxViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "Inbox"

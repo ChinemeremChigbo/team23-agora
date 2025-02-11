@@ -26,7 +26,7 @@ fun SettingsScreen() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SettingsPreview() {
     SettingsScreen()
