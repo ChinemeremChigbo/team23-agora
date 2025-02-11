@@ -14,19 +14,19 @@ val AgoraTypography = Typography(
     // Headings
     titleLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 24.sp,
         letterSpacing = 0.01.sp
     ),
     titleMedium = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 18.sp,
         letterSpacing = 0.005.sp
     ),
     titleSmall = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         letterSpacing = 0.005.sp
     ),
@@ -34,21 +34,21 @@ val AgoraTypography = Typography(
     // Body Text
     bodyLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         letterSpacing = 0.sp,
         lineHeight = 24.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         letterSpacing = 0.sp,
         lineHeight = 22.sp
     ),
     bodySmall = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         letterSpacing = 0.sp,
         lineHeight = 20.sp
