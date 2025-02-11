@@ -2,12 +2,10 @@ package com.example.agora
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
 import com.example.agora.screens.MainScreen
 import com.example.agora.ui.theme.AgoraTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.example.agora.ui.splash.SplashScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,13 +23,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AgoraTheme {
-                var showSplash by remember { mutableStateOf(true) }
-
-                if (showSplash) {
-                    SplashScreen { showSplash = false }
-                } else {
                     MainScreen()
-                }
             }
         }
     }
