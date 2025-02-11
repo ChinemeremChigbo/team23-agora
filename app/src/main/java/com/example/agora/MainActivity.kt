@@ -3,7 +3,7 @@ package com.example.agora
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.agora.screens.explore.ExploreScreen
+import com.example.agora.screens.MainScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -24,7 +24,9 @@ class MainActivity : ComponentActivity() {
 //            return
 //        }
 
-        setContent { ExploreScreen() }
+        setContent {
+               MainScreen()
+        }
     }
 
     private fun configureFirebaseServices() {
