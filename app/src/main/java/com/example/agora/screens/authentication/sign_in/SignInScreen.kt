@@ -134,7 +134,9 @@ fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
                         )
                     },
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth().height(56.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
                 ) {
                     Text(
                         text = "Login",
