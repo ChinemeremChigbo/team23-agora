@@ -39,7 +39,10 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
             } else {
-                Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                // temp for development TODO: remove bypass
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+//                Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
             }
         }
     }
