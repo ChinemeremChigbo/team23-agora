@@ -1,4 +1,4 @@
-package com.example.agora.screens.notifications
+package com.example.agora.screens.inbox
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,7 @@ fun NotificationScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Notification Screen",
+            text = "Inbox Screen",
             fontSize = 40.sp,
             textAlign = TextAlign.Center
         )
