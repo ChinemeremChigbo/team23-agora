@@ -17,10 +17,12 @@ class ExploreViewModel : ViewModel() {
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches = _recentSearches.asStateFlow()
 
-    private val _posts = MutableLiveData<Any>().apply {
-        value = listOf("Fridge", "Fridge 2", "Fridge 3")
-    }
-    val posts: LiveData<Any> = _posts
+    private val titles1 = listOf("Fridge", "Fridge 2", "Fridge 3")
+    private val titles2 = listOf("Book", "Book 2", "Book 3")
+    private val titles3 = listOf("Plates")
+
+    private val _sections = MutableStateFlow<List<List<String>>>(listOf(titles1, titles2, titles3))
+    val sections = _sections.asStateFlow()
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
@@ -34,7 +36,7 @@ class ExploreViewModel : ViewModel() {
         if (query.isNotBlank() && !_recentSearches.value.contains(query)) {
             _recentSearches.value = listOf(query) + _recentSearches.value.take(4) // Store up to 5 recent searches
         }
-        _searchText.value = ""
+        _searchText.value = query
         _isExpanded.value = false
     }
 }
