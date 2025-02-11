@@ -1,6 +1,5 @@
 package com.example.agora.screens.authentication.sign_in
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -22,10 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.agora.MainActivity
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.agora.R
 import com.example.agora.ui.theme.AgoraTheme
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginImage() {
@@ -38,22 +36,19 @@ fun LoginImage() {
     Image(
         painter = painterResource(id = imageResId),
         contentDescription = "Login Image",
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
     AgoraTheme {
         val context = LocalContext.current
         val emailState = remember { mutableStateOf(TextFieldValue("")) }
         val passwordState = remember { mutableStateOf(TextFieldValue("")) }
         var passwordVisible by remember { mutableStateOf(false) }
 
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             LoginImage()
 
             Column(
@@ -82,8 +77,7 @@ fun SignInScreen() {
                     value = emailState.value,
                     onValueChange = { emailState.value = it },
                     label = { Text("School Email Address") },
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                 )
@@ -94,8 +88,7 @@ fun SignInScreen() {
                     value = passwordState.value,
                     onValueChange = { passwordState.value = it },
                     label = { Text("Password") },
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -115,10 +108,7 @@ fun SignInScreen() {
                 TextButton(
                     onClick = { /* TODO: Handle forgot password here */ },
                     modifier = Modifier.align(Alignment.Start),
-                    contentPadding = PaddingValues(
-                        horizontal = 8.dp,
-                        vertical = 0.dp
-                    )
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                 ) {
                     Text(
                         text = "Forgot Password?",
@@ -131,44 +121,20 @@ fun SignInScreen() {
                 // Login button
                 Button(
                     onClick = {
-                        val auth = FirebaseAuth.getInstance()
-                        val email = emailState.value.text
-                        val password = passwordState.value.text
-
-                        if (email.isNotEmpty() && password.isNotEmpty()) {
-                            auth.signInWithEmailAndPassword(email, password)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        context.startActivity(
-                                            Intent(
-                                                context,
-                                                MainActivity::class.java
-                                            )
-                                        )
-                                        (context as? ComponentActivity)?.finish()
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            "Login failed: ${task.exception?.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "Please enter email and password",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            // TODO: Remove temporary bypass
-                            context.startActivity(Intent(context, MainActivity()::class.java))
-                            (context as? ComponentActivity)?.finish()
-                        }
+                        viewModel.signIn(
+                            email = emailState.value.text,
+                            password = passwordState.value.text,
+                            context = context,
+                            onSuccess = {
+                                (context as? ComponentActivity)?.finish()
+                            },
+                            onError = { errorMessage ->
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                            }
+                        )
                     },
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
+                    modifier = Modifier.fillMaxWidth().height(56.dp)
                 ) {
                     Text(
                         text = "Login",
@@ -178,9 +144,8 @@ fun SignInScreen() {
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "Not a member?",
                         fontSize = 14.sp,
@@ -189,10 +154,7 @@ fun SignInScreen() {
 
                     TextButton(
                         onClick = { /* TODO: Handle sign-up navigation here */ },
-                        contentPadding = PaddingValues(
-                            horizontal = 8.dp,
-                            vertical = 0.dp
-                        )
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                     ) {
                         Text(
                             text = "Sign up",
