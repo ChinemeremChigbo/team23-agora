@@ -24,7 +24,8 @@ fun PostPreview(title: String) {
     Column (
         Modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.surface)
+            .width(221.dp)
             .clickable(onClick={})
     ) {
         Image(
