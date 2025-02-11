@@ -40,11 +40,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
     val searchText by viewModel.searchText.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
     val recentSearches by viewModel.recentSearches.collectAsState()
-
-    val titles1 = listOf("Fridge", "Fridge 2", "Fridge 3")
-    val titles2 = listOf("Book", "Book 2", "Book 3")
-    val titles3 = listOf("Plates")
-    val sections = listOf(titles1, titles2, titles3)
+    val sections by viewModel.sections.collectAsState()
 
     Column (
         modifier = Modifier.padding(21.dp),
@@ -84,7 +80,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    recentSearches.forEach { search ->
+                    recentSearches.forEach() { search ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
