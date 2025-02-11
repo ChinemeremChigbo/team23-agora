@@ -3,96 +3,125 @@ package com.example.agora.screens.authentication.sign_in
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agora.MainActivity
+import com.example.agora.R
+import com.example.agora.ui.theme.AgoraTheme
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SignInScreen() {
+    val context = LocalContext.current
 
-    // todo: update theme/colours
+    val emailState = remember { mutableStateOf(TextFieldValue("")) }
+    val passwordState = remember { mutableStateOf(TextFieldValue("")) }
+    var passwordVisible by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
     ) {
-        // todo: image header
-        Text("image header placeholder",
-            modifier = Modifier.weight(1f).fillMaxWidth())
+        Image(
+            painter = painterResource(id = R.drawable.login),
+            contentDescription = "Login Image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+        )
 
-        // login options
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .weight(1f),
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 24.dp)
+                .padding(top = 200.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // welcome text
+            Spacer(modifier = Modifier.height(32.dp))
+
             Text(
                 text = "Welcome!",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .padding(16.dp)
+                fontWeight = FontWeight.Black,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth()
             )
 
-            // email address text field
-            val emailAddressState = remember { mutableStateOf(TextFieldValue("")) }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Email input field
             OutlinedTextField(
-                value = emailAddressState.value,
-                onValueChange = { newValue -> emailAddressState.value = newValue },
+                value = emailState.value,
+                onValueChange = { emailState.value = it },
                 label = { Text("School Email Address") },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                    .fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp)
             )
+            Spacer(modifier = Modifier.height(4.dp))
 
-            // password text field
-            // todo: set password field to hidden
-            val passwordState = remember { mutableStateOf(TextFieldValue("")) }
+            // Password input field with toggle visibility
             OutlinedTextField(
                 value = passwordState.value,
-                onValueChange = { newValue -> passwordState.value = newValue },
+                onValueChange = { passwordState.value = it },
                 label = { Text("Password") },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                    .fillMaxWidth(),
+                singleLine = true,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(imageVector = image, contentDescription = "Toggle Password Visibility")
+                    }
+                },
+                shape = RoundedCornerShape(16.dp)
             )
 
-            // login button
-            val context = LocalContext.current
+
+            TextButton(
+                onClick = { /* TODO: Handle forgot password here */ },
+                modifier = Modifier.align(Alignment.Start)
+            ) {
+                Text(
+                    text = "Forgot Password?",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Login button
             Button(
-                // todo: move onclick logic to mv
                 onClick = {
                     val auth = FirebaseAuth.getInstance()
-                    val email = emailAddressState.value.text
+                    val email = emailState.value.text
                     val password = passwordState.value.text
 
                     if (email.isNotEmpty() && password.isNotEmpty()) {
                         auth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
-                                    context.startActivity(Intent(context, MainActivity()::class.java))
+                                    context.startActivity(Intent(context, MainActivity::class.java))
                                     (context as? ComponentActivity)?.finish()
                                 } else {
                                     Toast.makeText(context, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -100,30 +129,40 @@ fun SignInScreen() {
                             }
                     } else {
                         Toast.makeText(context, "Please enter email and password", Toast.LENGTH_SHORT).show()
-
-                        // todo: remove temporary bypass
+                        // TODO: Remove temporary bypass
                         context.startActivity(Intent(context, MainActivity()::class.java))
                         (context as? ComponentActivity)?.finish()
                     }
                 },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(16.dp)
+                    .height(56.dp)
             ) {
                 Text(
                     text = "Login",
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            TextButton(onClick = { /* TODO: Handle sign-up navigation here */ }) {
+                Text(
+                    text = "Not a member? Sign up",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SignInPreview() {
-    SignInScreen()
+    AgoraTheme {
+        SignInScreen()
+    }
 }
+
