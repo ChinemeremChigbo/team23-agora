@@ -6,7 +6,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.agora.MainActivity
+import com.example.agora.MainActivity_Old
 import com.example.agora.R
 import com.google.firebase.auth.FirebaseAuth
 
@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            startActivity(Intent(this, MainActivity::class.java))
+                            startActivity(Intent(this, MainActivity_Old::class.java))
                             finish()
                         } else {
                             Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
                     }
             } else {
                 // temp for development TODO: remove bypass
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, MainActivity_Old::class.java))
                 finish()
 //                Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
             }
