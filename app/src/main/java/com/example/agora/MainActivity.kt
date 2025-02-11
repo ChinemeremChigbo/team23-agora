@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 if (showSplash) {
                     SplashScreen { showSplash = false }
                 } else {
-                    MainScreen() // Replace with your actual main screen
+                    MainScreen()
                 }
             }
         }
