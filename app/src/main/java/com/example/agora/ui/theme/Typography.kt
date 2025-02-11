@@ -20,13 +20,13 @@ val AgoraTypography = Typography(
     ),
     titleMedium = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.ExtraBold,
+        fontWeight = FontWeight.Black,
         fontSize = 18.sp,
         letterSpacing = 0.005.sp
     ),
     titleSmall = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 16.sp,
         letterSpacing = 0.005.sp
     ),
@@ -34,21 +34,21 @@ val AgoraTypography = Typography(
     // Body Text
     bodyLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 18.sp,
         letterSpacing = 0.sp,
         lineHeight = 24.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         letterSpacing = 0.sp,
         lineHeight = 22.sp
     ),
     bodySmall = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         letterSpacing = 0.sp,
         lineHeight = 20.sp
@@ -57,19 +57,19 @@ val AgoraTypography = Typography(
     // Action Buttons
     labelLarge = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         letterSpacing = 0.sp
     ),
     labelMedium = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         letterSpacing = 0.sp
     ),
     labelSmall = TextStyle(
         fontFamily = Inter,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Bold,
         fontSize = 10.sp,
         letterSpacing = 0.sp
     ),
