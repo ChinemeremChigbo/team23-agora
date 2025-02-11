@@ -26,7 +26,7 @@ fun ExploreScreen() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun ExplorePreview() {
     ExploreScreen()

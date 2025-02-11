@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun NotificationScreen() {
+fun InboxScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -26,9 +26,9 @@ fun NotificationScreen() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun NotificationPreview() {
-    NotificationScreen()
+fun InboxPreview() {
+    InboxScreen()
 }
 
