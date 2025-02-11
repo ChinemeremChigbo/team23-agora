@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.explore.ExploreScreen
 import com.example.agora.screens.notifications.NotificationScreen
 import com.example.agora.screens.post.PostScreen
-import com.example.agora.screens.settings.SettingScreen
+import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.wishlist.WishlistScreen
 
 @Composable
@@ -38,6 +38,6 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier = Modifi
         composable(BottomNavItem.Post.route) { PostScreen() }
         composable(BottomNavItem.Wishlist.route) { WishlistScreen() }
         composable(BottomNavItem.Inbox.route) { NotificationScreen() }
-        composable(BottomNavItem.Setting.route) { SettingScreen() }
+        composable(BottomNavItem.Settings.route) { SettingsScreen() }
     }
 }

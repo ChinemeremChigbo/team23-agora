@@ -12,14 +12,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SettingScreen() {
+fun SettingsScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Setting Screen",
+            text = "Settings Screen",
             fontSize = 40.sp,
             textAlign = TextAlign.Center
         )
@@ -28,7 +28,7 @@ fun SettingScreen() {
 
 @Preview
 @Composable
-fun SettingPreview() {
-    SettingScreen()
+fun SettingsPreview() {
+    SettingsScreen()
 }
 
