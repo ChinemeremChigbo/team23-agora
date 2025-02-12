@@ -1,14 +1,19 @@
 package com.example.agora.screens
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.agora.R
@@ -27,7 +32,9 @@ fun BottomNavigation(
         BottomNavItem.Settings
     )
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+    ) {
         items.forEach { item ->
             AddItem(
                 screen = item,
@@ -45,7 +52,7 @@ fun RowScope.AddItem(
     navController: NavController
 ) {
     NavigationBarItem(
-        // Text that shows bellow the icon
+        // Text that shows below the icon
         label = {
             Text(text = screen.title)
         },
@@ -54,14 +61,15 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 painterResource(id = screen.icon),
-                contentDescription = screen.title
+                contentDescription = screen.title,
+                modifier = Modifier.size(30.dp)
             )
         },
 
         // Display if the icon it is select or not
         selected = currentRoute == screen.route,
 
-        // Always show the label bellow the icon or not
+        // Always show the label below the icon or not
         alwaysShowLabel = false,
 
         // Click listener for the icon
@@ -76,7 +84,9 @@ fun RowScope.AddItem(
         },
 
         // Control all the colors of the icon
-        colors = NavigationBarItemDefaults.colors()
+        colors = NavigationBarItemDefaults.colors(
+            indicatorColor = Color.Transparent
+        )
     )
 }
 
