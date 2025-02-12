@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    id("kotlin-kapt")
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -99,4 +101,12 @@ dependencies {
     // For example, add the dependencies for Firebase Authentication and Cloud Firestore
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+
+    implementation(libs.hilt.android) // Using alias for Hilt dependency
+    kapt(libs.hilt.compiler) // Using alias for Hilt compiler
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
