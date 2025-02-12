@@ -1,5 +1,6 @@
 package com.example.agora.screens.explore
 
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -114,10 +115,8 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun ExplorePreview() {
     ExploreScreen()
 }
-
