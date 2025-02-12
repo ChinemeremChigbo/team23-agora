@@ -19,7 +19,7 @@ class Post(
     var description: String = "",
     var price: Double = 0.0,
     var category: Category = Category.OTHER,
-    var images: Array<String> = arrayOf(),
+    var images: Array<String> = arrayOf("https://picsum.photos/200"),
     var comments: MutableList<Comment> = mutableListOf()
 ) {
 
