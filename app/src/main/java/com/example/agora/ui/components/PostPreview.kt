@@ -43,7 +43,7 @@ fun PostPreview(post: Post) {
             modifier = Modifier.padding(21.dp)
         ) {
             Text(post.title, fontSize = 16.sp)
-            Text("$" + post.price.toString(), fontSize = 19.sp, fontWeight = FontWeight.Bold)
+            Text("$" + String.format("%.2f", post.price), fontSize = 19.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
