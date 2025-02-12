@@ -90,6 +90,8 @@ dependencies {
     // Optional - Integration with RxJava
     implementation("androidx.compose.runtime:runtime-rxjava2")
 
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     // When using the BoM, you don't specify versions in Firebase library dependencies
