@@ -17,10 +17,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.agora.R
+import com.example.agora.model.data.Post
 
-// TODO (jennifer) - replace w correct type
 @Composable
-fun PostPreview(title: String) {
+fun PostPreview(post: Post) {
     Column (
         Modifier
             .clip(RoundedCornerShape(10.dp))
@@ -29,6 +29,7 @@ fun PostPreview(title: String) {
             .clickable(onClick={})
     ) {
         Image(
+            // TODO (jennifer) pull image from Post object
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "My Image",
             contentScale = ContentScale.FillWidth,
@@ -41,8 +42,8 @@ fun PostPreview(title: String) {
             verticalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier.padding(21.dp)
         ) {
-            Text(title, fontSize = 16.sp)
-            Text("$10.00", fontSize = 19.sp, fontWeight = FontWeight.Bold)
+            Text(post.title, fontSize = 16.sp)
+            Text("$" + String.format("%.2f", post.price), fontSize = 19.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

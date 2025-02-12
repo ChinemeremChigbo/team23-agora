@@ -106,8 +106,8 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
                 Column (verticalArrangement = Arrangement.spacedBy(21.dp)) {
                     Text("Section header", fontSize=19.sp, fontWeight = FontWeight.Bold)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(section) { title ->
-                            PostPreview(title)
+                        items(section) { post ->
+                            PostPreview(post)
                         }
                     }
                 }
