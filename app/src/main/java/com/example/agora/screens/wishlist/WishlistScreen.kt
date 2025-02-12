@@ -26,7 +26,7 @@ fun WishlistScreen() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun WishlistPreview() {
     WishlistScreen()
