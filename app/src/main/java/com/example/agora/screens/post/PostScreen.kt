@@ -26,7 +26,7 @@ fun PostScreen() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PostPreview() {
     PostScreen()

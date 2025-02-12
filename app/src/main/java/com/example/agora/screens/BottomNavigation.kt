@@ -24,7 +24,7 @@ fun BottomNavigation(
         BottomNavItem.Post,
         BottomNavItem.Wishlist,
         BottomNavItem.Inbox,
-        BottomNavItem.Setting
+        BottomNavItem.Settings
     )
 
     NavigationBar {
@@ -113,10 +113,10 @@ sealed class BottomNavItem(
             "/inbox"
         )
 
-    object Setting :
+    object Settings :
         BottomNavItem(
-            "Setting",
+            "Settings",
             R.drawable.ic_settings,
-            "/setting"
+            "/settings"
         )
 }
