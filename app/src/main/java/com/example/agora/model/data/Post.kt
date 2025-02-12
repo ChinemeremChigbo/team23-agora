@@ -17,6 +17,7 @@ class Post(
     private var createdAt: Timestamp = Timestamp(System.currentTimeMillis()),
     var title: String = "",
     var description: String = "",
+    var price: Double = 0.0,
     var category: Category = Category.OTHER,
     var images: Array<String> = arrayOf(),
     var comments: MutableList<Comment>
