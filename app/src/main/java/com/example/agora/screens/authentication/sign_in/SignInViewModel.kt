@@ -6,37 +6,50 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.MainActivity
-import com.google.firebase.auth.FirebaseAuth
+import com.example.agora.model.util.AccountAuthUtil
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class SignInViewModel : ViewModel() {
+    val email = MutableStateFlow("")
+    val password = MutableStateFlow("")
 
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    fun updateEmail(newEmail: String) {
+        email.value = newEmail
+    }
+
+    fun updatePassword(newPassword: String) {
+        password.value = newPassword
+    }
 
     fun signIn(
-        email: String,
-        password: String,
         context: Context,
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        if (email.isNotEmpty() && password.isNotEmpty()) {
-            viewModelScope.launch {
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            context.startActivity(Intent(context, MainActivity::class.java))
-                            onSuccess()
-                        } else {
-                            onError(task.exception?.message ?: "Login failed")
-                        }
-                    }
-            }
-        } else {
+        val emailValue = email.value
+        val passwordValue = password.value
+
+        if (emailValue.isEmpty() || passwordValue.isEmpty()) {
             onError("Please enter email and password")
-            // TODO: Remove temporary bypass
-            context.startActivity(Intent(context, MainActivity()::class.java))
-            (context as? ComponentActivity)?.finish()
+            navigateToMainActivity(context) // TODO: Remove Temporary bypass logic
+            return
         }
+
+        viewModelScope.launch {
+            try {
+                AccountAuthUtil.accountSignIn(emailValue, passwordValue)
+                // if login failed, auto throw error can will be caught!
+                context.startActivity(Intent(context, MainActivity::class.java))
+                onSuccess()
+            }  catch (e: Exception) {
+                onError(e.localizedMessage ?: "Login failed")
+            }
+        }
+    }
+
+    private fun navigateToMainActivity(context: Context) {
+        context.startActivity(Intent(context, MainActivity::class.java))
+        (context as? ComponentActivity)?.finish()
     }
 }

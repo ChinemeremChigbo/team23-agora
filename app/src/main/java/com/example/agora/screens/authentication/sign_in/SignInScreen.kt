@@ -44,8 +44,8 @@ fun LoginImage() {
 fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
     AgoraTheme {
         val context = LocalContext.current
-        val emailState = remember { mutableStateOf(TextFieldValue("")) }
-        val passwordState = remember { mutableStateOf(TextFieldValue("")) }
+        val emailState = viewModel.email.collectAsState()
+        val passwordState = viewModel.password.collectAsState()
         var passwordVisible by remember { mutableStateOf(false) }
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -75,7 +75,7 @@ fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
                 // Email input field
                 OutlinedTextField(
                     value = emailState.value,
-                    onValueChange = { emailState.value = it },
+                    onValueChange = { viewModel.updateEmail(it) },
                     label = { Text("School Email Address") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -86,7 +86,7 @@ fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
                 // Password input field with toggle visibility
                 OutlinedTextField(
                     value = passwordState.value,
-                    onValueChange = { passwordState.value = it },
+                    onValueChange = {  viewModel.updatePassword(it) },
                     label = { Text("Password") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -122,8 +122,6 @@ fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
                 Button(
                     onClick = {
                         viewModel.signIn(
-                            email = emailState.value.text,
-                            password = passwordState.value.text,
                             context = context,
                             onSuccess = {
                                 (context as? ComponentActivity)?.finish()
