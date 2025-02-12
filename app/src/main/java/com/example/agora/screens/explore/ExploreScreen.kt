@@ -57,7 +57,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
                     onSearch = { viewModel.onSearchSubmitted(searchText) },
                     expanded = isExpanded,
                     onExpandedChange = { viewModel.onExpandedChange(it) },
-                    placeholder = { Text("Find what you're looking for...") },
+                    placeholder = { Text("Search") },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
                     trailingIcon = { if(isExpanded) {
                         Icon(
