@@ -99,12 +99,14 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
             }
         }
 
-        LazyColumn (
+        val sectionTitles = listOf("Editor's Choice", "New Arrivals", "Near You")
+
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(40.dp),
         ) {
-            items(sections) { section ->
-                Column (verticalArrangement = Arrangement.spacedBy(21.dp)) {
-                    Text("Section header", fontSize=19.sp, fontWeight = FontWeight.Bold)
+            items(sections.zip(sectionTitles)) { (section, title) ->
+                Column(verticalArrangement = Arrangement.spacedBy(21.dp)) {
+                    Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         items(section) { post ->
                             PostPreview(post)
