@@ -2,7 +2,6 @@ package com.example.agora.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -12,11 +11,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.agora.R
+import coil.compose.AsyncImage
 import com.example.agora.model.data.Post
 
 @Composable
@@ -28,9 +26,8 @@ fun PostPreview(post: Post) {
             .width(221.dp)
             .clickable(onClick={})
     ) {
-        Image(
-            // TODO (jennifer) pull image from Post object
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+        AsyncImage(
+            model = post.images[0],
             contentDescription = "My Image",
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
