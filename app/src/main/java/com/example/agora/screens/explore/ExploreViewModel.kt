@@ -1,8 +1,7 @@
 package com.example.agora.screens.explore
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.agora.model.data.Post
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -17,11 +16,19 @@ class ExploreViewModel : ViewModel() {
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches = _recentSearches.asStateFlow()
 
-    private val titles1 = listOf("Fridge", "Fridge 2", "Fridge 3")
-    private val titles2 = listOf("Book", "Book 2", "Book 3")
-    private val titles3 = listOf("Plates")
+    private val titles1 = listOf(
+        Post(title="Fridge", price=10.12),
+        Post(title="Fridge 2", price=100.12),
+        Post(title="Fridge 3", price=121.00)
+    )
+    private val titles2 = listOf(
+        Post(title="Book", price=7.99),
+        Post(title="Book 2", price=9.50),
+        Post(title="Book 3", price=10.25)
+    )
+    private val titles3 = listOf(Post(title="Plates", price=11.99))
 
-    private val _sections = MutableStateFlow<List<List<String>>>(listOf(titles1, titles2, titles3))
+    private val _sections = MutableStateFlow<List<List<Post>>>(listOf(titles1, titles2, titles3))
     val sections = _sections.asStateFlow()
 
     fun onSearchTextChange(text: String) {
