@@ -20,7 +20,7 @@ class Post(
     var price: Double = 0.0,
     var category: Category = Category.OTHER,
     var images: Array<String> = arrayOf(),
-    var comments: MutableList<Comment>
+    var comments: MutableList<Comment> = mutableListOf()
 ) {
 
     // Getters and Setters
