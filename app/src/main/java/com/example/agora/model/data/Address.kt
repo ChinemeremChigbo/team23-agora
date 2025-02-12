@@ -30,20 +30,7 @@ class Address private constructor(
     fun getCountry(): String = country
     fun setCountry(value: String) { country = value }
 
-    val postalCodePatterns = mapOf(
-        "US" to "\\d{5}(-\\d{4})?",  // USA: 12345 or 12345-6789
-        "CA" to "[A-Z]\\d[A-Z] \\d[A-Z]\\d", // Canada: A1A 1A1
-    )
 
-    fun getCountryCode(countryName: String): String? {
-        for (countryCode in Locale.getISOCountries()) {
-            val locale = Locale("", countryCode)
-            if (locale.displayCountry.equals(countryName, ignoreCase = true)) {
-                return countryCode
-            }
-        }
-        return null // no country name found
-    }
 
     companion object {
         // returns either the successfully made address, or a string error
@@ -84,7 +71,7 @@ class Address private constructor(
 
     // Methods
     fun validateAddress(): Boolean? {
-        // some of this is done in the companion object upon declaration, but we can add other
+        // TODO: some of this is done in the companion object upon declaration, but we can add other
         // checks if desired
         return null
     }

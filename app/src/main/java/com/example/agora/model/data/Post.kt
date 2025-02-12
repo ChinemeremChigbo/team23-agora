@@ -18,7 +18,8 @@ class Post(
     var title: String = "",
     var description: String = "",
     var category: Category = Category.OTHER,
-    var images: Array<String> = arrayOf()
+    var images: Array<String> = arrayOf(),
+    var comments: MutableList<Comment>
 ) {
 
     // Getters and Setters
@@ -33,15 +34,20 @@ class Post(
 
     // Methods
     fun updateInfo(newInfo: Map<String, Any>) {
-        // Placeholder implementation
+        // TODO
     }
 
-    fun addComment(comment: Comment) {
-        // Placeholder implementation
+    fun addComment(text: String) {
+        val comment: Comment = Comment(text=text, creatorId=UUID.randomUUID())
+        val mentions: List<String> = comment.findMentions()
+        for (mention in mentions) {
+            // TODO: create a notification
+        }
+        comments.add(comment)
     }
 
     fun removeComment(comment: Comment) {
-        // Placeholder implementation
+        // TODO
     }
 
     fun changeStatus(newStatus: PostStatus) {

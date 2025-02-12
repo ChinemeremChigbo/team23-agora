@@ -8,6 +8,7 @@ enum class UserStatus {
 class User(
     private var userId: UUID = UUID.randomUUID(),
     private var status: UserStatus = UserStatus.ACTIVATED,
+    var username: String = "",
     var firstName: String = "",
     var lastName: String = "",
     var bio: String = "",
@@ -25,15 +26,16 @@ class User(
 
     // Methods
     fun login(password: String): Boolean {
-        return false // Placeholder implementation
+        // TODO
+        return false
     }
 
     fun register() {
-        // Placeholder implementation
+        // TODO
     }
 
     fun updateInfo(newInfo: Map<String, Any>) {
-        // Placeholder implementation
+        // TODO
     }
 
     fun changeStatus(newStatus: UserStatus) {

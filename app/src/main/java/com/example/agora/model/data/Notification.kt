@@ -29,7 +29,8 @@ class Notification(
 
     // Methods
     fun getFormattedNotification(): String {
-        return "" // Placeholder implementation
+        // TODO
+        return ""
     }
 
     fun changeStatus(newStatus: NotificationStatus) {
