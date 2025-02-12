@@ -9,6 +9,10 @@ class AuthActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Uncomment the following line if you want to run
+        // against the Firebase Local Emulator Suite (FOR LOCAL TESTING!):
+        // FirebaseTestUtil.configureFirebaseServices(resources)
+
         setContent {
             SignInScreen()
         }
