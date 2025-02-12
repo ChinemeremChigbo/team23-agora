@@ -68,13 +68,13 @@ class ExploreViewModel : ViewModel() {
                 val newPosts = Array(3) { mutableListOf<Post>() }
                 querySnapshot.documents.mapNotNull { doc ->
                     val title = doc.getString("title")
-                    val imageUrl = doc.getString("imageUrl")
+                    val images = (doc.get("images") as? List<*>)?.filterIsInstance<String>()
                     val price = doc.getLong("price")?.toDouble()
                     val section = doc.getLong("section")?.toInt()
                     // Use a placeholder image for now (replace with actual logic if needed)
-                    if (title != null && price != null && imageUrl!=null && section in 1..3) {
+                    if (title != null && price != null && images!=null && section in 1..3) {
                         if (section !== null) {
-                            newPosts[section - 1].add(Post(title = title, price = price, images = arrayOf(imageUrl)))
+                            newPosts[section - 1].add(Post(title = title, price = price, images = images.toTypedArray()))
                         }
                         else {
 
