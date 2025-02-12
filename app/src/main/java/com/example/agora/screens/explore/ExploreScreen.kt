@@ -44,7 +44,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
     val sections by viewModel.sections.collectAsState()
 
     Column (
-        modifier = Modifier.padding(21.dp),
+        modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp),
     ) {
         SearchBar(
@@ -100,7 +100,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
         }
 
         LazyColumn (
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(40.dp),
         ) {
             items(sections) { section ->
                 Column (verticalArrangement = Arrangement.spacedBy(21.dp)) {
