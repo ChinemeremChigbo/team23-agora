@@ -205,7 +205,7 @@ fun SignInScreen() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun SignInPreview() {
     SignInScreen()

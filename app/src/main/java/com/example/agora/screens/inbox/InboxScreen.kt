@@ -1,4 +1,4 @@
-package com.example.agora.screens.settings
+package com.example.agora.screens.inbox
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,23 +12,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SettingScreen() {
+fun InboxScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Setting Screen",
+            text = "Inbox Screen",
             fontSize = 40.sp,
             textAlign = TextAlign.Center
         )
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun SettingPreview() {
-    SettingScreen()
+fun InboxPreview() {
+    InboxScreen()
 }
 
