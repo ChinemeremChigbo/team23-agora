@@ -26,13 +26,15 @@ class AuthActivity : ComponentActivity() {
         println("auth activity started!")
         // Uncomment the following line if you want to run
         // against the Firebase Local Emulator Suite (FOR LOCAL TESTING!):
-        // FirebaseTestUtil.configureFirebaseServices(resources)
+//         FirebaseTestUtil.configureFirebaseServices(resources)
 
         // Initialize Firebase Auth
         auth = Firebase.auth
 
         setContent {
-            AuthScreen()
+            AgoraTheme {
+                AuthScreen()
+            }
         }
     }
 
@@ -40,8 +42,8 @@ class AuthActivity : ComponentActivity() {
         super.onStart()
         // Check if user is logged in, redirect to MainActivity if yes
         val currentUser = auth.currentUser
-        if (currentUser != null) {
-            Toast.makeText(this, "Already logged in, redirecting...", Toast.LENGTH_SHORT).show()
+        if (currentUser != null && currentUser.isEmailVerified) {
+            Toast.makeText(this, "Already logged in ${currentUser.email}, redirecting...", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -59,7 +61,7 @@ class AuthActivity : ComponentActivity() {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "login") {
             composable("login") { SignInScreen(navController, auth) }
-            composable("register") { RegisterScreen(navController) }
+            composable("register") { RegisterScreen(navController, auth) }
         }
     }
 }
