@@ -61,35 +61,4 @@ class RegisterViewModel : ViewModel() {
     fun updatePostalCode(newVal: String) {
         postalCode.value = newVal
     }
-
-    fun signIn(
-        context: Context,
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
-    ) {
-        val emailValue = email.value
-        val passwordValue = password.value
-
-        if (emailValue.isEmpty() || passwordValue.isEmpty()) {
-            onError("Please enter email and password")
-            navigateToMainActivity(context) // TODO: Remove Temporary bypass logic
-            return
-        }
-
-        viewModelScope.launch {
-            try {
-//                AccountAuthUtil.accountSignIn(emailValue, passwordValue)
-                // if login failed, auto throw error can will be caught!
-                context.startActivity(Intent(context, MainActivity::class.java))
-                onSuccess()
-            }  catch (e: Exception) {
-                onError(e.localizedMessage ?: "Login failed")
-            }
-        }
-    }
-
-    private fun navigateToMainActivity(context: Context) {
-        context.startActivity(Intent(context, MainActivity::class.java))
-        (context as? ComponentActivity)?.finish()
-    }
 }
