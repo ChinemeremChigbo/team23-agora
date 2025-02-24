@@ -34,8 +34,8 @@ class SignInViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 if (emailValue.isEmpty() || passwordValue.isEmpty()) {
-                    passwordValue = "test@test.com"
-                    emailValue = "test@test.com"// TODO: Remove Temporary bypass logic, enable onError
+                    passwordValue = "123456"
+                    emailValue = "samanthazhanjiaqi@gmail.com"// TODO: Remove Temporary bypass logic, enable onError
 //                    onError("Please enter email and password")
                 }
                 AccountAuthUtil.accountSignIn(auth, emailValue, passwordValue)
