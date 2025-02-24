@@ -35,7 +35,7 @@ class SignInViewModel : ViewModel() {
             try {
                 if (emailValue.isEmpty() || passwordValue.isEmpty()) {
                     passwordValue = "123456"
-                    emailValue = "samanthazhanjiaqi@gmail.com"// TODO: Remove Temporary bypass logic, enable onError
+                    emailValue = "j35zhan@uwaterloo.ca"// TODO: Remove Temporary bypass logic, enable onError
 //                    onError("Please enter email and password")
                 }
                 AccountAuthUtil.accountSignIn(auth, emailValue, passwordValue)
