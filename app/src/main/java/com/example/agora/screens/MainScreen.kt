@@ -15,9 +15,10 @@ import com.example.agora.screens.inbox.InboxScreen
 import com.example.agora.screens.post.PostScreen
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.wishlist.WishlistScreen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun MainScreen() {
+fun MainScreen(auth: FirebaseAuth) {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
@@ -25,12 +26,12 @@ fun MainScreen() {
         },
     ) {
             innerPadding ->
-        NavigationHost(navController, Modifier.padding(innerPadding))
+        NavigationHost(navController, auth, Modifier.padding(innerPadding))
     }
 }
 
 @Composable
-fun NavigationHost(navController: NavHostController, modifier: Modifier = Modifier) {
+fun NavigationHost(navController: NavHostController, auth: FirebaseAuth, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Explore.route,
@@ -43,6 +44,6 @@ fun NavigationHost(navController: NavHostController, modifier: Modifier = Modifi
         composable(BottomNavItem.Post.route) { PostScreen() }
         composable(BottomNavItem.Wishlist.route) { WishlistScreen() }
         composable(BottomNavItem.Inbox.route) { InboxScreen() }
-        composable(BottomNavItem.Settings.route) { SettingsScreen() }
+        composable(BottomNavItem.Settings.route) { SettingsScreen(auth) }
     }
 }
