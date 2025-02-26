@@ -62,7 +62,7 @@ class ExploreViewModel : ViewModel() {
     }
     private fun fetchPosts() {
         val firestore = FirebaseFirestore.getInstance()
-        firestore.collection("post")
+        firestore.collection("posts")
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val newPosts = Array(3) { mutableListOf<Post>() }
