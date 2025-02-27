@@ -20,12 +20,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.agora.MainActivity
 import com.example.agora.R
 import com.example.agora.ui.theme.AgoraTheme
@@ -183,12 +181,4 @@ fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: Si
 private fun navigateToMainActivity(context: Context) {
     context.startActivity(Intent(context, MainActivity::class.java))
     (context as? ComponentActivity)?.finish()
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignInPreview() {
-    val fakeAuth = remember { FirebaseAuth.getInstance() }
-    // placeholder navController
-    SignInScreen(navController = rememberNavController(), fakeAuth)
 }

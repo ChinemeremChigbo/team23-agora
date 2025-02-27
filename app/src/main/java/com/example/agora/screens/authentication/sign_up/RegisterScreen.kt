@@ -184,10 +184,3 @@ fun RegistrationSuccessDialog(showDialog: Boolean, onDismiss: () -> Unit) {
         )
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterScreenPreview() {
-    val fakeAuth = remember { FirebaseAuth.getInstance() }
-    RegisterScreen(navController = rememberNavController(), fakeAuth)
-}
