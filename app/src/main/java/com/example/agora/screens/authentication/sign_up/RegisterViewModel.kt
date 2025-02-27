@@ -1,16 +1,7 @@
 package com.example.agora.screens.authentication.sign_up
 
-import android.content.Context
-import android.content.Intent
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.agora.MainActivity
 import com.example.agora.model.util.AccountAuthUtil
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
