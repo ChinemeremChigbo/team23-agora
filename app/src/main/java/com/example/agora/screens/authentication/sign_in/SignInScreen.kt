@@ -1,5 +1,7 @@
 package com.example.agora.screens.authentication.sign_in
 
+import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -18,12 +20,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.agora.MainActivity
 import com.example.agora.R
 import com.example.agora.ui.theme.AgoraTheme
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginImage() {
@@ -41,7 +45,8 @@ fun LoginImage() {
 }
 
 @Composable
-fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
+fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: SignInViewModel = viewModel()) {
+    var isLoading by remember { mutableStateOf(false) }
     AgoraTheme {
         val context = LocalContext.current
         val emailState = viewModel.email.collectAsState()
@@ -117,31 +122,37 @@ fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
                 }
 
                 Spacer(modifier = Modifier.height(6.dp))
-
-                // Login button
-                Button(
-                    onClick = {
-                        viewModel.signIn(
-                            context = context,
-                            onSuccess = {
-                                (context as? ComponentActivity)?.finish()
-                            },
-                            onError = { errorMessage ->
-                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                            }
+                if (isLoading) {
+                    CircularProgressIndicator() // ✅ Show Loading Indicator
+                } else {
+                    // Login button
+                    Button(
+                        onClick = {
+                            isLoading = true
+                            viewModel.signIn(
+                                auth,
+                                onSuccess = {
+                                    isLoading = false
+                                    navigateToMainActivity(context)
+                                },
+                                onError = { errorMessage ->
+                                    isLoading = false
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                    ) {
+                        Text(
+                            text = "Login",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center
                         )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                ) {
-                    Text(
-                        text = "Login",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Center
-                    )
+                    }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -153,7 +164,7 @@ fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
                     )
 
                     TextButton(
-                        onClick = { /* TODO: Handle sign-up navigation here */ },
+                        onClick = { navController.navigate("register") },
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                     ) {
                         Text(
@@ -167,8 +178,7 @@ fun SignInScreen(viewModel: SignInViewModel = viewModel()) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignInPreview() {
-    SignInScreen()
+private fun navigateToMainActivity(context: Context) {
+    context.startActivity(Intent(context, MainActivity::class.java))
+    (context as? ComponentActivity)?.finish()
 }
