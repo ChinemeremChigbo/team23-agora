@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +46,8 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(scrollState)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -54,14 +56,16 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
             text = "Sign Up",
             fontWeight = FontWeight.Black,
             fontSize = 24.sp,
-            modifier = Modifier.padding(bottom = 8.dp),
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
             color = MaterialTheme.colorScheme.onBackground,
         )
 
         Text(
             text = "Create an account to get started",
             fontSize = 16.sp,
-            modifier = Modifier.padding(bottom = 16.dp),
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             color = MaterialTheme.colorScheme.onBackground,
         )
 
@@ -87,7 +91,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
         )
 
         var expandedCountry by remember { mutableStateOf(false) }
-        val countries = listOf("Canada", "United States of America") // todo cindy
+        val countries = viewModel.countries
         ExposedDropdownMenuBox(
             expanded = expandedCountry,
             onExpandedChange = { expandedCountry = !expandedCountry }
@@ -124,8 +128,8 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
         }
 
         var expandedState by remember { mutableStateOf(false) }
-        val provinces = listOf("Ontario", "British Columbia")   // todo cindy
-        val states = listOf("CA", "NY")
+        val provinces = viewModel.provinces
+        val states = viewModel.states
         ExposedDropdownMenuBox(
             expanded = expandedState,
             onExpandedChange = { expandedState = !expandedState }
