@@ -1,33 +1,27 @@
-import android.content.Context
-import android.content.Intent
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.authentication.sign_up.RegisterViewModel
 import com.google.firebase.auth.FirebaseAuth
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: RegisterViewModel = viewModel()) {
     val context = LocalContext.current
@@ -53,55 +47,69 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
             .padding(16.dp)
             .verticalScroll(scrollState)
     ) {
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Title
         Text(
-            text = "Sign up",
+            text = "Sign Up",
+            fontWeight = FontWeight.Black,
             fontSize = 24.sp,
-            color = Color.Black
+            modifier = Modifier.padding(bottom = 8.dp),
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Text(
             text = "Create an account to get started",
             fontSize = 16.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.onBackground,
         )
+
+        // Form Fields
+        val bottomPadding = 8.dp
 
         OutlinedTextField(
             value = fullName.value,
             onValueChange = { viewModel.updateFullName(it) },
             label = { Text("Full Name") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
         )
 
         OutlinedTextField(
             value = email.value,
             onValueChange = { viewModel.updateEmail(it) },
             label = { Text("School Email Address") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
         )
 
-        // Country Dropdown
         var expandedCountry by remember { mutableStateOf(false) }
-        val countries = listOf("USA", "Canada", "UK")
-        Box(modifier = Modifier.fillMaxWidth().clickable { expandedCountry = true }) {
+        val countries = listOf("Canada", "United States of America") // todo cindy
+        ExposedDropdownMenuBox(
+            expanded = expandedCountry,
+            onExpandedChange = { expandedCountry = !expandedCountry }
+        ) {
             OutlinedTextField(
                 value = country.value,
                 onValueChange = { viewModel.updateCountry(it) },
                 label = { Text("Country") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = bottomPadding)
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
                 readOnly = true,
                 trailingIcon = {
-                    Icon(
-                        if (expandedCountry) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                        contentDescription = "Select Country",
-                        modifier = Modifier.clickable { expandedCountry = !expandedCountry }
-                    )
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCountry)
                 }
             )
-            DropdownMenu(
+            ExposedDropdownMenu(
                 expanded = expandedCountry,
-                onDismissRequest = { expandedCountry = false },
-                modifier = Modifier.fillMaxWidth()
+                onDismissRequest = { expandedCountry = false }
             ) {
                 countries.forEach { countryOption ->
                     DropdownMenuItem(
@@ -115,12 +123,89 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
             }
         }
 
+        var expandedState by remember { mutableStateOf(false) }
+        val provinces = listOf("Ontario", "British Columbia")   // todo cindy
+        val states = listOf("CA", "NY")
+        ExposedDropdownMenuBox(
+            expanded = expandedState,
+            onExpandedChange = { expandedState = !expandedState }
+        ) {
+            OutlinedTextField(
+                value = state.value,
+                onValueChange = { viewModel.updateState(it) },
+                label = { Text("Province/State")},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = bottomPadding)
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState)
+                }
+            )
+            ExposedDropdownMenu(
+                expanded = expandedState,
+                onDismissRequest = { expandedState = false }
+            ) {
+                if (country.value == "Canada") {
+                    provinces.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                viewModel.updateState(option)
+                                expandedState = false
+                            }
+                        )
+                    }
+                } else {
+                    states.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                viewModel.updateState(option)
+                                expandedState = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        OutlinedTextField(
+            value = city.value,
+            onValueChange = { viewModel.updateCity(it) },
+            label = { Text("City") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = address.value,
+            onValueChange = { viewModel.updateAddress(it) },
+            label = { Text("Address") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = postalCode.value,
+            onValueChange = { viewModel.updatePostalCode(it) },
+            label = { Text("Postal/Zip Code") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
 
         OutlinedTextField(
             value = password.value,
             onValueChange = { viewModel.updatePassword(it) },
             label = { Text("Create password") },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -129,11 +214,31 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                         contentDescription = "Toggle password visibility"
                     )
                 }
-            }
+            },
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = confirmPassword.value,
+            onValueChange = { viewModel.updateConfirmPassword(it) },
+            label = { Text("Confirm password") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
+            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                    Icon(
+                        imageVector = if (confirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = "Toggle password visibility"
+                    )
+                }
+            },
+            shape = RoundedCornerShape(16.dp),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Continue button
         if (isLoading) {
             CircularProgressIndicator() // ✅ Show Loading Indicator
         } else {
@@ -152,13 +257,17 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                         }
                     )
                 },
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
-                shape = RoundedCornerShape(8.dp)
+                    .height(56.dp),
             ) {
-                Text("Continue", color = Color.White, fontSize = 16.sp)
+                Text(
+                    text = "Continue",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center
+                )
             }
             RegistrationSuccessDialog(showDialog) {
                 showDialog = false // Close dialog when dismissed

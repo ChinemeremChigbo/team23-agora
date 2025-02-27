@@ -86,7 +86,7 @@ fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: Si
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // Password input field with toggle visibility
                 OutlinedTextField(
