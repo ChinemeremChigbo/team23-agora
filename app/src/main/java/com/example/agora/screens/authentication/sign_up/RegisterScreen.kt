@@ -4,6 +4,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -49,25 +50,41 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
 
         // Title
-        Text(
-            text = "Sign Up",
-            fontWeight = FontWeight.Black,
-            fontSize = 24.sp,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column() {
+                Spacer(modifier = Modifier.height(32.dp))
 
-        Text(
-            text = "Create an account to get started",
-            fontSize = 16.sp,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+                Text(
+                    text = "Sign Up",
+                    fontWeight = FontWeight.Black,
+                    fontSize = 24.sp,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+
+                Text(
+                    text = "Create an account to get started",
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+
+            IconButton(onClick = { navController.navigate("login") }) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close button",
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
 
         // Form Fields
         val bottomPadding = 8.dp
