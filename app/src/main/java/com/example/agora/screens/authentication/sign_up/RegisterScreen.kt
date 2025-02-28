@@ -121,6 +121,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                         onClick = {
                             viewModel.updateCountry(countryOption)
                             expandedCountry = false
+                            viewModel.updateState("")
                         }
                     )
                 }
@@ -153,7 +154,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                 expanded = expandedState,
                 onDismissRequest = { expandedState = false }
             ) {
-                if (country.value == "Canada") {
+                if (country.value == countries[0]) {
                     provinces.forEach { option ->
                         DropdownMenuItem(
                             text = { Text(option) },
@@ -163,7 +164,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                             }
                         )
                     }
-                } else {
+                } else if (country.value == countries[1]) {
                     states.forEach { option ->
                         DropdownMenuItem(
                             text = { Text(option) },
