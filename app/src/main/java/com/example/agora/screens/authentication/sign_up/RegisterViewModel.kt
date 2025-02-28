@@ -126,31 +126,17 @@ class RegisterViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        // Step 0: check all required fields are non empty
-        val fields = mapOf(
-            "Full Name" to fullName.value,
-            "Email" to email.value,
-            "Country" to country.value,
-            "Province/State" to state.value,
-            "City" to city.value,
-            "Address" to address.value,
-            "Postal/Zip Code" to postalCode.value,
-            "Password" to password.value,
-            "Password Confirmation" to confirmPassword.value
-        )
+        // Step 0-1: check all required fields are non empty
+        if (!checkRequiredFields{ errorMessage -> onError(errorMessage) }) return
 
-        fields.forEach{ (key, value) ->
-            if (value.isEmpty()) {
-                onError("$key field can not be empty")
-                return
-            }
-        }
-
-        // Step 0.5: confirm password fields are the same
+        // Step 0-2: confirm password fields are the same
         if (password.value != confirmPassword.value) { onError("Passwords do not match"); return }
 
         val emailValue = email.value
         val passwordValue = password.value
+
+        // Step 0-3: confirm email is uwaterloo school email
+        if(!isValidEmail(emailValue)) { onError("Only uwaterloo email allowed!"); return }
 
         viewModelScope.launch {
             try {
@@ -163,5 +149,31 @@ class RegisterViewModel : ViewModel() {
             }
         }
 
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return email.endsWith("@uwaterloo.ca")
+    }
+
+    private fun checkRequiredFields(onError: (String) -> Unit): Boolean {
+        val fields = mapOf(
+            "Full Name" to fullName.value,
+            "Email" to email.value,
+            "Country" to country.value,
+            "Province/State" to state.value,
+            "City" to city.value,
+            "Address" to address.value,
+            "Postal/Zip Code" to postalCode.value,
+            "Password" to password.value,
+            "Password Confirmation" to confirmPassword.value
+        )
+
+        for ((key, value) in fields) {
+            if (value.isEmpty()) {
+                onError("$key field cannot be empty")
+                return false
+            }
+        }
+        return true
     }
 }
