@@ -24,9 +24,8 @@ class AccountAuthUtil {
         }
         fun signOut(auth: FirebaseAuth) {
             auth.signOut()
-
         }
-        suspend fun sendVerificationEmail(auth: FirebaseAuth){
+        private suspend fun sendVerificationEmail(auth: FirebaseAuth){
             val user = auth.currentUser
             println("FirebaseAuth sendVerificationEmail")
             if (user != null) {

@@ -20,5 +20,14 @@ local.properties
 .settings
 .classpath
 
+# Ignore all user-specific IntelliJ/Android Studio files
+.idea/*
+# Keep essential project settings
+!.idea/misc.xml
+!.idea/modules.xml
+!.idea/vcs.xml
+!.idea/workspace.xml
+!.idea/runConfigurations/
+
 # Ignore all Firebase debug logs
 *-debug.log
