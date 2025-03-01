@@ -8,6 +8,72 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
+    val countries = listOf("Canada", "United States of America")
+    val provinces = listOf(
+        "Alberta",
+        "British Columbia",
+        "Manitoba", "New Brunswick",
+        "Newfoundland and Labrador",
+        "Nova Scotia", "Ontario",
+        "Prince Edward Island",
+        "Quebec",
+        "Saskatchewan",
+        "Northwest Territories",
+        "Nunavut",
+        "Yukon"
+    )
+    val states = listOf(
+        "Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
+    )
 
     var fullName = MutableStateFlow("")
     var email = MutableStateFlow("")
@@ -60,10 +126,17 @@ class RegisterViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        // TODO - step 0: check all required fields are non empty
+        // Step 0-1: check all required fields are non empty
+        if (!checkRequiredFields{ errorMessage -> onError(errorMessage) }) return
+
+        // Step 0-2: confirm password fields are the same
+        if (password.value != confirmPassword.value) { onError("Passwords do not match"); return }
 
         val emailValue = email.value
         val passwordValue = password.value
+
+        // Step 0-3: confirm email is uwaterloo school email
+        if(!isValidEmail(emailValue)) { onError("Only uwaterloo email allowed!"); return }
 
         viewModelScope.launch {
             try {
@@ -76,5 +149,31 @@ class RegisterViewModel : ViewModel() {
             }
         }
 
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return email.endsWith("@uwaterloo.ca")
+    }
+
+    private fun checkRequiredFields(onError: (String) -> Unit): Boolean {
+        val fields = mapOf(
+            "Full Name" to fullName.value,
+            "Email" to email.value,
+            "Country" to country.value,
+            "Province/State" to state.value,
+            "City" to city.value,
+            "Address" to address.value,
+            "Postal/Zip Code" to postalCode.value,
+            "Password" to password.value,
+            "Password Confirmation" to confirmPassword.value
+        )
+
+        for ((key, value) in fields) {
+            if (value.isEmpty()) {
+                onError("$key field cannot be empty")
+                return false
+            }
+        }
+        return true
     }
 }
