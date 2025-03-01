@@ -12,7 +12,7 @@ enum class Category {
 }
 
 class Post(
-    private var postId: UUID = UUID.randomUUID(),
+    private var postId: String = "",
     private var status: PostStatus = PostStatus.ACTIVE,
     private var createdAt: Timestamp = Timestamp(System.currentTimeMillis()),
     var title: String = "",
@@ -24,8 +24,8 @@ class Post(
 ) {
 
     // Getters and Setters
-    fun getPostId(): UUID = postId
-    fun setPostId(value: UUID) { postId = value }
+    fun getPostId(): String = postId
+    fun setPostId(value: String) { postId = value }
 
     fun getStatus(): PostStatus = status
     fun setStatus(value: PostStatus) { status = value }
@@ -39,7 +39,7 @@ class Post(
     }
 
     fun addComment(text: String) {
-        val comment: Comment = Comment(text=text, creatorId=UUID.randomUUID())
+        val comment: Comment = Comment(text=text, creatorId="")
         val mentions: List<String> = comment.findMentions()
         for (mention in mentions) {
             // TODO: create a notification

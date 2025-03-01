@@ -2,6 +2,8 @@ package com.example.agora.screens.authentication.sign_up
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.agora.model.data.User
+import com.example.agora.model.data.UserStatus
 import com.example.agora.model.util.AccountAuthUtil
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,6 +86,7 @@ class RegisterViewModel : ViewModel() {
     var postalCode = MutableStateFlow("")
     var password = MutableStateFlow("")
     var confirmPassword = MutableStateFlow("")
+    var userId = ""
 
     fun updateEmail(newEmail: String) {
         email.value = newEmail
@@ -141,14 +144,29 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 // step 1: register user with firebase auth + send verification email
-                AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
+                userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
                 // TODO - step 2: register user with our database
+                val newUser = createUser()
+                newUser.register()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e.localizedMessage ?: "Registration failed")
             }
         }
+    }
 
+    private fun createUser(): User {
+        val user = User(
+            username = email.value.substringBefore("@uwaterloo.ca"),
+            fullName = fullName.value,
+            bio = "", // to be updated in user setting
+            profileImage = "", // to be updated in user setting
+            email = email.value,
+            phoneNumber = "123456789"
+        )
+        user.setUserId(userId)
+        user.setStatus(UserStatus.ACTIVATED)
+        return user
     }
 
     private fun isValidEmail(email: String): Boolean {
