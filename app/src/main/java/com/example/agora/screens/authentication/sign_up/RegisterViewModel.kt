@@ -135,17 +135,20 @@ class RegisterViewModel : ViewModel() {
         // Step 0-2: confirm password fields are the same
         if (password.value != confirmPassword.value) { onError("Passwords do not match"); return }
 
+
         val emailValue = email.value
         val passwordValue = password.value
 
         // Step 0-3: confirm email is uwaterloo school email
         if(!isValidEmail(emailValue)) { onError("Only uwaterloo email allowed!"); return }
 
+        // TODO: Step 0-4: confirm address + phone number are valid
+
         viewModelScope.launch {
             try {
                 // step 1: register user with firebase auth + send verification email
                 userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
-                // TODO - step 2: register user with our database
+                // step 2: register user with our database
                 val newUser = createUser()
                 newUser.register()
                 onSuccess()
@@ -159,10 +162,13 @@ class RegisterViewModel : ViewModel() {
         val user = User(
             username = email.value.substringBefore("@uwaterloo.ca"),
             fullName = fullName.value,
-            bio = "", // to be updated in user setting
-            profileImage = "", // to be updated in user setting
             email = email.value,
-            phoneNumber = "123456789"
+            phoneNumber = "123456789",
+            country = country.value,
+            city = city.value,
+            state = state.value,
+            address = address.value,
+            postalCode = postalCode.value,
         )
         user.setUserId(userId)
         user.setStatus(UserStatus.ACTIVATED)

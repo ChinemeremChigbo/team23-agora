@@ -1,6 +1,6 @@
 package com.example.agora.model.data
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.*
+import java.sql.Timestamp
 
 enum class UserStatus {
     ACTIVATED, DEACTIVATED
@@ -15,7 +15,13 @@ class User(
     var bio: String = "",
     var profileImage: String = "",
     var email: String = "",
-    var phoneNumber: String = ""
+    var phoneNumber: String = "",
+    var country: String = "",
+    var state: String = "",
+    var city: String = "",
+    var postalCode: String = "",
+    var address: String = "",
+    var wishList: MutableMap<String, Timestamp> = mutableMapOf()
 ) {
 
     // Getters and Setters
@@ -37,7 +43,15 @@ class User(
                 "bio" to bio,
                 "profileImage" to profileImage,
                 "email" to email,
-                "phoneNumber" to phoneNumber
+                "phoneNumber" to phoneNumber,
+                "address" to mapOf(
+                    "country" to country,
+                    "city" to city,
+                    "state" to state,
+                    "address" to address,
+                    "postalCode" to postalCode
+                ),
+                "wishlist" to wishList,
             ))
             .addOnSuccessListener {
                 println("User successfully added to Firestore!")
