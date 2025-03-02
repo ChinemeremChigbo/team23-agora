@@ -1,5 +1,7 @@
 package com.example.agora.screens
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -13,6 +15,9 @@ import com.example.agora.screens.explore.ExploreScreen
 import com.example.agora.screens.explore.ExploreViewModel
 import com.example.agora.screens.inbox.InboxScreen
 import com.example.agora.screens.post.PostScreen
+import com.example.agora.screens.postDetail.PostDetailScreen
+import com.example.agora.screens.postDetail.PostDetailViewModel
+import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.wishlist.WishlistScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -20,18 +25,25 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun MainScreen(auth: FirebaseAuth) {
     val navController = rememberNavController()
+
     Scaffold(
         bottomBar = {
             BottomNavigation(navController)
         },
     ) {
             innerPadding ->
-        NavigationHost(navController, auth, Modifier.padding(innerPadding))
+        Box(Modifier.fillMaxSize()) {
+            NavigationHost(navController, auth, Modifier.padding(innerPadding))
+        }
     }
 }
 
 @Composable
-fun NavigationHost(navController: NavHostController, auth: FirebaseAuth, modifier: Modifier = Modifier) {
+fun NavigationHost(
+    navController: NavHostController,
+    auth: FirebaseAuth,
+    modifier: Modifier = Modifier
+) {
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Explore.route,
@@ -39,7 +51,14 @@ fun NavigationHost(navController: NavHostController, auth: FirebaseAuth, modifie
     ) {
         composable(BottomNavItem.Explore.route) {
             val exploreViewModel: ExploreViewModel = viewModel()
-            ExploreScreen(exploreViewModel)
+            ExploreScreen(exploreViewModel, navController)
+        }
+        composable(
+            route = "post_detail/{postId}",
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
+            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
+            PostDetailScreen(postDetailViewModel, navController)
         }
         composable(BottomNavItem.Post.route) { PostScreen() }
         composable(BottomNavItem.Wishlist.route) { WishlistScreen() }

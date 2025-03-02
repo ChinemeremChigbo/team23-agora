@@ -29,15 +29,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.agora.ui.components.PostPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
+fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavController) {
     val searchText by viewModel.searchText.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
     val recentSearches by viewModel.recentSearches.collectAsState()
@@ -48,7 +48,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
         verticalArrangement = Arrangement.spacedBy(40.dp),
     ) {
         SearchBar(
-            modifier = Modifier.clip(RoundedCornerShape(10.dp)),
+            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)),
             colors = SearchBarDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
             inputField = {
                 SearchBarDefaults.InputField(
@@ -109,16 +109,11 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel()) {
                     Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         items(section) { post ->
-                            PostPreview(post)
+                            PostPreview(post, onClick = {navController.navigate("post_detail/${post.getPostId()}")})
                         }
                     }
                 }
             }
         }
     }
-}
-@Preview(showBackground = true)
-@Composable
-fun ExplorePreview() {
-    ExploreScreen()
 }
