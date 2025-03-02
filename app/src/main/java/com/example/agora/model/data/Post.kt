@@ -41,50 +41,42 @@ class Post(
         minPrice: Int = 0,
         maxPrice: Int = Int.MAX_VALUE,
         category: Category? = null,
+        sortByPrice: Boolean = false,
         priceLowToHi: Boolean = true,
         callback: (List<Map<String, Any>>) -> Unit
     ) {
         val db = FirebaseFirestore.getInstance()
 
-        if (category == null) {
-            db.collection("posts")
+        var query = db.collection("posts")
                 .whereGreaterThanOrEqualTo("price", minPrice)
                 .whereLessThanOrEqualTo("price", maxPrice)
-                .orderBy("price",
-                    if (priceLowToHi) Query.Direction.ASCENDING else Query.Direction.DESCENDING
-                )
-                .get()
-                .addOnSuccessListener { documents ->
-                    val resultList = mutableListOf<Map<String, Any>>()
-                    for (document in documents) {
-                        resultList.add(document.data)
-                    }
-                    callback(resultList)
-                }
-                .addOnFailureListener { exception ->
-                    println("Error getting posts: $exception")
-                    callback(emptyList())
-                }
-        } else {
-            db.collection("posts")
-                .whereGreaterThanOrEqualTo("price", minPrice)
-                .whereLessThanOrEqualTo("price", maxPrice)
-                .whereEqualTo("category", category.value.toString())
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener { documents ->
-                    val resultList = mutableListOf<Map<String, Any>>()
-                    for (document in documents) {
-                        resultList.add(document.data)
-                    }
-                    callback(resultList)
-                }
-                .addOnFailureListener { exception ->
-                    println("Error getting posts: $exception")
-                    callback(emptyList())
-                }
+
+        category?.let {
+            query = query.whereEqualTo("category", category.value.toString())
         }
 
+        query = if (sortByPrice) {
+            query.orderBy(
+                "price", if (priceLowToHi) Query.Direction.ASCENDING else Query.Direction.DESCENDING
+            )
+        } else {
+            query.orderBy(
+                "createdAt", Query.Direction.DESCENDING
+            )
+        }
+
+        query.get()
+            .addOnSuccessListener { documents ->
+                val resultList = mutableListOf<Map<String, Any>>()
+                for (document in documents) {
+                    resultList.add(document.data)
+                }
+                callback(resultList)
+            }
+            .addOnFailureListener { exception ->
+                println("Error getting posts: $exception")
+                callback(emptyList())
+            }
     }
 
     fun updateInfo(newInfo: Map<String, Any>) {
