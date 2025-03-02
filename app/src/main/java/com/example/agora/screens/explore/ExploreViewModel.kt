@@ -24,7 +24,7 @@ class ExploreViewModel : ViewModel() {
 //        Post(title="Fridge 2", price=100.12),
 //        Post(title="Fridge 3", price=121.00)
 //    )
-//    private val titles2 = lis tOf(
+//    private val titles2 = listOf(
 //        Post(title="Book", price=7.99),
 //        Post(title="Book 2", price=9.50),
 //        Post(title="Book 3", price=10.25)
