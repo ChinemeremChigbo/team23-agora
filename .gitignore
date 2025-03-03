@@ -19,6 +19,7 @@ local.properties
 .project
 .settings
 .classpath
+app/src/main/assets/local.properties
 
 # Ignore all user-specific IntelliJ/Android Studio files
 .idea/*

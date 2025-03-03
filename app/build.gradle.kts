@@ -101,6 +101,8 @@ dependencies {
     // For example, add the dependencies for Firebase Authentication and Cloud Firestore
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    // For fetching images from a given url
-    implementation ("io.coil-kt:coil-compose:2.2.2")
+    // For fetching images from a givesn url
+    implementation("io.coil-kt:coil-compose:2.2.2")
+//    Import AWS Android SDK
+    implementation("com.amazonaws:aws-android-sdk-s3:2.66.0")
 }
