@@ -2,7 +2,6 @@ package com.example.agora.model.data
 
 import java.util.*
 import com.google.firebase.Timestamp
-import java.sql.Time
 
 enum class NotificationStatus {
     READ, UNREAD
