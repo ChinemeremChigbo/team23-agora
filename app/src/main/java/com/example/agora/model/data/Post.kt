@@ -1,13 +1,17 @@
 package com.example.agora.model.data
 
-import java.util.*
+import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import java.sql.Timestamp
+import java.util.*
+import kotlin.math.min
 
 enum class PostStatus {
     ACTIVE, RESOLVED, DELETED
 }
 
-enum class Category {
+enum class Category() {
     SELL, RIDESHARE, SUBLET, OTHER
 }
 
@@ -20,7 +24,9 @@ class Post(
     var price: Double = 0.0,
     var category: Category = Category.OTHER,
     var images: Array<String> = arrayOf("https://picsum.photos/200"),
-    var comments: MutableList<Comment> = mutableListOf()
+    var comments: MutableList<Comment> = mutableListOf(),
+
+    private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
 ) {
 
     // Getters and Setters
@@ -33,7 +39,54 @@ class Post(
     fun getCreatedAt(): Timestamp = createdAt
     fun setCreatedAt(value: Timestamp) { createdAt = value }
 
-    // Methods
+    fun filterPosts(
+        minPrice: Int? = null,
+        maxPrice: Int? = null,
+        category: Category? = null,
+        sortByPrice: Boolean = false,
+        priceLowToHi: Boolean = true,
+        callback: (List<Map<String, Any>>) -> Unit
+    ) {
+        val db = FirebaseFirestore.getInstance()
+
+        var query: Query = db.collection("posts")
+
+        minPrice?.let {
+            query = query.whereGreaterThanOrEqualTo("price", minPrice)
+        }
+
+        maxPrice?.let {
+            query = query.whereLessThanOrEqualTo("price", maxPrice)
+        }
+
+        category?.let {
+            query = query.whereEqualTo("category", category.name)
+        }
+
+        query = if (sortByPrice) {
+            query.orderBy(
+                "price", if (priceLowToHi) Query.Direction.ASCENDING else Query.Direction.DESCENDING
+            )
+        } else {
+            query.orderBy(
+                "createdAt", Query.Direction.DESCENDING
+            )
+        }
+
+        query.get()
+            .addOnSuccessListener { documents ->
+                val resultList = mutableListOf<Map<String, Any>>()
+                for (document in documents) {
+                    resultList.add(document.data)
+                }
+                callback(resultList)
+            }
+            .addOnFailureListener { exception ->
+                println("Error getting posts: $exception")
+                callback(emptyList())
+            }
+    }
+
     fun updateInfo(newInfo: Map<String, Any>) {
         // TODO
     }
