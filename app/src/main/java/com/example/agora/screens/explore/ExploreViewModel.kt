@@ -55,6 +55,7 @@ class ExploreViewModel : ViewModel() {
                 _isLoading.value = false
             } catch (e: Exception) {
                 // Handle any exceptions that occur
+                // TODO: add error screen component and display the component "oops something went wrong"
             }
         }
     }
