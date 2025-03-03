@@ -1,12 +1,10 @@
 package com.example.agora.screens.postDetail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Post
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.UUID
 
 class PostDetailViewModel (
    postId: String
@@ -19,8 +17,9 @@ class PostDetailViewModel (
         fetchPostDetails(postId)
     }
     private fun fetchPostDetails(postId: String) {
-        // TODO - do real stuff
-        _post.value = Post(postId = UUID.fromString(postId), title = "hehe")
+        // TODO (for eddie, from jennifer) - query the post based off postId
+        // will also need a separate query for the user details to display in the user section
+        _post.value = Post(postId = postId, title = "hehe")
     }
 }
 

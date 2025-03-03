@@ -1,5 +1,6 @@
 package com.example.agora.screens.postDetail
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -94,6 +95,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 text = "$ ${post.price}",
                                 fontSize = 21.sp
                             )
+                            // TODO (jennifer): wire up when wishlist is ready
                             IconButton(onClick = { }) {
                                 Icon(
                                     Icons.Outlined.FavoriteBorder,
