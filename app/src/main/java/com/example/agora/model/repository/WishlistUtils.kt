@@ -84,8 +84,57 @@ class WishlistUtils {
                 }
         }
 
-
         fun getWishList(userId: String, callback: (List<Map<String, Any>>) -> Unit) {
+            fetchWishListFromDB(userId) { posts ->
+                if (posts.isEmpty()) {
+                    callback(emptyList())
+                    return@fetchWishListFromDB
+                }
+
+                val sortedPosts = posts.sortedByDescending {
+                    (it["timestamp"] as? Timestamp)?.seconds ?: 0L
+                }
+
+                val db = FirebaseFirestore.getInstance()
+                val resultList = MutableList<Map<String, Any>?>(sortedPosts.size) { null }
+                var remaining = sortedPosts.size
+
+                sortedPosts.forEachIndexed { index, post ->
+                    val postId = post["postId"] as? String
+                    if (postId == null) {
+                        resultList[index] = emptyMap()
+                        remaining--
+                        if (remaining == 0) {
+                            callback(resultList.filterNotNull())
+                        }
+                    } else {
+                        db.collection("posts").document(postId)
+                            .get()
+                            .addOnSuccessListener { document ->
+                                resultList[index] = if (document != null && document.exists()) {
+                                    document.data
+                                } else {
+                                    emptyMap()
+                                }
+                                remaining--
+                                if (remaining == 0) {
+                                    callback(resultList.filterNotNull())
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                resultList[index] = emptyMap()
+                                remaining--
+                                if (remaining == 0) {
+                                    callback(resultList.filterNotNull())
+                                }
+                            }
+                    }
+                }
+            }
+        }
+
+
+        private fun fetchWishListFromDB(userId: String, callback: (List<Map<String, Any>>) -> Unit) {
             val db = FirebaseFirestore.getInstance()
             val wishlistsRef = db.collection("wishlists")
 
