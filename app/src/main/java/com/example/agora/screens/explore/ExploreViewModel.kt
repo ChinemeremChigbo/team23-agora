@@ -2,7 +2,6 @@ package com.example.agora.screens.explore
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,10 +73,18 @@ class ExploreViewModel : ViewModel() {
                     val images = (doc.get("images") as? List<*>)?.filterIsInstance<String>()
                     val price = doc.getLong("price")?.toDouble()
                     val categoryValue = doc.getString("category") ?: "OTHER"
-                    val category =  Category.entries.find { it.name == categoryValue }?.value ?: 3
+
+                    val categoryToNumber = mapOf(
+                        "SELL" to 1,
+                        "RIDESHARE" to 2,
+                        "SUBLET" to 3,
+                        "OTHER" to 4
+                    )
+                    val category = categoryToNumber[categoryValue] ?: 3
                     // Use a placeholder image for now (replace with actual logic if needed)
                     if (title != null && price != null && images != null) {
-                        newPosts[category].add(
+
+                        newPosts[category - 1].add(
                             Post(
                                 title = title,
                                 price = price,
