@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.sql.Timestamp
 import java.util.*
+import kotlin.math.min
 
 enum class PostStatus {
     ACTIVE, RESOLVED, DELETED
@@ -39,8 +40,8 @@ class Post(
     fun setCreatedAt(value: Timestamp) { createdAt = value }
 
     fun filterPosts(
-        minPrice: Int = 0,
-        maxPrice: Int = Int.MAX_VALUE,
+        minPrice: Int? = null,
+        maxPrice: Int? = null,
         category: Category? = null,
         sortByPrice: Boolean = false,
         priceLowToHi: Boolean = true,
@@ -48,9 +49,15 @@ class Post(
     ) {
         val db = FirebaseFirestore.getInstance()
 
-        var query = db.collection("posts")
-                .whereGreaterThanOrEqualTo("price", minPrice)
-                .whereLessThanOrEqualTo("price", maxPrice)
+        var query: Query = db.collection("posts")
+
+        minPrice?.let {
+            query = query.whereGreaterThanOrEqualTo("price", minPrice)
+        }
+
+        maxPrice?.let {
+            query = query.whereLessThanOrEqualTo("price", maxPrice)
+        }
 
         category?.let {
             query = query.whereEqualTo("category", category.name)
