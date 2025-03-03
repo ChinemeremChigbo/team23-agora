@@ -33,6 +33,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
 
     var fullName = viewModel.fullName.collectAsState()
     var email = viewModel.email.collectAsState()
+    var phoneNumber = viewModel.phoneNumber.collectAsState()
     var country = viewModel.country.collectAsState()
     var state = viewModel.state.collectAsState()
     var city = viewModel.city.collectAsState()
@@ -102,6 +103,15 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
             value = email.value,
             onValueChange = { viewModel.updateEmail(it) },
             label = { Text("School Email Address") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = phoneNumber.value,
+            onValueChange = { viewModel.updatePhoneNumber(it) },
+            label = { Text("Phone Number") },
             modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
             singleLine = true,
             shape = RoundedCornerShape(16.dp),
