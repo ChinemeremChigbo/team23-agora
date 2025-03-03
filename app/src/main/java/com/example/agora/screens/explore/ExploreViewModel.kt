@@ -5,13 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
+import com.example.agora.model.data.Post.PostUtils.filterPosts
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class ExploreViewModel : ViewModel() {
 
@@ -50,12 +55,39 @@ class ExploreViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                val feed = Post.PostUtils.getFeed()  // Call the suspend function
+                val feed = getFeed()  // Call the suspend function
                 _postList.value = feed.filter { it.second.isNotEmpty() }  // Update LiveData with the result
                 _isLoading.value = false
             } catch (e: Exception) {
                 // Handle any exceptions that occur
                 // TODO: add error screen component and display the component "oops something went wrong"
+            }
+        }
+    }
+
+    private suspend fun getFeed(): MutableList<Pair<String, List<Post>>> {
+        val feed: MutableList<Pair<String, List<Post>>> =  mutableListOf()
+
+        return suspendCoroutine { continuation ->
+            val remainingCalls = AtomicInteger(Category.entries.size)
+            for (category in Category.entries) {
+                feed.add(category.value to listOf())
+                filterPosts(
+                    category = category,
+                    limit = 5,
+                    callback = { result ->
+                        val posts: List<Post> = result.map { Post.PostUtils.convertEntryToPost(it) }
+                        // ensure order of adding feed items
+                        val index = feed.indexOfFirst { it.first == category.value }
+                        if (index != -1) {
+                            feed[index] = category.value to posts
+                        }
+                        // If all callbacks have been completed, resume the continuation
+                        if (remainingCalls.decrementAndGet() == 0) {
+                            continuation.resume(feed)
+                        }
+                    }
+                )
             }
         }
     }
