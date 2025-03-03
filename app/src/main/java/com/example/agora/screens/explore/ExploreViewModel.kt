@@ -88,7 +88,7 @@ class ExploreViewModel : ViewModel() {
                             Post(
                                 title = title,
                                 price = price,
-                                images = images.toTypedArray()
+                                images = images.toList()
                             )
                         )
                     } else {
