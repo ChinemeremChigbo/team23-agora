@@ -1,7 +1,8 @@
 package com.example.agora.model.data
 
 import java.util.*
-import java.sql.Timestamp
+import com.google.firebase.Timestamp
+import java.sql.Time
 
 enum class NotificationStatus {
     READ, UNREAD
@@ -10,7 +11,7 @@ enum class NotificationStatus {
 class Notification(
     private var targetUser: String = "",
     private var status: NotificationStatus = NotificationStatus.UNREAD,
-    private var createdAt: Timestamp = Timestamp(System.currentTimeMillis()),
+    private var createdAt: Timestamp = Timestamp.now(),
     private var eventInfo: String = ""
 ) {
 
