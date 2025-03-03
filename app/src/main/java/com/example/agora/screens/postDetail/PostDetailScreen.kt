@@ -44,8 +44,10 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -55,13 +57,16 @@ import com.example.agora.model.data.User
 @Composable
 fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController: NavController) {
     var showContactModal by remember { mutableStateOf(false) }
+    var showReportModal by remember { mutableStateOf(false) }
     val _post by viewModel.post.collectAsState()
     val post = _post
     val _user by viewModel.user.collectAsState()
     val user = _user
 
     if (showContactModal && user != null) {
-        ContactModal(user, {showContactModal = false})
+        ContactModal(user, { showContactModal = false })
+    } else if (showReportModal && user != null) {
+        ReportModal(user, { showReportModal = false })
     }
 
     Column(
@@ -161,7 +166,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 )
                             }
 
-                            TextButton(onClick = {}) {
+                            TextButton(onClick = { showReportModal = true }) {
                                 Text(
                                     text = "Report post",
                                     fontSize = 16.sp,
@@ -172,7 +177,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                         }
                     }
                     OutlinedButton (
-                        onClick = {showContactModal = true},
+                        onClick = { showContactModal = true },
                         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(16.dp),
                         contentPadding = PaddingValues(10.dp, 14.dp),
@@ -196,6 +201,7 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
     val context = LocalContext.current
 
     AlertDialog(
+        shape = RoundedCornerShape(21.dp),
         containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = { onDismiss() },
         confirmButton = {
@@ -204,6 +210,7 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
                     clipboardManager.setText(AnnotatedString(user.email))
                     android.widget.Toast.makeText(context, "Copied to clipboard!", android.widget.Toast.LENGTH_SHORT).show()
                 },
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Copy Email to Clipboard")
@@ -256,6 +263,53 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
                         color = MaterialTheme.colorScheme.surfaceVariant
                     )
                 }
+            }
+        },
+    )
+}
+
+@Composable
+fun ReportModal(user: User, onDismiss: () -> Unit) {
+    AlertDialog(
+        shape = RoundedCornerShape(21.dp),
+        containerColor = MaterialTheme.colorScheme.background,
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Cancel")
+                }
+                Button(
+                    onClick = {},
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Report")
+                }
+            }
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Report post",
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "Are you sure you want to report this post? This action cannot be undone.",
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    textAlign = TextAlign.Center
+                )
             }
         },
     )
