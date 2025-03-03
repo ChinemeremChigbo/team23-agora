@@ -1,6 +1,6 @@
 package com.example.agora.model.data
 
-import java.sql.Timestamp
+import com.google.firebase.Timestamp
 
 class WishList(private var userId: String = "") {
 

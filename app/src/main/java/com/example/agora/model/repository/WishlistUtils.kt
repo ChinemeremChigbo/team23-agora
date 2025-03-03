@@ -1,6 +1,7 @@
 package com.example.agora.model.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.Timestamp
 
 class WishlistUtils {
     companion object {
@@ -23,7 +24,7 @@ class WishlistUtils {
 
                         if (posts.none { it["postId"] == postId }) {
                             val newPost =
-                                mapOf("postId" to postId, "timestamp" to System.currentTimeMillis())
+                                mapOf("postId" to postId, "timestamp" to Timestamp.now())
                             posts.add(newPost)
 
                             wishlistsRef.document(wishlistId)
@@ -39,7 +40,7 @@ class WishlistUtils {
                             "posts" to listOf(
                                 mapOf(
                                     "postId" to postId,
-                                    "timestamp" to System.currentTimeMillis()
+                                    "timestamp" to Timestamp.now()
                                 )
                             )
                         )
