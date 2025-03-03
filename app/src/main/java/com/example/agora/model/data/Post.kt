@@ -17,6 +17,7 @@ enum class Category() {
 
 class Post(
     private var postId: String = "",
+    private var userId: String = "123",
     private var status: PostStatus = PostStatus.ACTIVE,
     private var createdAt: Timestamp = Timestamp(System.currentTimeMillis()),
     var title: String = "",
@@ -32,6 +33,9 @@ class Post(
     // Getters and Setters
     fun getPostId(): String = postId
     fun setPostId(value: String) { postId = value }
+
+    fun getUserId(): String = userId
+    fun setUserId(value: String) { userId = value }
 
     fun getStatus(): PostStatus = status
     fun setStatus(value: PostStatus) { status = value }
