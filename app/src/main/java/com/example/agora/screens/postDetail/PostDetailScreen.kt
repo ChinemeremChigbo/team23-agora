@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -91,7 +92,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "$ ${post.price}",
+                                text = "$ " + String.format("%.2f", post.price),
                                 fontSize = 21.sp
                             )
                             // TODO (jennifer): wire up when wishlist is ready
