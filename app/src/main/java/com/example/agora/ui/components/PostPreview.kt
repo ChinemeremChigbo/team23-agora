@@ -18,13 +18,13 @@ import coil.compose.AsyncImage
 import com.example.agora.model.data.Post
 
 @Composable
-fun PostPreview(post: Post) {
+fun PostPreview(post: Post, onClick: () -> Unit) {
     Column (
         Modifier
             .clip(RoundedCornerShape(10.dp))
             .background(MaterialTheme.colorScheme.surface)
             .width(221.dp)
-            .clickable(onClick={})
+            .clickable(onClick={onClick()})
     ) {
         AsyncImage(
             model = post.images[0],
