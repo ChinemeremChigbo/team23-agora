@@ -74,11 +74,10 @@ class ExploreViewModel : ViewModel() {
                     val images = (doc.get("images") as? List<*>)?.filterIsInstance<String>()
                     val price = doc.getLong("price")?.toDouble()
                     val categoryValue = doc.getString("category") ?: "OTHER"
-                    val category =  Category.entries.find { it.name == categoryValue }?.value ?: 4
+                    val category =  Category.entries.find { it.name == categoryValue }?.value ?: 3
                     // Use a placeholder image for now (replace with actual logic if needed)
                     if (title != null && price != null && images != null) {
-
-                        newPosts[category - 1].add(
+                        newPosts[category].add(
                             Post(
                                 title = title,
                                 price = price,
