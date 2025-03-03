@@ -1,5 +1,6 @@
 package com.example.agora.model.data
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.sql.Timestamp
@@ -9,8 +10,8 @@ enum class PostStatus {
     ACTIVE, RESOLVED, DELETED
 }
 
-enum class Category(val value: Int) {
-    SELL(0), RIDESHARE(1), SUBLET(2), OTHER(3)
+enum class Category() {
+    SELL, RIDESHARE, SUBLET, OTHER
 }
 
 class Post(
@@ -52,7 +53,7 @@ class Post(
                 .whereLessThanOrEqualTo("price", maxPrice)
 
         category?.let {
-            query = query.whereEqualTo("category", category.value.toString())
+            query = query.whereEqualTo("category", category.name)
         }
 
         query = if (sortByPrice) {
