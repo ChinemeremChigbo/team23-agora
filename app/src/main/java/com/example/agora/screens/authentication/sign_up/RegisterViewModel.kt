@@ -1,79 +1,23 @@
 package com.example.agora.screens.authentication.sign_up
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.agora.R
+import com.example.agora.model.data.User
+import com.example.agora.model.data.UserStatus
 import com.example.agora.model.util.AccountAuthUtil
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel() {
-    val countries = listOf("Canada", "United States of America")
-    val provinces = listOf(
-        "Alberta",
-        "British Columbia",
-        "Manitoba", "New Brunswick",
-        "Newfoundland and Labrador",
-        "Nova Scotia", "Ontario",
-        "Prince Edward Island",
-        "Quebec",
-        "Saskatchewan",
-        "Northwest Territories",
-        "Nunavut",
-        "Yukon"
-    )
-    val states = listOf(
-        "Alabama",
-        "Alaska",
-        "Arizona",
-        "Arkansas",
-        "California",
-        "Colorado",
-        "Connecticut",
-        "Delaware",
-        "Florida",
-        "Georgia",
-        "Hawaii",
-        "Idaho",
-        "Illinois",
-        "Indiana",
-        "Iowa",
-        "Kansas",
-        "Kentucky",
-        "Louisiana",
-        "Maine",
-        "Maryland",
-        "Massachusetts",
-        "Michigan",
-        "Minnesota",
-        "Mississippi",
-        "Missouri",
-        "Montana",
-        "Nebraska",
-        "Nevada",
-        "New Hampshire",
-        "New Jersey",
-        "New Mexico",
-        "New York",
-        "North Carolina",
-        "North Dakota",
-        "Ohio",
-        "Oklahoma",
-        "Oregon",
-        "Pennsylvania",
-        "Rhode Island",
-        "South Carolina",
-        "South Dakota",
-        "Tennessee",
-        "Texas",
-        "Utah",
-        "Vermont",
-        "Virginia",
-        "Washington",
-        "West Virginia",
-        "Wisconsin",
-        "Wyoming",
-    )
+class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+    private val context = application.applicationContext
+    val countries = context.resources.getStringArray(R.array.countries).toList()
+    val provinces = context.resources.getStringArray(R.array.provinces).toList()
+    val states = context.resources.getStringArray(R.array.states).toList()
 
     var fullName = MutableStateFlow("")
     var email = MutableStateFlow("")
@@ -84,6 +28,12 @@ class RegisterViewModel : ViewModel() {
     var postalCode = MutableStateFlow("")
     var password = MutableStateFlow("")
     var confirmPassword = MutableStateFlow("")
+    var phoneNumber = MutableStateFlow("")
+    var userId = ""
+
+    fun updatePhoneNumber(newPhoneNumber: String){
+        phoneNumber.value = newPhoneNumber
+    }
 
     fun updateEmail(newEmail: String) {
         email.value = newEmail
@@ -132,23 +82,38 @@ class RegisterViewModel : ViewModel() {
         // Step 0-2: confirm password fields are the same
         if (password.value != confirmPassword.value) { onError("Passwords do not match"); return }
 
+
         val emailValue = email.value
         val passwordValue = password.value
 
         // Step 0-3: confirm email is uwaterloo school email
         if(!isValidEmail(emailValue)) { onError("Only uwaterloo email allowed!"); return }
 
+        // TODO: Step 0-4: confirm address + phone number are valid
+
         viewModelScope.launch {
             try {
                 // step 1: register user with firebase auth + send verification email
-                AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
-                // TODO - step 2: register user with our database
+                userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
+                // step 2: register user with our database
+                val newUser = User(
+                    userId = userId,
+                    username = email.value.substringBefore("@uwaterloo.ca"),
+                    fullName = fullName.value,
+                    email = email.value,
+                    phoneNumber = phoneNumber.value,
+                    country = country.value,
+                    city = city.value,
+                    state = state.value,
+                    address = address.value,
+                    postalCode = postalCode.value,
+                )
+                newUser.register()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e.localizedMessage ?: "Registration failed")
             }
         }
-
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -165,7 +130,8 @@ class RegisterViewModel : ViewModel() {
             "Address" to address.value,
             "Postal/Zip Code" to postalCode.value,
             "Password" to password.value,
-            "Password Confirmation" to confirmPassword.value
+            "Password Confirmation" to confirmPassword.value,
+            "Phone Number" to phoneNumber.value
         )
 
         for ((key, value) in fields) {

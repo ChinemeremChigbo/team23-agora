@@ -15,12 +15,13 @@ class AccountAuthUtil {
             }
             // TODO: create currentUser auth listener which should grab the login info (i.e. uuid)
         }
-        suspend fun accountSignUp(auth: FirebaseAuth, email: String, password: String) {
+        suspend fun accountSignUp(auth: FirebaseAuth, email: String, password: String): String {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             // send verification email
             println("FirebaseAuth sending verification email for ${result.user?.email}...")
 
             result.user!!.sendEmailVerification().await()
+            return result.user!!.uid
         }
         fun signOut(auth: FirebaseAuth) {
             auth.signOut()

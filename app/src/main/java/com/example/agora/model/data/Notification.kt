@@ -8,15 +8,15 @@ enum class NotificationStatus {
 }
 
 class Notification(
-    private var targetUser: UUID = UUID.randomUUID(),
+    private var targetUser: String = "",
     private var status: NotificationStatus = NotificationStatus.UNREAD,
     private var createdAt: Timestamp = Timestamp(System.currentTimeMillis()),
     private var eventInfo: String = ""
 ) {
 
     // Getters and Setters
-    fun getTargetUser(): UUID = targetUser
-    fun setTargetUser(value: UUID) { targetUser = value }
+    fun getTargetUser(): String = targetUser
+    fun setTargetUser(value: String) { targetUser = value }
 
     fun getStatus(): NotificationStatus = status
     fun setStatus(value: NotificationStatus) { status = value }
