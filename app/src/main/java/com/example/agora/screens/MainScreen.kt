@@ -12,7 +12,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.explore.ExploreScreen
 import com.example.agora.screens.explore.ExploreViewModel
 import com.example.agora.screens.inbox.InboxScreen
+import com.example.agora.screens.post.CreatePostScreen
 import com.example.agora.screens.post.PostScreen
+import com.example.agora.screens.post.PostViewModel
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.wishlist.WishlistScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -41,7 +43,11 @@ fun NavigationHost(navController: NavHostController, auth: FirebaseAuth, modifie
             val exploreViewModel: ExploreViewModel = viewModel()
             ExploreScreen(exploreViewModel)
         }
-        composable(BottomNavItem.Post.route) { PostScreen() }
+        composable("createPost") {
+            val postViewModel: PostViewModel = viewModel()
+            CreatePostScreen(navController, postViewModel, auth)
+        }
+        composable(BottomNavItem.Post.route) { PostScreen(navController) }
         composable(BottomNavItem.Wishlist.route) { WishlistScreen() }
         composable(BottomNavItem.Inbox.route) { InboxScreen() }
         composable(BottomNavItem.Settings.route) { SettingsScreen(auth) }
