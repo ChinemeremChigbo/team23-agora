@@ -1,7 +1,11 @@
 package com.example.agora.screens.authentication.sign_up
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.agora.R
 import com.example.agora.model.data.User
 import com.example.agora.model.data.UserStatus
 import com.example.agora.model.util.AccountAuthUtil
@@ -9,73 +13,11 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel() {
-    val countries = listOf("Canada", "United States of America")
-    val provinces = listOf(
-        "Alberta",
-        "British Columbia",
-        "Manitoba", "New Brunswick",
-        "Newfoundland and Labrador",
-        "Nova Scotia", "Ontario",
-        "Prince Edward Island",
-        "Quebec",
-        "Saskatchewan",
-        "Northwest Territories",
-        "Nunavut",
-        "Yukon"
-    )
-    val states = listOf(
-        "Alabama",
-        "Alaska",
-        "Arizona",
-        "Arkansas",
-        "California",
-        "Colorado",
-        "Connecticut",
-        "Delaware",
-        "Florida",
-        "Georgia",
-        "Hawaii",
-        "Idaho",
-        "Illinois",
-        "Indiana",
-        "Iowa",
-        "Kansas",
-        "Kentucky",
-        "Louisiana",
-        "Maine",
-        "Maryland",
-        "Massachusetts",
-        "Michigan",
-        "Minnesota",
-        "Mississippi",
-        "Missouri",
-        "Montana",
-        "Nebraska",
-        "Nevada",
-        "New Hampshire",
-        "New Jersey",
-        "New Mexico",
-        "New York",
-        "North Carolina",
-        "North Dakota",
-        "Ohio",
-        "Oklahoma",
-        "Oregon",
-        "Pennsylvania",
-        "Rhode Island",
-        "South Carolina",
-        "South Dakota",
-        "Tennessee",
-        "Texas",
-        "Utah",
-        "Vermont",
-        "Virginia",
-        "Washington",
-        "West Virginia",
-        "Wisconsin",
-        "Wyoming",
-    )
+class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+    private val context = application.applicationContext
+    val countries = context.resources.getStringArray(R.array.countries).toList()
+    val provinces = context.resources.getStringArray(R.array.provinces).toList()
+    val states = context.resources.getStringArray(R.array.states).toList()
 
     var fullName = MutableStateFlow("")
     var email = MutableStateFlow("")
@@ -160,6 +102,7 @@ class RegisterViewModel : ViewModel() {
 
     private fun createUser(): User {
         val user = User(
+            userId = userId,
             username = email.value.substringBefore("@uwaterloo.ca"),
             fullName = fullName.value,
             email = email.value,
@@ -170,8 +113,6 @@ class RegisterViewModel : ViewModel() {
             address = address.value,
             postalCode = postalCode.value,
         )
-        user.setUserId(userId)
-        user.setStatus(UserStatus.ACTIVATED)
         return user
     }
 

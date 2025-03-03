@@ -7,9 +7,9 @@ enum class UserStatus {
 }
 
 class User(
-    private var userId: String = "",
-    private var status: UserStatus = UserStatus.ACTIVATED,
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    var userId: String = "",
+    var status: UserStatus = UserStatus.ACTIVATED,
     var username: String = "",
     var fullName: String = "",
     var bio: String = "",
@@ -23,14 +23,6 @@ class User(
     var address: String = "",
     var wishList: MutableMap<String, Timestamp> = mutableMapOf()
 ) {
-
-    // Getters and Setters
-    fun getUserId(): String = userId
-    fun setUserId(value: String) { userId = value }
-
-    fun getStatus(): UserStatus = status
-    fun setStatus(value: UserStatus) { status = value }
-
     // Methods
     // NOTE: we don't need login method as Firebase handle password management
     fun register() {
