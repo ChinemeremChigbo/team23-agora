@@ -1,14 +1,14 @@
 package com.example.agora.model.data
 
 import java.util.*
-import java.sql.Timestamp
+import com.google.firebase.Timestamp
 
 class Comment(
     private val commentId: String = "",
     private val creatorId: String = "",
     private var text: String = "",
     private var mentions: Array<String> = arrayOf(),
-    private var createdAt: Timestamp = Timestamp(System.currentTimeMillis())
+    private var createdAt: Timestamp = Timestamp.now()
 ) {
 
     // Getters and Setters
