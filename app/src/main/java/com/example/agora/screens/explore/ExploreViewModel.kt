@@ -51,7 +51,8 @@ class ExploreViewModel : ViewModel() {
 
     fun onSearchSubmitted(query: String) {
         if (query.isNotBlank() && !_recentSearches.value.contains(query)) {
-            _recentSearches.value = listOf(query) + _recentSearches.value.take(4) // Store up to 5 recent searches
+            _recentSearches.value =
+                listOf(query) + _recentSearches.value.take(4) // Store up to 5 recent searches
         }
         _searchText.value = query
         _isExpanded.value = false
@@ -60,25 +61,36 @@ class ExploreViewModel : ViewModel() {
     init {
         fetchPosts()
     }
+
     private fun fetchPosts() {
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("posts")
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val newPosts = Array(3) { mutableListOf<Post>() }
+                val newPosts = Array(4) { mutableListOf<Post>() }
                 querySnapshot.documents.mapNotNull { doc ->
                     val title = doc.getString("title")
                     val images = (doc.get("images") as? List<*>)?.filterIsInstance<String>()
                     val price = doc.getLong("price")?.toDouble()
-                    val category = doc.getString("category")?.toInt()
-                    // Use a placeholder image for now (replace with actual logic if needed)
-                    if (title != null && price != null && images!=null && category in 1..3) {
-                        if (category !== null) {
-                            newPosts[category - 1].add(Post(title = title, price = price, images = images.toTypedArray()))
-                        }
-                        else {
+                    val categoryValue = doc.getString("category") ?: "OTHER"
 
-                        }
+                    val categoryToNumber = mapOf(
+                        "SELL" to 1,
+                        "RIDESHARE" to 2,
+                        "SUBLET" to 3,
+                        "OTHER" to 4
+                    )
+                    val category = categoryToNumber[categoryValue] ?: 3
+                    // Use a placeholder image for now (replace with actual logic if needed)
+                    if (title != null && price != null && images != null) {
+
+                        newPosts[category - 1].add(
+                            Post(
+                                title = title,
+                                price = price,
+                                images = images.toTypedArray()
+                            )
+                        )
                     } else {
                         Log.w("Firestore", "data is missing")
                         null
