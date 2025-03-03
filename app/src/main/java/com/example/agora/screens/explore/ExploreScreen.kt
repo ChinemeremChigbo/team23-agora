@@ -117,7 +117,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavC
                     Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         items(posts) { post ->
-                            PostPreview(post, onClick = {navController.navigate("post_detail/${post.getPostId()}")})
+                            PostPreview(post, onClick = {navController.navigate("post_detail/${post.postId}")})
                         }
                     }
                 }
