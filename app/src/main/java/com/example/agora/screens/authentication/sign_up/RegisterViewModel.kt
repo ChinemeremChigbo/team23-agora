@@ -28,7 +28,12 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     var postalCode = MutableStateFlow("")
     var password = MutableStateFlow("")
     var confirmPassword = MutableStateFlow("")
+    var phoneNumber = MutableStateFlow("")
     var userId = ""
+
+    fun updatePhoneNumber(newPhoneNumber: String){
+        phoneNumber.value = newPhoneNumber
+    }
 
     fun updateEmail(newEmail: String) {
         email.value = newEmail
@@ -91,29 +96,24 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                 // step 1: register user with firebase auth + send verification email
                 userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
                 // step 2: register user with our database
-                val newUser = createUser()
+                val newUser = User(
+                    userId = userId,
+                    username = email.value.substringBefore("@uwaterloo.ca"),
+                    fullName = fullName.value,
+                    email = email.value,
+                    phoneNumber = phoneNumber.value,
+                    country = country.value,
+                    city = city.value,
+                    state = state.value,
+                    address = address.value,
+                    postalCode = postalCode.value,
+                )
                 newUser.register()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e.localizedMessage ?: "Registration failed")
             }
         }
-    }
-
-    private fun createUser(): User {
-        val user = User(
-            userId = userId,
-            username = email.value.substringBefore("@uwaterloo.ca"),
-            fullName = fullName.value,
-            email = email.value,
-            phoneNumber = "123456789",
-            country = country.value,
-            city = city.value,
-            state = state.value,
-            address = address.value,
-            postalCode = postalCode.value,
-        )
-        return user
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -130,7 +130,8 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             "Address" to address.value,
             "Postal/Zip Code" to postalCode.value,
             "Password" to password.value,
-            "Password Confirmation" to confirmPassword.value
+            "Password Confirmation" to confirmPassword.value,
+            "Phone Number" to phoneNumber.value
         )
 
         for ((key, value) in fields) {
