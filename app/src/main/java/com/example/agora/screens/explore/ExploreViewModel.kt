@@ -1,18 +1,15 @@
 package com.example.agora.screens.explore
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
-import com.example.agora.model.data.Post.PostUtils.filterPosts
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.agora.model.repository.SearchFilterUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
@@ -72,11 +69,11 @@ class ExploreViewModel : ViewModel() {
             val remainingCalls = AtomicInteger(Category.entries.size)
             for (category in Category.entries) {
                 feed.add(category.value to listOf())
-                filterPosts(
+                SearchFilterUtils.filterPosts(
                     category = category,
                     limit = 5,
                     callback = { result ->
-                        val posts: List<Post> = result.map { Post.PostUtils.convertEntryToPost(it) }
+                        val posts: List<Post> = result.map { Post.convertDBEntryToPostPreview(it) }
                         // ensure order of adding feed items
                         val index = feed.indexOfFirst { it.first == category.value }
                         if (index != -1) {
