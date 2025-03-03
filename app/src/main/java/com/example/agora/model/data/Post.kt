@@ -43,6 +43,40 @@ class Post(
     var userId: String = "",
     var address: Address = Address.create("1 Elm Lane", "Toronto", "Ontario", "M2N 0A5", "Canada") as Address // Default empty address
 ) {
+    // Getters and Setters
+    fun getPostId(): String = postId
+    fun setPostId(value: String) { postId = value }
+
+    fun getUserId(): String = userId
+    fun setUserId(value: String) { userId = value }
+
+    fun getStatus(): PostStatus = status
+    fun setStatus(value: PostStatus) { status = value }
+
+    fun getCreatedAt(): Timestamp = createdAt
+    fun setCreatedAt(value: Timestamp) { createdAt = value }
+
+    fun updateInfo(newInfo: Map<String, Any>) {
+        // TODO
+    }
+
+//    fun addComment(text: String) {
+//        val comment: Comment = Comment(text=text, creatorId="")
+//        val mentions: List<String> = comment.findMentions()
+//        for (mention in mentions) {
+//            // TODO: create a notification
+//        }
+//        comments.add(comment)
+//    }
+
+    fun removeComment(comment: Comment) {
+        // TODO
+    }
+
+    fun changeStatus(newStatus: PostStatus) {
+        status = newStatus
+    }
+
 
     companion object {
         private val DEFAULT_IMAGE = "https://files.catbox.moe/ioidxm.JPG"
@@ -167,5 +201,7 @@ class Post(
                 }
                 .addOnFailureListener { onFailure(it) }
         }
+
+
     }
 }
