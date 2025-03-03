@@ -3,7 +3,7 @@ package com.example.agora.model.data
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import java.sql.Timestamp
+import com.google.firebase.Timestamp
 import java.util.*
 import kotlin.math.min
 
@@ -19,7 +19,7 @@ class Post(
     private var postId: String = "",
     private var userId: String = "123",
     private var status: PostStatus = PostStatus.ACTIVE,
-    private var createdAt: Timestamp = Timestamp(System.currentTimeMillis()),
+    private var createdAt: Timestamp = Timestamp.now(),
     var title: String = "",
     var description: String = "",
     var price: Double = 0.0,
