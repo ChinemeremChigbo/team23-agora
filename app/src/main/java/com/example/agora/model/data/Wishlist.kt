@@ -1,27 +1,24 @@
 package com.example.agora.model.data
 
-import java.util.*
-import java.sql.Timestamp
+import com.google.firebase.Timestamp
 
-class WishList {
-    private val savedPosts: MutableMap<String, Timestamp> = mutableMapOf()
+class WishList(private var userId: String = "") {
 
-    // Methods
-    fun addToWishList(postId: String): Boolean {
-        return if (!savedPosts.containsKey(postId)) {
-            savedPosts[postId] = Timestamp(System.currentTimeMillis())
-            true
-        } else {
-            false
-        }
+    private val posts: MutableMap<String, Timestamp> = mutableMapOf()
+
+    fun getUserId(): String {
+        return userId
     }
 
-    fun removeFromWishList(postId: String): Boolean {
-        return if (savedPosts.containsKey(postId)) {
-            savedPosts.remove(postId)
-            true
-        } else {
-            false
-        }
+    fun getPosts(): Map<String, Timestamp> {
+        return posts.toMap()
+    }
+
+    fun addPost(postId: String, timestamp: Timestamp) {
+        posts[postId] = timestamp
+    }
+
+    fun removePost(postId: String) {
+        posts.remove(postId)
     }
 }
