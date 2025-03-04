@@ -47,131 +47,129 @@ fun LoginImage() {
 @Composable
 fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: SignInViewModel = viewModel()) {
     var isLoading by remember { mutableStateOf(false) }
-    AgoraTheme {
-        val context = LocalContext.current
-        val emailState = viewModel.email.collectAsState()
-        val passwordState = viewModel.password.collectAsState()
-        var passwordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val emailState = viewModel.email.collectAsState()
+    val passwordState = viewModel.password.collectAsState()
+    var passwordVisible by remember { mutableStateOf(false) }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            LoginImage()
+    Box(modifier = Modifier.fillMaxSize()) {
+        LoginImage()
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 310.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp)
+                .padding(top = 310.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Welcome!",
+                fontWeight = FontWeight.Black,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Email input field
+            OutlinedTextField(
+                value = emailState.value,
+                onValueChange = { viewModel.updateEmail(it) },
+                label = { Text("School Email Address") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Password input field with toggle visibility
+            OutlinedTextField(
+                value = passwordState.value,
+                onValueChange = {  viewModel.updatePassword(it) },
+                label = { Text("Password") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    val image =
+                        if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = image,
+                            contentDescription = "Toggle Password Visibility"
+                        )
+                    }
+                },
+                shape = RoundedCornerShape(16.dp),
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+
+            TextButton(
+                onClick = { /* TODO: Handle forgot password here */ },
+                modifier = Modifier.align(Alignment.Start),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
             ) {
-                Spacer(modifier = Modifier.height(32.dp))
-
                 Text(
-                    text = "Welcome!",
-                    fontWeight = FontWeight.Black,
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth(),
+                    text = "Forgot Password?",
+                    fontSize = 14.sp,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+            if (isLoading) {
+                CircularProgressIndicator() // ✅ Show Loading Indicator
+            } else {
+                // Login button
+                Button(
+                    onClick = {
+                        isLoading = true
+                        viewModel.signIn(
+                            auth,
+                            onSuccess = {
+                                isLoading = false
+                                navigateToMainActivity(context)
+                            },
+                            onError = { errorMessage ->
+                                isLoading = false
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    },
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                ) {
+                    Text(
+                        text = "Login",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Not a member?",
+                    fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Email input field
-                OutlinedTextField(
-                    value = emailState.value,
-                    onValueChange = { viewModel.updateEmail(it) },
-                    label = { Text("School Email Address") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    shape = RoundedCornerShape(16.dp),
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Password input field with toggle visibility
-                OutlinedTextField(
-                    value = passwordState.value,
-                    onValueChange = {  viewModel.updatePassword(it) },
-                    label = { Text("Password") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        val image =
-                            if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                            Icon(
-                                imageVector = image,
-                                contentDescription = "Toggle Password Visibility"
-                            )
-                        }
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-
                 TextButton(
-                    onClick = { /* TODO: Handle forgot password here */ },
-                    modifier = Modifier.align(Alignment.Start),
+                    onClick = { navController.navigate("register") },
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                 ) {
                     Text(
-                        text = "Forgot Password?",
+                        text = "Sign up",
                         fontSize = 14.sp,
                     )
-                }
-
-                Spacer(modifier = Modifier.height(6.dp))
-                if (isLoading) {
-                    CircularProgressIndicator() // ✅ Show Loading Indicator
-                } else {
-                    // Login button
-                    Button(
-                        onClick = {
-                            isLoading = true
-                            viewModel.signIn(
-                                auth,
-                                onSuccess = {
-                                    isLoading = false
-                                    navigateToMainActivity(context)
-                                },
-                                onError = { errorMessage ->
-                                    isLoading = false
-                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                                }
-                            )
-                        },
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                    ) {
-                        Text(
-                            text = "Login",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "Not a member?",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-
-                    TextButton(
-                        onClick = { navController.navigate("register") },
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                    ) {
-                        Text(
-                            text = "Sign up",
-                            fontSize = 14.sp,
-                        )
-                    }
                 }
             }
         }
