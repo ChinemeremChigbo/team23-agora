@@ -1,4 +1,4 @@
-package com.example.agora.screens.post.view
+package com.example.agora.screens.post
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
