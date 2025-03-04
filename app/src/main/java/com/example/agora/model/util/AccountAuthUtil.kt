@@ -1,10 +1,9 @@
 package com.example.agora.model.util
 
-import android.provider.ContactsContract.Profile
 import com.example.agora.model.data.User
 import com.example.agora.model.repository.ProfileSettingUtils
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
 
 class AccountAuthUtil {
@@ -19,6 +18,7 @@ class AccountAuthUtil {
             }
             // TODO: create currentUser auth listener which should grab the login info (i.e. uuid)
         }
+
         suspend fun accountSignUp(auth: FirebaseAuth, email: String, password: String): String {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             // send verification email
@@ -27,9 +27,29 @@ class AccountAuthUtil {
             result.user!!.sendEmailVerification().await()
             return result.user!!.uid
         }
+
         fun signOut(auth: FirebaseAuth) {
             auth.signOut()
         }
+
+        fun updatePassword(auth: FirebaseAuth, newPassword: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
+            val user: FirebaseUser? = auth.currentUser
+
+            // Check if the user is logged in
+            if (user != null) {
+                user.updatePassword(newPassword)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            onSuccess() // Callback when password is updated successfully
+                        } else {
+                            onFailure("Password update failed: ${task.exception?.localizedMessage}")
+                        }
+                    }
+            } else {
+                onFailure("User not logged in.")
+            }
+        }
+
         private suspend fun sendVerificationEmail(auth: FirebaseAuth){
             val user = auth.currentUser
             println("FirebaseAuth sendVerificationEmail")
@@ -38,6 +58,7 @@ class AccountAuthUtil {
             }
             user?.sendEmailVerification()?.await()
         }
+
         suspend fun deleteAccount(auth: FirebaseAuth) {
             auth.currentUser!!.delete().await()
         }
