@@ -16,11 +16,7 @@ class User(
     var profileImage: String? = null,
     var email: String = "",
     var phoneNumber: String = "",
-    var country: String = "",
-    var state: String = "",
-    var city: String = "",
-    var postalCode: String = "",
-    var address: String = "",
+    var address: Address = Address(),
     var wishList: MutableMap<String, Timestamp> = mutableMapOf()
 ) {
     // Methods
@@ -38,11 +34,11 @@ class User(
                 "email" to email,
                 "phoneNumber" to phoneNumber,
                 "address" to mapOf(
-                    "country" to country,
-                    "city" to city,
-                    "state" to state,
-                    "address" to address,
-                    "postalCode" to postalCode
+                    "country" to address.getCountry(),
+                    "city" to address.getCity(),
+                    "state" to address.getState(),
+                    "address" to address.getStreet(),
+                    "postalCode" to address.getPostalCode()
                 ),
                 "wishlist" to wishList,
             ))
@@ -92,7 +88,9 @@ class User(
                 profileImage = entry["profileImage"]?.toString() ?: "https://picsum.photos/200", // Handle empty images
                 email = entry["email"].toString(),
                 phoneNumber = entry["phoneNumber"].toString(),
-                // TODO: address
+                address = (entry["address"] as? Map<String, Any>)?.let {
+                    Address.convertDBEntryToAddress(it)
+                } ?: Address(),
             )
         }
     }
