@@ -1,6 +1,7 @@
 package com.example.agora.model.repository
 
 import com.example.agora.model.data.Category
+import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -12,6 +13,7 @@ class SearchFilterUtils {
             category: Category? = null,
             sortByPrice: Boolean = false,
             priceLowToHi: Boolean = true,
+            limit: Int = -1,
             callback: (List<Map<String, Any>>) -> Unit
         ) {
             val db = FirebaseFirestore.getInstance()
@@ -40,6 +42,17 @@ class SearchFilterUtils {
                     "createdAt", Query.Direction.DESCENDING
                 )
             }
+
+            // TODO: Enable this when all posts have been populated with status
+            // query = query.whereNotEqualTo(
+            //    "status",
+            //    PostStatus.DELETED.name
+            //)
+
+            if(limit != -1) {
+                query = query.limit(limit.toLong())
+            }
+
 
             query.get()
                 .addOnSuccessListener { documents ->
