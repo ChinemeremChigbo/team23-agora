@@ -20,7 +20,7 @@ fun BasicPostGrid(posts: List<Post>, navController: NavController) {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(posts) { post ->
-            PostPreview(post, { navController.navigate("post_detail/${post.getPostId()}") })
+            PostPreview(post, { navController.navigate("post_detail/${post.postId}") })
         }
     }
 }

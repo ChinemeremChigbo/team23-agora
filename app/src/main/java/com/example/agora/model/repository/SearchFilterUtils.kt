@@ -1,5 +1,6 @@
 package com.example.agora.model.repository
 
+import android.util.Log
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
@@ -66,6 +67,20 @@ class SearchFilterUtils {
                     println("Error getting posts: $exception")
                     callback(emptyList())
                 }
+        }
+
+        fun isPostInWishlist(userId: String, postId: String): Boolean {
+            var wishlist = emptyList<Post>()
+
+            WishlistUtils.getWishList(userId) { posts ->
+                Log.i("HELLO", "hehehaha")
+                Log.i(posts.toString() + "HELLO", "bing bong")
+                wishlist = posts.map { post -> Post.convertDBEntryToPostDetail(post)}
+            }
+
+            Log.i(wishlist.toString(), "wishlist")
+
+            return wishlist.filter {post -> post.postId == postId}.isNotEmpty()
         }
     }
 }
