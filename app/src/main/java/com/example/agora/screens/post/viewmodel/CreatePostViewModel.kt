@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.agora.model.data.Category
-import com.example.agora.model.data.PostUtils
+import com.example.agora.model.repository.PostUtils
 
 class CreatePostViewModel: ViewModel() {
 
