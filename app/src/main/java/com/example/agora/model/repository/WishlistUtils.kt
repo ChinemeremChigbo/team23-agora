@@ -153,5 +153,12 @@ class WishlistUtils {
                     }
                 }
         }
+
+        fun isPostInWishlist(userId: String, postId: String, callback: (Boolean) -> Unit) {
+            getWishList(userId) { posts ->
+                callback(posts.any { it["postId"] == postId })
+            }
+        }
+
     }
 }
