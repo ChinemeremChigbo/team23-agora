@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.R
+import com.example.agora.model.data.Address
 import com.example.agora.model.data.User
 import com.example.agora.model.data.UserStatus
 import com.example.agora.model.util.AccountAuthUtil
@@ -95,6 +96,12 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             try {
                 // step 1: register user with firebase auth + send verification email
                 userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
+                val userAddress = Address(
+                    country = country.value,
+                    city = city.value,
+                    state = state.value,
+                    postalCode = postalCode.value
+                )
                 // step 2: register user with our database
                 val newUser = User(
                     userId = userId,
@@ -102,11 +109,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                     fullName = fullName.value,
                     email = email.value,
                     phoneNumber = phoneNumber.value,
-                    country = country.value,
-                    city = city.value,
-                    state = state.value,
-                    address = address.value,
-                    postalCode = postalCode.value,
+                    address = userAddress
                 )
                 newUser.register()
                 onSuccess()
