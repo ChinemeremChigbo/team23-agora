@@ -9,11 +9,3 @@ import com.example.agora.screens.post.view.PostScreen
 class PostViewModel : ViewModel() {
     // posts logic goes here
 }
-
-
-@Preview(showBackground = true)
-@Composable
-fun PostPreview() {
-    val navController = rememberNavController()
-    PostScreen(navController = navController)
-}
