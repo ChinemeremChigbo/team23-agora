@@ -131,7 +131,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             color = MaterialTheme.colorScheme.surfaceVariant
                         )
                         Text(
-                            text = "Post detail Screen for ${post.getPostId()}" + post.description,
+                            text = "Post detail Screen for ${post.postId}" + post.description,
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.surfaceVariant
                         )
