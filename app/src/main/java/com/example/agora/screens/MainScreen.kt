@@ -20,6 +20,7 @@ import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.wishlist.WishlistScreen
+import com.example.agora.screens.wishlist.WishlistViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -61,7 +62,10 @@ fun NavigationHost(
             PostDetailScreen(postDetailViewModel, navController)
         }
         composable(BottomNavItem.Post.route) { PostScreen() }
-        composable(BottomNavItem.Wishlist.route) { WishlistScreen() }
+        composable(BottomNavItem.Wishlist.route) {
+            val wishlistViewModel: WishlistViewModel = viewModel()
+            WishlistScreen(wishlistViewModel, navController)
+        }
         composable(BottomNavItem.Inbox.route) { InboxScreen() }
         composable(BottomNavItem.Settings.route) { SettingsScreen(auth) }
     }
