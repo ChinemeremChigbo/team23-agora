@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.Category
-import com.example.agora.screens.post.viewmodel.CreatePostViewModel
+import com.example.agora.screens.post.viewModel.CreatePostViewModel
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
 

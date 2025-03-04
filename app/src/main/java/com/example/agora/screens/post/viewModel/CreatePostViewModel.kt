@@ -1,4 +1,4 @@
-package com.example.agora.screens.post.viewmodel
+package com.example.agora.screens.post.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,7 +1,6 @@
 package com.example.agora.model.repository
 
 import com.example.agora.model.data.Category
-import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
