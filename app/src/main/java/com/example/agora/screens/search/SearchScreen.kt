@@ -54,6 +54,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
     val isExpanded by viewModel.isExpanded.collectAsState()
     val recentSearches by viewModel.recentSearches.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val sortBy by viewModel.sortBy.collectAsState()
 
     val tabs = listOf("All") + Category.entries.map { it.value }
     val initialIndex = tabs.indexOf(selectedCategory?.value)
@@ -164,7 +165,8 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
                 ) {
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         Icon(Icons.Default.SwapVert, tint = MaterialTheme.colorScheme.surfaceVariant, contentDescription = "Sort arrow")
-                        Text(text = "Sort", color = MaterialTheme.colorScheme.onBackground)
+                        Text(text = "Sort: ", color = MaterialTheme.colorScheme.onBackground)
+                        Text(text = sortBy, color = MaterialTheme.colorScheme.onBackground)
                     }
                 }
                 DropdownMenu(
@@ -175,19 +177,28 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
                 ) {
                     DropdownMenuItem(
                         text = { Text("Low cost") },
-                        onClick = { /* Do something... */ },
+                        onClick = {
+                            viewModel.changeSort("Low cost")
+                            sortDropdownExpanded = false
+                        },
                         contentPadding = PaddingValues(15.dp, 10.dp)
                     )
                     HorizontalDivider()
                     DropdownMenuItem(
                         text = { Text("High cost") },
-                        onClick = { /* Do something... */ },
+                        onClick = {
+                            viewModel.changeSort("High cost")
+                            sortDropdownExpanded = false
+                        },
                         contentPadding = PaddingValues(15.dp, 10.dp)
                     )
                     HorizontalDivider()
                     DropdownMenuItem(
                         text = { Text("Newest") },
-                        onClick = { /* Do something... */ },
+                        onClick = {
+                            viewModel.changeSort("Newest")
+                            sortDropdownExpanded = false
+                        },
                         contentPadding = PaddingValues(15.dp, 10.dp)
                     )
                 }
