@@ -6,7 +6,7 @@ import java.net.URL
 import kotlin.math.*
 import org.json.JSONObject
 
-class Address private constructor(
+class Address constructor(
     private var street: String = "",
     private var city: String = "",
     private var state: String = "",
@@ -80,6 +80,17 @@ class Address private constructor(
         return "$street, $city, $state, $country, $postalCode"
     }
 
+    fun distanceTo(address: Address): Double {
+        val selfLoc = getLatLng(postalCode, country)
+        val otherLoc = getLatLng(address.getPostalCode(), address.getCountry())
+
+        if (selfLoc != null && otherLoc != null) {
+            return haversine(selfLoc.first, selfLoc.second, otherLoc.first, otherLoc.second)
+        }
+
+        return -1.0
+    }
+
     private fun getLatLng(postalCode: String, countryCode: String): Pair<Double, Double>? {
         val url = "http://api.zippopotam.us/$countryCode/$postalCode"
         val connection = URL(url).openConnection() as HttpURLConnection
@@ -107,14 +118,17 @@ class Address private constructor(
         return R * c // Distance in km
     }
 
-    fun distanceTo(address: Address): Double {
-        val selfLoc = getLatLng(postalCode, country)
-        val otherLoc = getLatLng(address.getPostalCode(), address.getCountry())
-
-        if (selfLoc != null && otherLoc != null) {
-            return haversine(selfLoc.first, selfLoc.second, otherLoc.first, otherLoc.second)
+    object AddressUtils {
+        fun convertDBEntryToAddress(entry: Map<String, Any>): Address{
+            return Address(
+                country = entry["country"].toString(),
+                city = entry["city"].toString(),
+                state = entry["state"].toString(),
+                street = entry["address"].toString(),
+                postalCode = entry["postalCode"].toString(),
+                )
         }
-
-        return -1.0
     }
+
+
 }

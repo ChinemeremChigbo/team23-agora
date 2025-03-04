@@ -1,11 +1,19 @@
 package com.example.agora.screens.explore
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.agora.model.repository.SearchFilterUtils
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class ExploreViewModel : ViewModel() {
 
@@ -18,28 +26,11 @@ class ExploreViewModel : ViewModel() {
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches = _recentSearches.asStateFlow()
 
-//    can keep these for dummy testing later
-//    private val titles1 = listOf(
-//        Post(title="Fridge", price=10.12),
-//        Post(title="Fridge 2", price=100.12),
-//        Post(title="Fridge 3", price=121.00)
-//    )
-//    private val titles2 = listOf(
-//        Post(title="Book", price=7.99),
-//        Post(title="Book 2", price=9.50),
-//        Post(title="Book 3", price=10.25)
-//    )
+    private val _postList = MutableStateFlow<List<Pair<String, List<Post>>>>(listOf())
+    val postList: StateFlow<List<Pair<String, List<Post>>>> = _postList.asStateFlow()
 
-//    private val titles3 = listOf(Post(title="Plates", price=11.99))
-//
-
-    private val titles1 = mutableListOf<Post>()
-    private val titles2 = mutableListOf<Post>()
-    private val titles3 = mutableListOf<Post>()
-
-    private val _sections = MutableStateFlow<List<List<Post>>>(listOf(titles1, titles2, titles3))
-    val sections = _sections.asStateFlow()
-
+    private val _isLoading = MutableLiveData<Boolean>(true)
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
@@ -59,49 +50,42 @@ class ExploreViewModel : ViewModel() {
     }
 
     init {
-        fetchPosts()
+        viewModelScope.launch {
+            try {
+                val feed = getFeed()  // Call the suspend function
+                _postList.value = feed.filter { it.second.isNotEmpty() }  // Update LiveData with the result
+                _isLoading.value = false
+            } catch (e: Exception) {
+                // Handle any exceptions that occur
+                // TODO: add error screen component and display the component "oops something went wrong"
+            }
+        }
     }
 
-    private fun fetchPosts() {
-        val firestore = FirebaseFirestore.getInstance()
-        firestore.collection("posts")
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val newPosts = Array(4) { mutableListOf<Post>() }
-                querySnapshot.documents.mapNotNull { doc ->
-                    val title = doc.getString("title")
-                    val images = (doc.get("images") as? List<*>)?.filterIsInstance<String>()
-                    val price = doc.getLong("price")?.toDouble()
-                    val categoryValue = doc.getString("category") ?: "OTHER"
+    private suspend fun getFeed(): MutableList<Pair<String, List<Post>>> {
+        val feed: MutableList<Pair<String, List<Post>>> =  mutableListOf()
 
-                    val categoryToNumber = mapOf(
-                        "SELL" to 1,
-                        "RIDESHARE" to 2,
-                        "SUBLET" to 3,
-                        "OTHER" to 4
-                    )
-                    val category = categoryToNumber[categoryValue] ?: 3
-                    // Use a placeholder image for now (replace with actual logic if needed)
-                    if (title != null && price != null && images != null) {
-
-                        newPosts[category - 1].add(
-                            Post(
-                                title = title,
-                                price = price,
-                                images = images.toTypedArray()
-                            )
-                        )
-                    } else {
-                        Log.w("Firestore", "data is missing")
-                        null
+        return suspendCoroutine { continuation ->
+            val remainingCalls = AtomicInteger(Category.entries.size)
+            for (category in Category.entries) {
+                feed.add(category.value to listOf())
+                SearchFilterUtils.filterPosts(
+                    category = category,
+                    limit = 5,
+                    callback = { result ->
+                        val posts: List<Post> = result.map { Post.convertDBEntryToPostPreview(it) }
+                        // ensure order of adding feed items
+                        val index = feed.indexOfFirst { it.first == category.value }
+                        if (index != -1) {
+                            feed[index] = category.value to posts
+                        }
+                        // If all callbacks have been completed, resume the continuation
+                        if (remainingCalls.decrementAndGet() == 0) {
+                            continuation.resume(feed)
+                        }
                     }
-                }
-                _sections.value = newPosts.toList()
-
+                )
             }
-            .addOnFailureListener { exception ->
-                // could be useful in future
-            }
+        }
     }
-
 }
