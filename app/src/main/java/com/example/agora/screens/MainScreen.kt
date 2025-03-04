@@ -14,7 +14,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.explore.ExploreScreen
 import com.example.agora.screens.explore.ExploreViewModel
 import com.example.agora.screens.inbox.InboxScreen
+import com.example.agora.screens.post.CreatePostScreen
 import com.example.agora.screens.post.PostScreen
+import com.example.agora.screens.post.CreatePostViewModel
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
@@ -61,7 +63,11 @@ fun NavigationHost(
             val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
             PostDetailScreen(postDetailViewModel, navController)
         }
-        composable(BottomNavItem.Post.route) { PostScreen() }
+        composable("createPost") {
+            val createPostViewModel: CreatePostViewModel = viewModel()
+            CreatePostScreen(navController, createPostViewModel, auth)
+        }
+        composable(BottomNavItem.Post.route) { PostScreen(navController) }
         composable(BottomNavItem.Wishlist.route) {
             val wishlistViewModel: WishlistViewModel = viewModel()
             WishlistScreen(wishlistViewModel, navController)
