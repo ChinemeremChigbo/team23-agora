@@ -1,6 +1,5 @@
 package com.example.agora.screens.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Category
@@ -26,8 +25,16 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     val selectedCategory = _selectedCategory.asStateFlow()
 
+    private val _sortBy = MutableStateFlow<String>("Newest")
+    val sortBy = _sortBy.asStateFlow()
+
     fun changeCategory(category: Category?) {
         _selectedCategory.value = category
+        fetchResults()
+    }
+
+    fun changeSort(sortBy: String) {
+        _sortBy.value = sortBy
         fetchResults()
     }
 
@@ -55,10 +62,11 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     }
 
     fun fetchResults() {
-        Log.i(_selectedCategory.value?.value, "selected cat")
         SearchFilterUtils.getPosts(
             category = _selectedCategory.value,
-            searchString = _searchText.value
+            searchString = _searchText.value,
+            sortByPrice = if (_sortBy.value != "Newest") true else false,
+            priceLowToHi = if (_sortBy.value == "Low cost") true else false,
         ) { posts ->
             _posts.value = posts.map { post -> Post.convertDBEntryToPostDetail(post)}
         }
