@@ -58,6 +58,7 @@ class Post(
                     ?: mutableListOf("https://picsum.photos/200"), // Handle empty images
             )
         }
+
         fun convertDBEntryToPostDetail(entry: Map<String, Any>): Post {
             return Post(
                 postId = entry["postId"].toString(),
