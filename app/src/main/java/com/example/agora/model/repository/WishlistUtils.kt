@@ -1,5 +1,6 @@
 package com.example.agora.model.repository
 
+import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 
@@ -152,5 +153,12 @@ class WishlistUtils {
                     }
                 }
         }
+
+        fun isPostInWishlist(userId: String, postId: String, callback: (Boolean) -> Unit) {
+            getWishList(userId) { posts ->
+                callback(posts.any { it["postId"] == postId })
+            }
+        }
+
     }
 }

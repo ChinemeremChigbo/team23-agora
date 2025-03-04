@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,6 +27,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +44,8 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavC
     val searchText by viewModel.searchText.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
     val recentSearches by viewModel.recentSearches.collectAsState()
-    val sections by viewModel.sections.collectAsState()
+    val postList by viewModel.postList.collectAsState()
+    val isLoading by viewModel.isLoading.observeAsState(true)
 
     Column (
         modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp),
@@ -98,17 +102,21 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavC
                 }
             }
         }
-
-        val sectionTitles = listOf("Editor's Choice", "New Arrivals", "Near You")
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center)
+                .padding(16.dp))
+        }
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(40.dp),
         ) {
-            items(sections.zip(sectionTitles)) { (section, title) ->
+            items(postList) { (title, posts) ->
                 Column(verticalArrangement = Arrangement.spacedBy(21.dp)) {
                     Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(section) { post ->
+                        items(posts) { post ->
                             PostPreview(post, onClick = {navController.navigate("post_detail/${post.postId}")})
                         }
                     }
