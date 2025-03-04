@@ -1,7 +1,5 @@
 package com.example.agora.screens.post
 
-
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,41 +25,23 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.Category
-import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreatePostScreen(
     navController: NavController,
     viewModel: CreatePostViewModel = viewModel(),
-    auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) {
     val context = LocalContext.current
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf(Category.SELL) }
     var isLoading by remember { mutableStateOf(false) }
 
+    var imageUris = viewModel.images.collectAsState()
 
-    // Allow up to 3 images
-    var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-
-
-    // Image Picker Launcher
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents(),
-        onResult = { uris ->
-            if (uris.size <= 3) {
-                imageUris = uris
-            } else {
-                Toast.makeText(context, "You can only upload up to 3 images", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    )
+    var title = viewModel.title.collectAsState()
+    var description = viewModel.description.collectAsState()
+    var price = viewModel.price.collectAsState()
+    var selectedCategory = viewModel.category.collectAsState()
 
     Column(
         modifier = Modifier.padding(top=40.dp, bottom=0.dp, start=21.dp, end=21.dp),
@@ -98,6 +78,19 @@ fun CreatePostScreen(
 
         // Photos
 
+        // Image Picker Launcher
+        val imagePickerLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetMultipleContents(),
+            onResult = { uris ->
+                if (uris.size <= 3) {
+                    viewModel.updateImages(uris)
+                } else {
+                    Toast.makeText(context, "You can only upload up to 3 images", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        )
+
         // todo cindy: add static carousel
         Text(
             text = "Add Photos",
@@ -118,7 +111,7 @@ fun CreatePostScreen(
 
         // Show selected images in a horizontal scroll
         LazyRow {
-            items(imageUris) { uri ->
+            items(imageUris.value) { uri ->
                 Image(
                     painter = rememberAsyncImagePainter(uri),
                     contentDescription = "Selected Image",
@@ -160,8 +153,8 @@ fun CreatePostScreen(
         val bottomPadding = 8.dp
 
         OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
+            value = title.value,
+            onValueChange = { viewModel.updateTitle(it) },
             label = { Text("Title") },
             modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
             singleLine = true,
@@ -169,11 +162,11 @@ fun CreatePostScreen(
         )
 
         OutlinedTextField(
-            value = price,
+            value = price.value,
             onValueChange = { newValue ->
                 // Price validation
                 if (newValue.matches(Regex("^\\d*(\\.\\d{0,2})?\$"))) {
-                    price = newValue
+                    viewModel.updatePrice(newValue)
                 }
             },
             label = { Text("Price") },
@@ -183,15 +176,14 @@ fun CreatePostScreen(
             shape = RoundedCornerShape(16.dp),
         )
 
-        // todo cindy: start as empty category
         var expanded by remember { mutableStateOf(false) }
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
         ) {
             OutlinedTextField(
-                value = selectedCategory.name,
-                onValueChange = {},
+                value = selectedCategory.value,
+                onValueChange = { viewModel.updateCategory(it) },
                 label = { Text("Category") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -207,9 +199,9 @@ fun CreatePostScreen(
             ) {
                 Category.entries.forEach { category ->
                     DropdownMenuItem(
-                        text = { Text(category.name) },
+                        text = { Text(category.value) },
                         onClick = {
-                            selectedCategory = category
+                            viewModel.updateCategory(category.value)
                             expanded = false
                         }
                     )
@@ -218,8 +210,8 @@ fun CreatePostScreen(
         }
 
         OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
+            value = description.value,
+            onValueChange = { viewModel.updateDescription(it) },
             label = { Text("Description") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -237,53 +229,16 @@ fun CreatePostScreen(
         } else {
             Button(
                 onClick = {
-                    val userId = auth.currentUser?.uid
-                    if (userId != null) {
-                        isLoading = true
-                        if (imageUris.isNotEmpty()) {
-                            val uploadedUrls = mutableListOf<String>()
-                            imageUris.forEachIndexed { _, uri ->
-                                uploadImageToS3(context, uri, onSuccess = { uploadedImageUrl ->
-                                    uploadedUrls.add(uploadedImageUrl)
-                                    if (uploadedUrls.size == imageUris.size) { // Wait for all uploads to finish
-                                        createPost(
-                                            navController,
-                                            viewModel,
-                                            userId,
-                                            title,
-                                            description,
-                                            price,
-                                            selectedCategory,
-                                            uploadedUrls,
-                                            context
-                                        )
-                                    }
-                                }, onFailure = { errorMessage ->
-                                    Toast.makeText(
-                                        context,
-                                        "Image upload failed: $errorMessage",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    isLoading = false
-                                })
-                            }
-                        } else {
-                            createPost(
-                                navController,
-                                viewModel,
-                                userId,
-                                title,
-                                description,
-                                price,
-                                selectedCategory,
-                                emptyList(),
-                                context
-                            )
+                    isLoading = true
+                    viewModel.createPost(
+                        onSuccess = {
                             isLoading = false
+                        },
+                        onError = { errorMessage ->
+                            isLoading = false
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                         }
-                    } else {
-                        Toast.makeText(context, "User not logged in!", Toast.LENGTH_SHORT).show()
-                    }
+                    )
                 },
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
@@ -293,36 +248,5 @@ fun CreatePostScreen(
                 Text("Post", fontSize = 16.sp)
             }
         }
-    }
-}
-
-
-/** Create Post in Firestore */
-fun createPost(
-    navController: NavController,
-    viewModel: CreatePostViewModel,
-    userId: String,
-    title: String,
-    description: String,
-    price: String,
-    category: Category,
-    imageUrls: List<String>,
-    context: android.content.Context
-) {
-    viewModel.createPost(
-        title = title,
-        description = description,
-        price = price.toDoubleOrNull() ?: -1.0,
-        category = category,
-        images = imageUrls,
-        userId = userId
-    )
-
-
-    if (viewModel.error.value == null) {
-        Toast.makeText(context, "Post Created Successfully!", Toast.LENGTH_SHORT).show()
-        navController.popBackStack()
-    } else {
-        Toast.makeText(context, viewModel.error.value, Toast.LENGTH_SHORT).show()
     }
 }
