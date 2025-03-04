@@ -1,7 +1,5 @@
 package com.example.agora.model.repository
 
-import android.util.Log
-import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 
@@ -16,7 +14,6 @@ class WishlistUtils {
                 .get()
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
-                        Log.i("empty", "add to wishlist status")
                         val documentSnapshot = documents.documents[0]
                         val wishlistId = documentSnapshot.id
 
@@ -37,7 +34,6 @@ class WishlistUtils {
                             callback(false) // do nothing if post present
                         }
                     } else {
-                        Log.i("new wishlsit", "add to wishlist status")
                         // create new wishlist
                         val newWishlist = mapOf(
                             "userId" to userId,
