@@ -73,7 +73,7 @@ fun CreatePostScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             TextButton(
-                onClick = { },
+                onClick = { navController.navigate("/post") },
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
                 modifier = Modifier.width(60.dp),
                 ) {
