@@ -1,5 +1,6 @@
 package com.example.agora.screens.postDetail
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -47,21 +49,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.agora.model.data.User
+import com.example.agora.model.repository.WishlistUtils
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController: NavController) {
-    var showContactModal by remember { mutableStateOf(false) }
-    var showReportModal by remember { mutableStateOf(false) }
     val _post by viewModel.post.collectAsState()
     val post = _post
     val _user by viewModel.user.collectAsState()
     val user = _user
+    val inWishlist by viewModel.inWishlist.collectAsState()
+
+    Log.i(inWishlist.toString(), "screen in wishlist")
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    var showContactModal by remember { mutableStateOf(false) }
+    var showReportModal by remember { mutableStateOf(false) }
+    var heartFilled by remember { mutableStateOf(inWishlist) }
 
     if (showContactModal && user != null) {
         ContactModal(user, { showContactModal = false })
@@ -115,10 +125,28 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 text = "$ " + String.format("%.2f", post.price),
                                 fontSize = 21.sp
                             )
-                            // TODO (jennifer): wire up when wishlist is ready
-                            IconButton(onClick = { }) {
+                            IconButton(onClick = {
+                                currentUser?.uid?.let {
+                                    if (!heartFilled) {
+                                        Log.i("hearting", "status")
+                                        WishlistUtils.addToWishList(
+                                            currentUser.uid,
+                                            post.postId
+                                        ) { added ->
+                                            heartFilled = added
+                                        }
+                                    } else {
+                                        WishlistUtils.removeFromWishList(
+                                            currentUser.uid,
+                                            post.postId
+                                        ) { removed ->
+                                            heartFilled = !removed
+                                        }
+                                    }
+                                }
+                            }) {
                                 Icon(
-                                    Icons.Outlined.FavoriteBorder,
+                                    imageVector = if (heartFilled) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
                                     contentDescription = "Add to wishlist",
                                     modifier = Modifier.size(32.dp)
                                 )

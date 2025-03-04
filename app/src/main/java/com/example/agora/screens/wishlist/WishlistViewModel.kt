@@ -1,5 +1,6 @@
 package com.example.agora.screens.wishlist
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.agora.model.data.Post
 import com.example.agora.model.repository.WishlistUtils
@@ -10,17 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
 class WishlistViewModel : ViewModel() {
     val currentUser = FirebaseAuth.getInstance().currentUser
 
-    private val _posts = MutableStateFlow<List<Post>>(listOf(
-        Post(title="Fridge", price=10.12),
-        Post(title="Fridge 2", price=100.12),
-        Post(title="Fridge 3", price=121.00)
-    ))
+    private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()
 
     init {
+
         currentUser?.uid?.let {
             WishlistUtils.getWishList(currentUser.uid) { posts ->
-
+                _posts.value = posts.map { post -> Post.convertDBEntryToPostDetail(post)}
             }
         }
     }
