@@ -1,6 +1,5 @@
 package com.example.agora.model.repository
 
-import SearchFilterUtils.Companion.extractPosts
 import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
@@ -86,7 +85,7 @@ class WishlistUtils {
                 }
         }
 
-        fun getWishList(userId: String, callback: (List<Post>) -> Unit) {
+        fun getWishList(userId: String, callback: (List<Map<String, Any>>) -> Unit) {
             fetchWishListFromDB(userId) { posts ->
                 if (posts.isEmpty()) {
                     callback(emptyList())
@@ -107,7 +106,7 @@ class WishlistUtils {
                         resultList[index] = emptyMap()
                         remaining--
                         if (remaining == 0) {
-                            callback(extractPosts(resultList.filterNotNull()))
+                            callback(resultList.filterNotNull())
                         }
                     } else {
                         db.collection("posts").document(postId)
@@ -120,14 +119,14 @@ class WishlistUtils {
                                 }
                                 remaining--
                                 if (remaining == 0) {
-                                    callback(extractPosts(resultList.filterNotNull()))
+                                    callback(resultList.filterNotNull())
                                 }
                             }
                             .addOnFailureListener { exception ->
                                 resultList[index] = emptyMap()
                                 remaining--
                                 if (remaining == 0) {
-                                    callback(extractPosts(resultList.filterNotNull()))
+                                    callback(resultList.filterNotNull())
                                 }
                             }
                     }
