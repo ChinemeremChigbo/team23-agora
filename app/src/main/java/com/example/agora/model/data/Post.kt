@@ -1,15 +1,19 @@
 package com.example.agora.model.data
 
+
 import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+
 
 enum class PostStatus {
     ACTIVE, RESOLVED, DELETED
 }
 
+
 enum class Category {
     SELL, RIDESHARE, SUBLET, OTHER;
+
 
     companion object {
         private val categoryToNumber = mapOf(
@@ -19,17 +23,22 @@ enum class Category {
             OTHER to 4
         )
 
-        private val numberToCategory = categoryToNumber.entries.associate { (key, value) -> value to key }
+
+        private val numberToCategory =
+            categoryToNumber.entries.associate { (key, value) -> value to key }
+
 
         fun toNumber(category: Category): Int {
             return categoryToNumber[category] ?: 4
         }
+
 
         fun fromNumber(number: Int): Category {
             return numberToCategory[number] ?: OTHER
         }
     }
 }
+
 
 class Post(
     var postId: String = "",
@@ -41,24 +50,34 @@ class Post(
     var category: Category = Category.OTHER,
     var images: List<String> = listOf("https://files.catbox.moe/ioidxm.JPG"),
     var userId: String = "",
-    var address: Address = Address.create("1 Elm Lane", "Toronto", "Ontario", "M2N 0A5", "Canada") as Address // Default empty address
+    var address: Address = Address.create(
+        "1 Elm Lane",
+        "Toronto",
+        "Ontario",
+        "M2N 0A5",
+        "Canada"
+    ) as Address // Default empty address
 ) {
-    // Getters and Setters
-    fun getPostId(): String = postId
-    fun setPostId(value: String) { postId = value }
 
-    fun getUserId(): String = userId
-    fun setUserId(value: String) { userId = value }
+//    fun setPostId(value: String) { postId = value }
 
-    fun getStatus(): PostStatus = status
-    fun setStatus(value: PostStatus) { status = value }
 
-    fun getCreatedAt(): Timestamp = createdAt
-    fun setCreatedAt(value: Timestamp) { createdAt = value }
+//    fun getUserId(): String = userId
+//    fun setUserId(value: String) { userId = value }
 
+
+//    fun getStatus(): PostStatus = status
+//    fun setStatus(value: PostStatus) { status = value }
+
+
+//    fun getCreatedAt(): Timestamp = createdAt
+//    fun setCreatedAt(value: Timestamp) { createdAt = value }
+//
+//
     fun updateInfo(newInfo: Map<String, Any>) {
         // TODO
     }
+
 
 //    fun addComment(text: String) {
 //        val comment: Comment = Comment(text=text, creatorId="")
@@ -69,17 +88,18 @@ class Post(
 //        comments.add(comment)
 //    }
 
+
     fun removeComment(comment: Comment) {
         // TODO
     }
 
+
     fun changeStatus(newStatus: PostStatus) {
         status = newStatus
     }
-
-
     companion object {
         private val DEFAULT_IMAGE = "https://files.catbox.moe/ioidxm.JPG"
+
 
         /** Fetch User's Address from Firestore */
         private fun fetchUserAddress(
@@ -110,6 +130,7 @@ class Post(
                 }
                 .addOnFailureListener { onFailure(it) }
         }
+
 
         /** Create a new post in Firestore with User's Address */
         fun createPost(
@@ -148,6 +169,7 @@ class Post(
                         )
                     )
 
+
                     db.collection("posts").document(postId)
                         .set(newPost)
                         .addOnSuccessListener { onSuccess(postId) }
@@ -158,6 +180,7 @@ class Post(
                 }
             )
         }
+
 
         /** Fetch all posts from Firestore */
         fun fetchPosts(
@@ -178,7 +201,9 @@ class Post(
                                 Category.OTHER
                             }
 
-                            val addressMap = document.get("address") as? Map<String, Any> ?: emptyMap()
+
+                            val addressMap =
+                                document.get("address") as? Map<String, Any> ?: emptyMap()
                             val address = Address.create(
                                 street = addressMap["street"] as? String ?: "",
                                 city = addressMap["city"] as? String ?: "",
@@ -186,6 +211,7 @@ class Post(
                                 postalCode = addressMap["postalCode"] as? String ?: "",
                                 country = addressMap["country"] as? String ?: ""
                             ) as? Address ?: Address.create("", "", "", "", "") as Address
+
 
                             val post = document.toObject(Post::class.java).apply {
                                 category = categoryEnum
@@ -201,7 +227,5 @@ class Post(
                 }
                 .addOnFailureListener { onFailure(it) }
         }
-
-
     }
 }
