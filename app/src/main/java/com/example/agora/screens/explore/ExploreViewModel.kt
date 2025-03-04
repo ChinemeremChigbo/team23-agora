@@ -69,7 +69,7 @@ class ExploreViewModel : ViewModel() {
             val remainingCalls = AtomicInteger(Category.entries.size)
             for (category in Category.entries) {
                 feed.add(category.value to listOf())
-                SearchFilterUtils.filterPosts(
+                SearchFilterUtils.getPosts(
                     category = category,
                     limit = 5,
                     callback = { result ->

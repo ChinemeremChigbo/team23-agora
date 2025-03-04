@@ -10,7 +10,7 @@ class WishList(private var userId: String = "") {
         return userId
     }
 
-    fun getPosts(): Map<String, Timestamp> {
+    fun getWishlistPosts(): Map<String, Timestamp> {
         return posts.toMap()
     }
 
