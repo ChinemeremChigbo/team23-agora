@@ -1,6 +1,5 @@
 package com.example.agora.screens.wishlist
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.agora.model.data.Post
 import com.example.agora.model.repository.WishlistUtils
@@ -15,7 +14,10 @@ class WishlistViewModel : ViewModel() {
     val posts = _posts.asStateFlow()
 
     init {
+        fetchWishlist()
+    }
 
+    fun fetchWishlist() {
         currentUser?.uid?.let {
             WishlistUtils.getWishList(currentUser.uid) { posts ->
                 _posts.value = posts.map { post -> Post.convertDBEntryToPostDetail(post)}
