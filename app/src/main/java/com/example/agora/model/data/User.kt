@@ -58,6 +58,11 @@ class User(
      * )
      */
     fun updateInfo(newInfo: Map<String, Any>) {
+        if (userId.isBlank()) {
+            println("Error: User ID is empty!")
+            return
+        }
+
         db.collection("users").document(userId)
             .update(newInfo)
             .addOnSuccessListener {

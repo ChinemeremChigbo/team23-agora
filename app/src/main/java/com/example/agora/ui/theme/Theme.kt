@@ -1,5 +1,6 @@
 package com.example.agora.ui.theme
 
+import ThemeMode
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -72,17 +73,20 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun AgoraTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit,
+    themeMode: ThemeMode,
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        useDarkTheme -> DarkColors
-        else -> LightColors
+    val useDarkTheme = when (themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
     }
+
+    val colorScheme = if (useDarkTheme) DarkColors else LightColors
 
     MaterialTheme(
         colorScheme = colorScheme,
-        content = content,
         typography = AgoraTypography,
-        )
+        content = content
+    )
 }

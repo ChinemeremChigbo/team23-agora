@@ -51,6 +51,11 @@ fun RowScope.AddItem(
     currentRoute: String,
     navController: NavController
 ) {
+    val settingsSubRoutes = listOf("update_password", "appearance", "profile")
+
+    val isSettingsSelected = screen is BottomNavItem.Settings &&
+            (currentRoute == screen.route || settingsSubRoutes.contains(currentRoute))
+
     NavigationBarItem(
         // Text that shows below the icon
         label = {
@@ -67,8 +72,8 @@ fun RowScope.AddItem(
         },
 
         // Display if the icon it is select or not
-        selected = currentRoute == screen.route,
 
+        selected = if (screen is BottomNavItem.Settings) isSettingsSelected else currentRoute == screen.route,
         // Always show the label below the icon or not
         alwaysShowLabel = false,
 
