@@ -13,7 +13,7 @@ class User(
     var username: String = "",
     var fullName: String = "",
     var bio: String = "",
-    var profileImage: String = "",
+    var profileImage: String? = null,
     var email: String = "",
     var phoneNumber: String = "",
     var country: String = "",
@@ -29,6 +29,7 @@ class User(
         // Use the userId as the document ID
         db.collection("users").document(userId)
             .set(mapOf(
+                "userId" to userId,
                 "status" to status.name,  // Convert Enum to String
                 "username" to username,
                 "fullName" to fullName,
@@ -71,8 +72,28 @@ class User(
             }
     }
 
+    // TODO: wait for eddie to setup S3
+    fun updateProfileImage() {
+        updateInfo(mapOf("profileImage" to ""))
+    }
+
     fun updateUserStatus(newStatus: UserStatus) {
         status = newStatus
         updateInfo(mapOf("status" to newStatus.name))
+    }
+
+    companion object {
+        fun convertDBEntryToUser(entry: Map<String, Any>): User {
+            return User(
+                status = UserStatus.entries.find { it.name == entry["status"] } ?: UserStatus.DEACTIVATED,
+                username = entry["username"].toString(),
+                fullName = entry["fullName"].toString(),
+                bio = entry["bio"].toString(),
+                profileImage = entry["profileImage"]?.toString() ?: "https://picsum.photos/200", // Handle empty images
+                email = entry["email"].toString(),
+                phoneNumber = entry["phoneNumber"].toString(),
+                // TODO: address
+            )
+        }
     }
 }
