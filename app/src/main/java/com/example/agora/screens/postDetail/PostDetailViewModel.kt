@@ -1,12 +1,11 @@
 package com.example.agora.screens.postDetail
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Post
 import com.example.agora.model.data.User
-import com.example.agora.model.repository.SearchFilterUtils
-import com.example.agora.screens.authentication.sign_in.LoginImage
+import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.repository.WishlistUtils
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,9 +30,8 @@ class PostDetailViewModel (
     }
 
     private fun fetchPostDetails(postId: String) {
-        // TODO (for eddie, from jennifer) - query the post based off postId
-        // will also need a separate query for the user details to display in the user section
-        _post.value = Post(postId = postId, title = "hehe")
+        // TODO: will also need a separate query for the user details to display in the user section
+        PostUtils.getPost(postId, {post -> _post.value = post})
         _user.value = User(
             fullName = "test user",
             bio = "Hi! I am a student at the University of Waterloo",
@@ -43,10 +41,10 @@ class PostDetailViewModel (
     }
 
     fun checkIfPostInWishlist(postId: String) {
-        Log.i(currentUser?.uid, "user id")
         currentUser?.uid?.let {
-            _inWishlist.value = SearchFilterUtils.isPostInWishlist(currentUser.uid, postId)
-            Log.i(_inWishlist.value.toString(), "in wishlist")
+            WishlistUtils.isPostInWishlist(currentUser.uid, postId) { inWishlist ->
+                _inWishlist.value = inWishlist
+            }
         }
     }
 }
