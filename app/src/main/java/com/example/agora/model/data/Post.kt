@@ -1,7 +1,6 @@
 package com.example.agora.model.data
 
 import com.example.agora.model.util.DataUtil
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 
 enum class PostStatus {
@@ -24,14 +23,13 @@ class Post(
     var comments: MutableList<Comment> = mutableListOf(),
     var userId: String = "",
     var address: Address = Address(),
-    private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
 ) {
     fun updateInfo(newInfo: Map<String, Any>) {
         // TODO
     }
 
     fun addComment(text: String) {
-        val comment: Comment = Comment(text=text, creatorId="")
+        val comment = Comment(text = text, creatorId = "")
         val mentions: List<String> = comment.findMentions()
         for (mention in mentions) {
             // TODO: create a notification
