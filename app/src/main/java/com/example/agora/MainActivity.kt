@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.agora.model.util.FirebaseTestUtil
+import com.example.agora.model.util.UserManager
 import com.example.agora.screens.MainScreen
 import com.example.agora.ui.theme.AgoraTheme
 import com.google.firebase.Firebase
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, AuthActivity::class.java))
             finish()
         }
+        auth.uid?.let { UserManager.fetchUser(it){} }
     }
 
 

@@ -6,12 +6,13 @@ import com.google.firebase.firestore.Query
 
 class SearchFilterUtils {
     companion object {
-        fun filterPosts(
+        fun getPosts(
             minPrice: Int? = null,
             maxPrice: Int? = null,
             category: Category? = null,
             sortByPrice: Boolean = false,
             priceLowToHi: Boolean = true,
+            searchString: String? = null,
             limit: Int = -1,
             callback: (List<Map<String, Any>>) -> Unit
         ) {
@@ -37,9 +38,7 @@ class SearchFilterUtils {
                     if (priceLowToHi) Query.Direction.ASCENDING else Query.Direction.DESCENDING
                 )
             } else {
-                query.orderBy(
-                    "createdAt", Query.Direction.DESCENDING
-                )
+                query.orderBy("createdAt", Query.Direction.DESCENDING)
             }
 
             // TODO: Enable this when all posts have been populated with status
@@ -48,7 +47,7 @@ class SearchFilterUtils {
             //    PostStatus.DELETED.name
             //)
 
-            if(limit != -1) {
+            if (limit != -1) {
                 query = query.limit(limit.toLong())
             }
 
@@ -56,8 +55,15 @@ class SearchFilterUtils {
             query.get()
                 .addOnSuccessListener { documents ->
                     val resultList = mutableListOf<Map<String, Any>>()
+                    val formattedSearchString = searchString?.trim()?.lowercase()
+
                     for (document in documents) {
-                        resultList.add(document.data)
+                        val data = document.data
+                        val title = (data["title"] as? String)?.trim()?.lowercase()
+
+                        if (formattedSearchString.isNullOrEmpty() || (title != null && title.contains(formattedSearchString))) {
+                            resultList.add(data)
+                        }
                     }
                     callback(resultList)
                 }

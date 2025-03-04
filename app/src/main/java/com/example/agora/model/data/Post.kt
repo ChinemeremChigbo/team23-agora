@@ -1,6 +1,7 @@
 package com.example.agora.model.data
 
 import com.example.agora.model.util.DataUtil
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 
 enum class PostStatus {
@@ -22,14 +23,15 @@ class Post(
     var images: MutableList<String> = mutableListOf("https://picsum.photos/200"),
     var comments: MutableList<Comment> = mutableListOf(),
     var userId: String = "",
-    var address: Address = Address()
+    var address: Address = Address(),
+    private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
 ) {
     fun updateInfo(newInfo: Map<String, Any>) {
         // TODO
     }
 
     fun addComment(text: String) {
-        val comment = Comment(text = text, creatorId = "")
+        val comment: Comment = Comment(text=text, creatorId="")
         val mentions: List<String> = comment.findMentions()
         for (mention in mentions) {
             // TODO: create a notification
@@ -53,7 +55,7 @@ class Post(
                 price = entry["price"].toString().toDoubleOrNull() ?: 0.0,
                 createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"].toString()),
                 images = (entry["images"] as? List<*>)?.map { it.toString() }?.toMutableList()
-                    ?: mutableListOf("https://picsum.photos/200")
+                    ?: mutableListOf("https://picsum.photos/200"), // Handle empty images
             )
         }
 
@@ -68,8 +70,11 @@ class Post(
                 category = Category.entries.find { it.name == entry["category"] } ?: Category.OTHER,
                 createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"].toString()),
                 userId = entry["userId"].toString(),
+                address = (entry["address"] as? Map<String, Any>)?.let {
+                    Address.convertDBEntryToAddress(it)
+                } ?: Address(),
                 images = (entry["images"] as? List<*>)?.map { it.toString() }?.toMutableList()
-                    ?: mutableListOf("https://picsum.photos/200")
+                    ?: mutableListOf("https://picsum.photos/200"), // Handle empty images
             )
         }
     }
