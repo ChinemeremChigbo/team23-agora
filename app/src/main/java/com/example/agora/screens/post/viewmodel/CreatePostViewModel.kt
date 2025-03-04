@@ -1,27 +1,16 @@
-package com.example.agora.screens.post
+package com.example.agora.screens.post.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.agora.model.data.Post
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.PostUtils
 
-class PostViewModel: ViewModel() {
-
-    private val _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>> get() = _posts
+class CreatePostViewModel: ViewModel() {
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
 
-    /** Fetch all posts from Firestore */
-    private fun fetchPosts() {
-        PostUtils.fetchPosts(
-            onSuccess = { postList -> _posts.value = postList },
-            onFailure = { e -> _error.value = "Error fetching posts: ${e.message}" }
-        )
-    }
 
     /** Create new post */
     fun createPost(
@@ -41,7 +30,7 @@ class PostViewModel: ViewModel() {
 
         PostUtils.createPost(
             title, description, price, category, images, userId,
-            onSuccess = { fetchPosts() }, // Refresh posts after adding
+            onSuccess = {}, // Refresh posts after adding
             onFailure = { e -> _error.value = "Failed to create post: ${e.message}" }
         )
     }

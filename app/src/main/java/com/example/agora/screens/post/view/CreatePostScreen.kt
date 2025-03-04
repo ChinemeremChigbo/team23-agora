@@ -1,4 +1,4 @@
-package com.example.agora.screens.post
+package com.example.agora.screens.post.view
 
 
 import android.net.Uri
@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.Category
+import com.example.agora.screens.post.viewmodel.CreatePostViewModel
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
 
@@ -32,7 +33,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun CreatePostScreen(
     navController: NavController,
-    viewModel: PostViewModel = viewModel(),
+    viewModel: CreatePostViewModel = viewModel(),
     auth: FirebaseAuth = FirebaseAuth.getInstance()
 ) {
     val context = LocalContext.current
@@ -45,7 +46,6 @@ fun CreatePostScreen(
 
     // Allow up to 3 images
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-    var uploadedImageUrls by remember { mutableStateOf<List<String>>(emptyList()) }
 
 
     // Image Picker Launcher
@@ -229,7 +229,7 @@ fun CreatePostScreen(
 /** Create Post in Firestore */
 fun createPost(
     navController: NavController,
-    viewModel: PostViewModel,
+    viewModel: CreatePostViewModel,
     userId: String,
     title: String,
     description: String,

@@ -1,4 +1,4 @@
-package com.example.agora.screens.post
+package com.example.agora.screens.post.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -6,11 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun PostScreen(navController: NavController) {
@@ -33,9 +31,3 @@ fun PostScreen(navController: NavController) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PostPreview() {
-    val navController = rememberNavController()
-    PostScreen(navController = navController)
-}
