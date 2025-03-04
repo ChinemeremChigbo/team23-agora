@@ -71,7 +71,7 @@ class Post(
                 createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"].toString()),
                 userId = entry["userId"].toString(),
                 address = (entry["address"] as? Map<String, Any>)?.let {
-                    Address.AddressUtils.convertDBEntryToAddress(it)
+                    Address.convertDBEntryToAddress(it)
                 } ?: Address(),
                 images = (entry["images"] as? List<*>)?.map { it.toString() }?.toMutableList()
                     ?: mutableListOf("https://picsum.photos/200"), // Handle empty images

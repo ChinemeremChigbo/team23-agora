@@ -67,6 +67,16 @@ class Address constructor(
             }
             return null // no country name found
         }
+
+        fun convertDBEntryToAddress(entry: Map<String, Any>): Address{
+            return Address(
+                country = entry["country"].toString(),
+                city = entry["city"].toString(),
+                state = entry["state"].toString(),
+                street = entry["address"].toString(),
+                postalCode = entry["postalCode"].toString(),
+            )
+        }
     }
 
     // Methods
@@ -117,18 +127,4 @@ class Address constructor(
 
         return R * c // Distance in km
     }
-
-    object AddressUtils {
-        fun convertDBEntryToAddress(entry: Map<String, Any>): Address{
-            return Address(
-                country = entry["country"].toString(),
-                city = entry["city"].toString(),
-                state = entry["state"].toString(),
-                street = entry["address"].toString(),
-                postalCode = entry["postalCode"].toString(),
-                )
-        }
-    }
-
-
 }
