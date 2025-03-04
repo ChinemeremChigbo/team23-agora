@@ -1,6 +1,10 @@
 package com.example.agora.model.util
 
+import android.provider.ContactsContract.Profile
+import com.example.agora.model.data.User
+import com.example.agora.model.repository.ProfileSettingUtils
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class AccountAuthUtil {
@@ -37,5 +41,20 @@ class AccountAuthUtil {
         suspend fun deleteAccount(auth: FirebaseAuth) {
             auth.currentUser!!.delete().await()
         }
+    }
+}
+
+// Allow cross-app access details about current user
+object UserManager {
+    var currentUser: User? = null
+
+    fun fetchUser(uid: String, onComplete: (User?) -> Unit) {
+        if (currentUser != null) {
+            onComplete(currentUser)
+            return
+        }
+
+        // only calls database once!
+        ProfileSettingUtils.getUserById(uid, onComplete)
     }
 }
