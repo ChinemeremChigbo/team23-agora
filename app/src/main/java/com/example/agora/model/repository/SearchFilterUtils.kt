@@ -1,6 +1,5 @@
 package com.example.agora.model.repository
 
-import SearchFilterUtils.Companion.extractPosts
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,7 +14,7 @@ class SearchFilterUtils {
             sortByPrice: Boolean = false,
             priceLowToHi: Boolean = true,
             limit: Int = -1,
-            callback: (List<Post>) -> Unit
+            callback: (List<Map<String, Any>>) -> Unit
         ) {
             val db = FirebaseFirestore.getInstance()
 
@@ -61,7 +60,7 @@ class SearchFilterUtils {
                     for (document in documents) {
                         resultList.add(document.data)
                     }
-                    callback(extractPosts(resultList))
+                    callback(resultList)
                 }
                 .addOnFailureListener { exception ->
                     println("Error getting posts: $exception")
