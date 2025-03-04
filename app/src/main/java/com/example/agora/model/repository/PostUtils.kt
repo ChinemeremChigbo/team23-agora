@@ -1,6 +1,10 @@
-package com.example.agora.model.data
+package com.example.agora.model.repository
 
 
+import com.example.agora.model.data.Address
+import com.example.agora.model.data.Category
+import com.example.agora.model.data.Post
+import com.example.agora.model.data.PostStatus
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
