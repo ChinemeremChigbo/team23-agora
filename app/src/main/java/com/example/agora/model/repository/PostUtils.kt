@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class PostUtils {
     companion object {
-        private val DEFAULT_IMAGE = "https://files.catbox.moe/ioidxm.JPG"
+        private const val DEFAULT_IMAGE = "https://files.catbox.moe/dtg63k.jpg"
 
         /** Fetch User's Address from Firestore */
         private fun fetchUserAddress(
@@ -86,48 +86,6 @@ class PostUtils {
             )
         }
 
-        /** Fetch all posts from Firestore */
-        fun fetchPosts(
-            onSuccess: (List<Post>) -> Unit,
-            onFailure: (Exception) -> Unit
-        ) {
-            val db = FirebaseFirestore.getInstance()
-            db.collection("posts")
-                .get()
-                .addOnSuccessListener { documents ->
-                    val posts = mutableListOf<Post>()
-                    for (document in documents) {
-                        try {
-                            val categoryString = document.getString("category") ?: "OTHER"
-                            val categoryEnum = try {
-                                Category.valueOf(categoryString)
-                            } catch (e: IllegalArgumentException) {
-                                Category.OTHER
-                            }
-
-                            val addressMap = document.get("address") as? Map<String, Any> ?: emptyMap()
-                            val address = Address.create(
-                                street = addressMap["street"] as? String ?: "",
-                                city = addressMap["city"] as? String ?: "",
-                                state = addressMap["state"] as? String ?: "",
-                                postalCode = addressMap["postalCode"] as? String ?: "",
-                                country = addressMap["country"] as? String ?: ""
-                            ) as? Address ?: Address.create("", "", "", "", "") as Address
-
-                            val post = document.toObject(Post::class.java).apply {
-                                category = categoryEnum
-                                this.address = address
-                            }
-                            posts.add(post)
-                        } catch (e: Exception) {
-                            onFailure(e)
-                            return@addOnSuccessListener
-                        }
-                    }
-                    onSuccess(posts)
-                }
-                .addOnFailureListener { onFailure(it) }
-        }
 
         /** Get a specific post by ID */
         fun getPost(postId: String, callback: (Post?) -> Unit) {

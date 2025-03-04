@@ -14,13 +14,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.explore.ExploreScreen
 import com.example.agora.screens.explore.ExploreViewModel
 import com.example.agora.screens.inbox.InboxScreen
-import com.example.agora.screens.post.CreatePostScreen
-import com.example.agora.screens.post.PostScreen
-import com.example.agora.screens.post.PostViewModel
+import com.example.agora.screens.post.view.CreatePostScreen
+import com.example.agora.screens.post.view.PostScreen
+import com.example.agora.screens.post.viewmodel.CreatePostViewModel
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
-import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.wishlist.WishlistScreen
 import com.google.firebase.auth.FirebaseAuth
@@ -64,8 +63,8 @@ fun NavigationHost(
             PostDetailScreen(postDetailViewModel, navController)
         }
         composable("createPost") {
-            val postViewModel: PostViewModel = viewModel()
-            CreatePostScreen(navController, postViewModel, auth)
+            val createPostViewModel: CreatePostViewModel = viewModel()
+            CreatePostScreen(navController, createPostViewModel, auth)
         }
         composable(BottomNavItem.Post.route) { PostScreen(navController) }
         composable(BottomNavItem.Wishlist.route) { WishlistScreen() }
