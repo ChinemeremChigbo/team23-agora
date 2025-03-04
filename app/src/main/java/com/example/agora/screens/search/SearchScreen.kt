@@ -1,15 +1,13 @@
-package com.example.agora.screens.explore
-
+package com.example.agora.screens.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -24,7 +22,6 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,15 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.agora.ui.components.PostPreview
+import com.example.agora.ui.components.BasicPostGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavController) {
+fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavController) {
     val searchText by viewModel.searchText.collectAsState()
+    val posts by viewModel.posts.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
-    val postList by viewModel.postList.collectAsState()
-    val isLoading by viewModel.isLoading.observeAsState(true)
+    val recentSearches by viewModel.recentSearches.collectAsState()
 
     Column (
         modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp),
@@ -54,9 +51,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavC
                 SearchBarDefaults.InputField(
                     query = searchText,
                     onQueryChange = viewModel::onSearchTextChange,
-                    onSearch = {
-                        navController.navigate("search/${searchText}")
-                    },
+                    onSearch = { viewModel.onSearchSubmitted(searchText) },
                     expanded = isExpanded,
                     onExpandedChange = { viewModel.onExpandedChange(it) },
                     placeholder = { Text("Search") },
@@ -72,28 +67,35 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavC
             },
             expanded = isExpanded,
             onExpandedChange = { viewModel.onExpandedChange(it) }
-        ) {}
-
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center)
-                .padding(16.dp))
-        }
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(40.dp),
         ) {
-            items(postList) { (title, posts) ->
-                Column(verticalArrangement = Arrangement.spacedBy(21.dp)) {
-                    Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(posts) { post ->
-                            PostPreview(post, onClick = {navController.navigate("post_detail/${post.postId}")})
+            if (recentSearches.isNotEmpty()) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "RECENT SEARCHES",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    recentSearches.forEach() { search ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(70.dp)
+                                .padding(vertical = 4.dp)
+                                .clickable { viewModel.onSearchSubmitted(search) },
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(search, modifier = Modifier.weight(1f).padding(4.dp))
+                            // TODO (jennifer): add ability to clear later
                         }
                     }
                 }
             }
         }
+
+        BasicPostGrid(posts, navController)
     }
 }
