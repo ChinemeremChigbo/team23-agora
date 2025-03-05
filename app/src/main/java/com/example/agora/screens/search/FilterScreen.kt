@@ -49,7 +49,7 @@ fun FilterScreen(viewModel: SearchViewModel = viewModel(), onCancel: () -> Unit)
                     fontWeight = FontWeight.Bold
                 )
 
-                TextButton(onClick = onCancel) {
+                TextButton(onClick = { viewModel.clearFilters() }) {
                     Text(text = "Clear all", fontSize = 16.sp)
                 }
             }

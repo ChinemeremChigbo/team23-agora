@@ -1,6 +1,5 @@
 package com.example.agora.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -63,7 +62,6 @@ fun NavigationHost(
         composable(
             route = "search/{searchText}",
         ) { backStackEntry ->
-            Log.i("naving", "hehe")
             val search = backStackEntry.arguments?.getString("searchText") ?: ""
             val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModelFactory(search))
             SearchScreen(searchViewModel, navController)
