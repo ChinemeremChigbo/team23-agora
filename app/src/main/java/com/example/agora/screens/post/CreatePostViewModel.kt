@@ -3,19 +3,21 @@ package com.example.agora.screens.post
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Category
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.model.util.UserManager
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.*
 
-class CreatePostViewModel(application: Application): AndroidViewModel(application) {
-    private val context = application.applicationContext
-//    val userId = UserManager.currentUser!!.userId
+class CreatePostViewModel(application: Application) : AndroidViewModel(application) {
+    private val context get() = getApplication<Application>().applicationContext
+
+    //    val userId = UserManager.currentUser!!.userId
     val auth = FirebaseAuth.getInstance()
     val userId = auth.currentUser!!.uid // todo: get current user with UserManager
-    val uploadedUrls = mutableListOf<String>()
 
     var images = MutableStateFlow<List<Uri>>(emptyList())
     var title = MutableStateFlow("")
@@ -48,39 +50,40 @@ class CreatePostViewModel(application: Application): AndroidViewModel(applicatio
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        // Check fields are non empty
-        if (!checkRequiredFields{ errorMessage -> onError(errorMessage) }) return
+        viewModelScope.launch {
+            // Check fields are non empty
+            if (!checkRequiredFields { errorMessage -> onError(errorMessage) }) return@launch
 
-        // Validate price, category
-        val priceDouble = try {
-            price.value.toDouble()
-        } catch (e: NumberFormatException) {
-            onError("Price is poorly formatted"); return
-        }
+            // Validate price, category
+            val priceDouble = try {
+                price.value.toDouble()
+            } catch (e: NumberFormatException) {
+                onError("Price is poorly formatted"); return@launch
+            }
 
-        val categoryEnum = try {
-            Category.entries.first { it.value == category.value }
-        } catch (e: NoSuchElementException) {
-            onError("No such category found"); return
-        }
+            val categoryEnum = try {
+                Category.entries.first { it.value == category.value }
+            } catch (e: NoSuchElementException) {
+                onError("No such category found"); return@launch
+            }
 
-        // Update images
-        if (!uploadImages{ errorMessage -> onError(errorMessage) }) return
-
-        // Create post
-        try {
-            PostUtils.createPost(
-                title = title.value,
-                description = description.value,
-                price = priceDouble,
-                category = categoryEnum,
-                images = uploadedUrls,
-                userId = userId,
-                onSuccess = { onSuccess() },
-                onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
-            )
-        } catch (e: Exception) {
-            onError(e.localizedMessage ?: "Post failed")
+            try {
+                // Upload images and wait for completion
+                val uploadedUrls = uploadImages()
+                // Create post
+                PostUtils.createPost(
+                    title = title.value,
+                    description = description.value,
+                    price = priceDouble,
+                    category = categoryEnum,
+                    images = uploadedUrls,
+                    userId = userId,
+                    onSuccess = { onSuccess() },
+                    onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
+                )
+            } catch (e: Exception) {
+                onError(e.localizedMessage ?: "Post failed")
+            }
         }
     }
 
@@ -101,21 +104,20 @@ class CreatePostViewModel(application: Application): AndroidViewModel(applicatio
         return true
     }
 
-    private fun uploadImages(onError: (String) -> Unit): Boolean {
-        var uploadSuccessful = true
-        images.value.forEach { uri ->
-            uploadImageToS3(
-                context,
-                uri,
-                onSuccess = { uploadedImageUrl ->
-                    uploadedUrls.add(uploadedImageUrl)
-                },
-                onFailure = { errorMessage ->
-                    onError("Image upload failed: $errorMessage")
-                    uploadSuccessful = false
-                }
-            )
+    private suspend fun uploadImages(): List<String> = withContext(Dispatchers.IO) {
+        val uploadJobs = images.value.map { uri ->
+            async {
+                val deferred = CompletableDeferred<String>()
+                uploadImageToS3(
+                    context,
+                    uri,
+                    onSuccess = { uploadedUrl -> deferred.complete(uploadedUrl) },
+                    onFailure = { errorMessage -> deferred.completeExceptionally(Exception("Image upload failed: $errorMessage")) }
+                )
+                deferred.await()
+            }
         }
-        return uploadSuccessful
+        uploadJobs.awaitAll() // wait for all uploads to complete
     }
+
 }
