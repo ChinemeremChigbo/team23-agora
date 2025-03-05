@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.example.agora.model.repository.SearchFilterUtils
+import com.example.agora.model.repository.SortOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -24,7 +25,7 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     val selectedCategory = _selectedCategory.asStateFlow()
 
-    private val _sortBy = MutableStateFlow<String>("Newest")
+    private val _sortBy = MutableStateFlow<SortOptions>(SortOptions.NEWEST)
     val sortBy = _sortBy.asStateFlow()
 
     private val _selectedPriceIntervals = MutableStateFlow<List<String>>(emptyList())
@@ -35,7 +36,7 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
         fetchResults()
     }
 
-    fun changeSort(sortBy: String) {
+    fun changeSort(sortBy: SortOptions) {
         _sortBy.value = sortBy
         fetchResults()
     }
@@ -46,6 +47,10 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
         } else {
             _selectedPriceIntervals.value = _selectedPriceIntervals.value + interval
         }
+    }
+
+    fun clearFilters() {
+        _selectedPriceIntervals.value = emptyList()
     }
 
     fun onSearchTextChange(text: String) {
@@ -77,8 +82,8 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
             SearchFilterUtils.getPosts(
                 category = _selectedCategory.value,
                 searchString = _searchText.value,
-                sortByPrice = if (_sortBy.value != "Newest") true else false,
-                priceLowToHi = if (_sortBy.value == "Low cost") true else false,
+                sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
+                priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false,
             ) { posts ->
                 _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post)}
             }
@@ -89,8 +94,8 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
                 SearchFilterUtils.getPosts(
                     category = _selectedCategory.value,
                     searchString = _searchText.value,
-                    sortByPrice = if (_sortBy.value != "Newest") true else false,
-                    priceLowToHi = if (_sortBy.value == "Low cost") true else false,
+                    sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
+                    priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false,
                     minPrice = minPrice,
                     maxPrice = maxPrice
                 ) { posts ->

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.agora.model.data.Category
+import com.example.agora.model.repository.SortOptions
 import com.example.agora.screens.BottomNavItem
 import com.example.agora.ui.components.BasicPostGrid
 
@@ -174,7 +175,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
                                 contentDescription = "Sort arrow"
                             )
                             Text(text = "Sort: ", color = MaterialTheme.colorScheme.onBackground)
-                            Text(text = sortBy, color = MaterialTheme.colorScheme.onBackground)
+                            Text(text = sortBy.value, color = MaterialTheme.colorScheme.onBackground)
                         }
                     }
                     DropdownMenu(
@@ -183,32 +184,17 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
                         containerColor = MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(16.dp)
                     ) {
-                        DropdownMenuItem(
-                            text = { Text("Low cost") },
-                            onClick = {
-                                viewModel.changeSort("Low cost")
-                                sortDropdownExpanded = false
-                            },
-                            contentPadding = PaddingValues(15.dp, 10.dp)
-                        )
-                        HorizontalDivider()
-                        DropdownMenuItem(
-                            text = { Text("High cost") },
-                            onClick = {
-                                viewModel.changeSort("High cost")
-                                sortDropdownExpanded = false
-                            },
-                            contentPadding = PaddingValues(15.dp, 10.dp)
-                        )
-                        HorizontalDivider()
-                        DropdownMenuItem(
-                            text = { Text("Newest") },
-                            onClick = {
-                                viewModel.changeSort("Newest")
-                                sortDropdownExpanded = false
-                            },
-                            contentPadding = PaddingValues(15.dp, 10.dp)
-                        )
+                        SortOptions.entries.forEach { entry ->
+                            DropdownMenuItem(
+                                text = { Text(entry.value) },
+                                onClick = {
+                                    viewModel.changeSort(entry)
+                                    sortDropdownExpanded = false
+                                },
+                                contentPadding = PaddingValues(15.dp, 10.dp)
+                            )
+                            HorizontalDivider()
+                        }
                     }
                 }
 

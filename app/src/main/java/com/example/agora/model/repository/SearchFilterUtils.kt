@@ -4,6 +4,10 @@ import com.example.agora.model.data.Category
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
+enum class SortOptions(val value: String) {
+    NEWEST("Newest"), LOWESTPRICE("Lowest price"), HIGHESTPRICE("Highest price")
+}
+
 class SearchFilterUtils {
     companion object {
         val priceFilterOptions = mapOf(
