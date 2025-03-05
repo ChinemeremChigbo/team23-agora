@@ -239,6 +239,7 @@ fun CreatePostScreen(
                             isLoading = false
                             Toast.makeText(context, "Post created successfully!", Toast.LENGTH_SHORT).show()
                             navController.popBackStack()
+                            // todo: refresh post/explore screen?
                         },
                         onError = { errorMessage ->
                             isLoading = false
