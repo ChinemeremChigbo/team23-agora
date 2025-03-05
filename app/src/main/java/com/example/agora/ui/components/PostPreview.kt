@@ -50,5 +50,3 @@ fun PostPreview(post: Post, onClick: () -> Unit, edit: Boolean) {
         if (edit) EditButton(Modifier.align(Alignment.TopEnd).offset(x = (-5).dp, y = 5.dp))
     }
 }
-
-
