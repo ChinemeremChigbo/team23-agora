@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 import com.example.agora.model.data.Post
 
 @Composable
-fun BasicPostGrid(posts: List<Post>, navController: NavController, edit: Boolean) {
+fun BasicPostGrid(posts: List<Post>, navController: NavController, route: String, additionalContent: @Composable ((Modifier) -> Unit)? = null) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // 2 columns
         modifier = Modifier.fillMaxSize(),
@@ -24,10 +24,9 @@ fun BasicPostGrid(posts: List<Post>, navController: NavController, edit: Boolean
             PostPreview(
                 post,
                 onClick = {
-                    if (edit) { Log.i("edit", post.postId) }    // todo: create edit screen
-                    else navController.navigate("post_detail/${post.postId}")
+                    navController.navigate("${route}/${post.postId}")
                 },
-                edit
+                additionalContent
             )
         }
     }

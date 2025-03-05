@@ -39,6 +39,6 @@ fun WishlistScreen(viewModel: WishlistViewModel = viewModel(), navController: Na
 
         Spacer(Modifier.size(40.dp))
 
-        BasicPostGrid(posts, navController, edit = false)
+        BasicPostGrid(posts, navController, "post_detail")
     }
 }
