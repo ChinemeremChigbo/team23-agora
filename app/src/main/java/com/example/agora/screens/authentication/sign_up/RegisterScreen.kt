@@ -78,7 +78,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                 )
             }
 
-            IconButton(onClick = { navController.navigate("login") }) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close button",
@@ -303,7 +303,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
             }
             RegistrationSuccessDialog(showDialog) {
                 showDialog = false // Close dialog when dismissed
-                navController.navigate("login")
+                navController.popBackStack()
             }
         }
     }
