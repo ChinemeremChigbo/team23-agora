@@ -51,7 +51,7 @@ class User(
     }
 
     /**
-     * sample uage:
+     * sample usage:
      * val updates = mapOf(
      *     "bio" to "Updated bio",
      *     "phoneNumber" to "9876543210"
