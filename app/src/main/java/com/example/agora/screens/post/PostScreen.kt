@@ -62,10 +62,10 @@ fun PostScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Box(modifier = Modifier.width(120.dp))
+                    Box(modifier = Modifier.width(60.dp))
 
                     Text(
-                        text = "Post",
+                        text = "My Posts",
                         fontSize = 19.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -153,7 +153,7 @@ fun CollapsiblePostOptions(nestedNavController: NavController, onToggleEditMode:
 
     Column {
         // Arrow Button to Expand/Collapse
-        IconButton(onClick = { expanded = !expanded }) {
+        IconButton(onClick = { expanded = !expanded }, modifier = Modifier.width(60.dp)) {
             Icon(
                 imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                 contentDescription = "Toggle Options"
