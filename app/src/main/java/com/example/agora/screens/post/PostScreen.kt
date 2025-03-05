@@ -1,12 +1,18 @@
 package com.example.agora.screens.post
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -29,14 +35,24 @@ fun PostScreen(
     viewModel: PostViewModel = viewModel(),
 ) {
     val userPosts by viewModel.userPosts.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val isLoading by viewModel.isLoading.observeAsState(true)
     val nestedNavController = rememberNavController()
+    var isEditMode by remember { mutableStateOf(false) }
+
     NavHost(
         navController = nestedNavController,
         startDestination = "postList"
     ) {
         // Post List Screen
         composable("postList") {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                        .padding(16.dp)
+                )
+            }
             Column(
                 modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
             ) {
@@ -55,16 +71,7 @@ fun PostScreen(
                         textAlign = TextAlign.Center,
                     )
 
-                    TextButton(
-                        onClick = { nestedNavController.navigate("createPost") },
-                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
-                        modifier = Modifier.width(120.dp)
-                    ) {
-                        Text(
-                            text = "Create Post",
-                            fontSize = 15.sp,
-                        )
-                    }
+                    CollapsiblePostOptions(nestedNavController, {isEditMode = !isEditMode} )
                 }
                 Spacer(Modifier.size(40.dp))
 
@@ -72,7 +79,7 @@ fun PostScreen(
                     userPosts,
                     nestedNavController,
                     "post_detail",  // todo: update to post_edit
-                    { modifier -> EditButton(modifier) }
+                    if (isEditMode) { { modifier -> EditButton(modifier) } } else null
                 )
 
             }
@@ -139,3 +146,47 @@ fun EditButton(modifier: Modifier) {
         }
     }
 }
+
+@Composable
+fun CollapsiblePostOptions(nestedNavController: NavController, onToggleEditMode: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column {
+        // Arrow Button to Expand/Collapse
+        IconButton(onClick = { expanded = !expanded }) {
+            Icon(
+                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                contentDescription = "Toggle Options"
+            )
+        }
+
+        // AnimatedVisibility for smooth expand/collapse effect
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Create Post") },
+                onClick = {
+                    nestedNavController.navigate("createPost")
+                    expanded = false // Collapse menu
+                },
+                leadingIcon = {
+                    Icon(Icons.Default.Add, contentDescription = "Create Post")
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Edit Post") },
+                onClick = {
+                    onToggleEditMode()
+                    expanded = false // Collapse menu
+                },
+                leadingIcon = {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit Posts")
+                }
+            )
+        }
+
+    }
+}
+
