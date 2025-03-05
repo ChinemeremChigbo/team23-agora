@@ -7,6 +7,7 @@ import com.example.agora.model.data.Post
 import com.example.agora.model.data.PostStatus
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class PostUtils {
     companion object {
@@ -103,6 +104,23 @@ class PostUtils {
                     } else {
                         callback(null)
                     }
+                }
+        }
+
+        /** Get all posts by a specific user, sorted by "createdAt"*/
+        fun getPostsByUser (userId: String, callback: (List<Post>) -> Unit) {
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("posts")
+                .whereEqualTo("userId", userId)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener { posts ->
+                    val postList = posts.mapNotNull { it.data.let { data -> Post.convertDBEntryToPostDetail(data) } }
+                    callback(postList)
+                }
+                .addOnFailureListener {
+                    callback(emptyList())
                 }
         }
     }
