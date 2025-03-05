@@ -57,7 +57,12 @@ fun PostScreen(
 
         Spacer(Modifier.size(40.dp))
 
-        BasicPostGrid(userPosts, navController, edit = true)
+        BasicPostGrid(
+            userPosts,
+            navController,
+            "post_detail",  // todo: update to post_edit
+            { modifier -> EditButton(modifier) }
+        )
     }
 }
 

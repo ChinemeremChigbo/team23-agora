@@ -17,10 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.agora.model.data.Post
-import com.example.agora.screens.post.EditButton
 
 @Composable
-fun PostPreview(post: Post, onClick: () -> Unit, edit: Boolean) {
+fun PostPreview(post: Post, onClick: () -> Unit, additionalContent: @Composable ((Modifier) -> Unit)? = null) {
     Box {
         Column (
             Modifier
@@ -47,6 +46,8 @@ fun PostPreview(post: Post, onClick: () -> Unit, edit: Boolean) {
             }
         }
 
-        if (edit) EditButton(Modifier.align(Alignment.TopEnd).offset(x = (-5).dp, y = 5.dp))
+        if (additionalContent != null) {
+            additionalContent(Modifier.align(Alignment.TopEnd).offset(x = (-5).dp, y = 5.dp))
+        }
     }
 }
