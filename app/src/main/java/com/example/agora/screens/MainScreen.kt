@@ -17,6 +17,7 @@ import com.example.agora.screens.inbox.InboxScreen
 import com.example.agora.screens.post.CreatePostScreen
 import com.example.agora.screens.post.PostScreen
 import com.example.agora.screens.post.CreatePostViewModel
+import com.example.agora.screens.post.PostViewModel
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
@@ -73,7 +74,10 @@ fun NavigationHost(
             val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
             PostDetailScreen(postDetailViewModel, navController)
         }
-        composable(BottomNavItem.Post.route) { PostScreen(navController) }
+        composable(BottomNavItem.Post.route) {
+
+            val postViewModel: PostViewModel = viewModel()
+            PostScreen(navController, postViewModel) }
         composable("createPost") {
             val createPostViewModel: CreatePostViewModel = viewModel()
             CreatePostScreen(navController, createPostViewModel)
