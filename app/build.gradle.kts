@@ -90,19 +90,20 @@ dependencies {
     // Optional - Integration with RxJava
     implementation("androidx.compose.runtime:runtime-rxjava2")
 
-    implementation("io.coil-kt:coil-compose:2.5.0")
+    // Jetpack DataStore for storing user preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-core:1.0.0")
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    // Add the dependency for the Firebase SDK for Google Analytics
-    // TODO: Add the dependencies for any other Firebase products you want to use
-    // See https://firebase.google.com/docs/android/setup#available-libraries
-    // For example, add the dependencies for Firebase Authentication and Cloud Firestore
+
+    // Firebase Authentication
     implementation("com.google.firebase:firebase-auth")
+    // Firebase Firestore
     implementation("com.google.firebase:firebase-firestore")
     // For fetching images from a givesn url
-    implementation("io.coil-kt:coil-compose:2.2.2")
-//    Import AWS Android SDK
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Import AWS Android SDK
     implementation("com.amazonaws:aws-android-sdk-s3:2.66.0")
 }
