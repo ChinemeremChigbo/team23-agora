@@ -4,8 +4,20 @@ import com.example.agora.model.data.Category
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
+enum class SortOptions(val value: String) {
+    NEWEST("Newest"), LOWESTPRICE("Lowest price"), HIGHESTPRICE("Highest price")
+}
+
 class SearchFilterUtils {
     companion object {
+        val priceFilterOptions = mapOf(
+            "UNDER $25" to Pair(null, 25),
+            "$25 TO $50" to Pair(25, 50),
+            "$50 TO $100" to Pair(50, 100),
+            "$100 TO $200" to Pair(100, 200),
+            "$200 AND ABOVE" to Pair(200, null)
+        )
+
         fun getPosts(
             minPrice: Int? = null,
             maxPrice: Int? = null,

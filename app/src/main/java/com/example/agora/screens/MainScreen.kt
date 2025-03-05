@@ -20,6 +20,9 @@ import com.example.agora.screens.post.CreatePostViewModel
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
+import com.example.agora.screens.search.SearchScreen
+import com.example.agora.screens.search.SearchViewModel
+import com.example.agora.screens.search.SearchViewModelFactory
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.wishlist.WishlistScreen
 import com.example.agora.screens.wishlist.WishlistViewModel
@@ -55,6 +58,13 @@ fun NavigationHost(
         composable(BottomNavItem.Explore.route) {
             val exploreViewModel: ExploreViewModel = viewModel()
             ExploreScreen(exploreViewModel, navController)
+        }
+        composable(
+            route = "search/{searchText}",
+        ) { backStackEntry ->
+            val search = backStackEntry.arguments?.getString("searchText") ?: ""
+            val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModelFactory(search))
+            SearchScreen(searchViewModel, navController)
         }
         composable(
             route = "post_detail/{postId}",

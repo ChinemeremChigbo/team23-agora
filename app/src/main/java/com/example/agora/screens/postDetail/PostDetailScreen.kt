@@ -143,7 +143,8 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 Icon(
                                     imageVector = if (inWishlist) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
                                     contentDescription = "Add to wishlist",
-                                    modifier = Modifier.size(32.dp)
+                                    tint = if (inWishlist) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.size(32.dp),
                                 )
                             }
                         }
