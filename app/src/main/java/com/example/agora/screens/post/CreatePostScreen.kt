@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.*
@@ -25,7 +27,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.Category
-import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +36,7 @@ fun CreatePostScreen(
 ) {
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     var imageUris = viewModel.images.collectAsState()
 
@@ -44,7 +46,9 @@ fun CreatePostScreen(
     var selectedCategory = viewModel.category.collectAsState()
 
     Column(
-        modifier = Modifier.padding(top=40.dp, bottom=0.dp, start=21.dp, end=21.dp),
+        modifier = Modifier
+            .padding(top=40.dp, bottom=0.dp, start=21.dp, end=21.dp)
+            .verticalScroll(scrollState),
     ) {
         // Title
         Row(
@@ -53,7 +57,7 @@ fun CreatePostScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             TextButton(
-                onClick = { navController.navigate("/post") },
+                onClick = { navController.popBackStack() },
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
                 modifier = Modifier.width(60.dp),
                 ) {
@@ -233,6 +237,8 @@ fun CreatePostScreen(
                     viewModel.createPost(
                         onSuccess = {
                             isLoading = false
+                            Toast.makeText(context, "Post created successfully!", Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
                         },
                         onError = { errorMessage ->
                             isLoading = false

@@ -7,11 +7,14 @@ import com.example.agora.model.data.Category
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.model.util.UserManager
 import com.example.agora.util.uploadImageToS3
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class CreatePostViewModel(application: Application): AndroidViewModel(application) {
     private val context = application.applicationContext
-    val userId = UserManager.currentUser!!.userId
+//    val userId = UserManager.currentUser!!.userId
+    val auth = FirebaseAuth.getInstance()
+    val userId = auth.currentUser!!.uid // todo: get current user with UserManager
     val uploadedUrls = mutableListOf<String>()
 
     var images = MutableStateFlow<List<Uri>>(emptyList())
