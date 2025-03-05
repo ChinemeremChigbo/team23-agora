@@ -31,7 +31,7 @@ class PostDetailViewModel (
 
     private fun fetchPostDetails(postId: String) {
         // TODO: will also need a separate query for the user details to display in the user section
-        PostUtils.getPost(postId, {post -> _post.value = post})
+        PostUtils.getPostById(postId, { post -> _post.value = post})
         _user.value = User(
             fullName = "test user",
             bio = "Hi! I am a student at the University of Waterloo",
