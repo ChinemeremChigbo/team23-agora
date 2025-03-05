@@ -174,7 +174,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                         ) {
                             Row {
                                 AsyncImage(
-                                    model = post.images[0],
+                                    model = user?.profileImage,
                                     contentDescription = "User Avatar",
                                     modifier = Modifier
                                         .size(27.dp)
@@ -184,7 +184,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 Spacer(Modifier.size(10.dp))
 
                                 Text(
-                                    text = "test user",
+                                    text = user?.fullName ?: "Unknown",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.ExtraBold
                                 )
