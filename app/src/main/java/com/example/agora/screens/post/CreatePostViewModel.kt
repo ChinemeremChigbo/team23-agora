@@ -3,6 +3,8 @@ package com.example.agora.screens.post
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Category
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.model.util.UserManager
@@ -10,7 +12,10 @@ import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class CreatePostViewModel(application: Application): AndroidViewModel(application) {
+class CreatePostViewModel(
+    application: Application,
+    postId: String
+): AndroidViewModel(application) {
     private val context = application.applicationContext
 //    val userId = UserManager.currentUser!!.userId
     val auth = FirebaseAuth.getInstance()
@@ -22,6 +27,12 @@ class CreatePostViewModel(application: Application): AndroidViewModel(applicatio
     var price = MutableStateFlow("")
     var category = MutableStateFlow("")
     var description = MutableStateFlow("")
+
+    // Prepopulate if editing
+    val editing = postId.isNotEmpty()
+    init {
+        if (editing) fetchPostDetails(postId)
+    }
 
     fun updateImages(newImages: List<Uri>) {
         images.value = newImages
@@ -43,8 +54,19 @@ class CreatePostViewModel(application: Application): AndroidViewModel(applicatio
         description.value = newDescription
     }
 
-    /** Create new post */
-    fun createPost(
+    private fun fetchPostDetails(postId: String) {
+        PostUtils.getPostById(postId, { post ->
+            if (post != null) {
+//            updateImages(post.images)   // todo: huh
+                updateTitle(post.title)
+                updatePrice(post.price.toString())
+                updateCategory(post.category.value)
+                updateDescription(post.description)
+            }
+        })
+    }
+
+    fun createEditPost(
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
@@ -67,18 +89,23 @@ class CreatePostViewModel(application: Application): AndroidViewModel(applicatio
         // Update images
         if (!uploadImages{ errorMessage -> onError(errorMessage) }) return
 
-        // Create post
         try {
-            PostUtils.createPost(
-                title = title.value,
-                description = description.value,
-                price = priceDouble,
-                category = categoryEnum,
-                images = uploadedUrls,
-                userId = userId,
-                onSuccess = { onSuccess() },
-                onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
-            )
+            if (editing) {
+                // Edit post
+                // todo: add backend request
+            } else {
+                // Create post
+                PostUtils.createPost(
+                    title = title.value,
+                    description = description.value,
+                    price = priceDouble,
+                    category = categoryEnum,
+                    images = uploadedUrls,
+                    userId = userId,
+                    onSuccess = { onSuccess() },
+                    onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
+                )
+            }
         } catch (e: Exception) {
             onError(e.localizedMessage ?: "Post failed")
         }
@@ -117,5 +144,14 @@ class CreatePostViewModel(application: Application): AndroidViewModel(applicatio
             )
         }
         return uploadSuccessful
+    }
+}
+
+class CreatePostViewModelFactory(
+    private val application: Application,
+    private val postId: String
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return CreatePostViewModel(application, postId) as T
     }
 }

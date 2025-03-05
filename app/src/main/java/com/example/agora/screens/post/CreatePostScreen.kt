@@ -35,6 +35,7 @@ fun CreatePostScreen(
     viewModel: CreatePostViewModel = viewModel(),
 ) {
     val context = LocalContext.current
+    val editing = viewModel.editing
     var isLoading by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
@@ -49,6 +50,7 @@ fun CreatePostScreen(
         modifier = Modifier
             .padding(top=40.dp, bottom=0.dp, start=21.dp, end=21.dp)
             .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Title
         Row(
@@ -69,7 +71,7 @@ fun CreatePostScreen(
             }
 
             Text(
-                text = "Create Post",
+                text = "${ if(editing) "Edit" else "Create"} Post",
                 fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -101,7 +103,7 @@ fun CreatePostScreen(
             fontWeight = FontWeight.Black,
             fontSize = 19.sp,
             textAlign = TextAlign.Start,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground,
         )
 
@@ -109,7 +111,7 @@ fun CreatePostScreen(
             text = "Upload up to 3 photos directly from your phone",
             fontSize = 16.sp,
             textAlign = TextAlign.Start,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground,
         )
 
@@ -122,13 +124,14 @@ fun CreatePostScreen(
                     modifier = Modifier
                         .size(100.dp)
                         .padding(4.dp)
+                        .fillMaxWidth()
                 )
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+        Button(onClick = { imagePickerLauncher.launch("image/*") }, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Default.Upload, contentDescription = "Upload")
             Spacer(modifier = Modifier.width(8.dp))
             Text("Pick Images (Up to 3)")
@@ -142,7 +145,7 @@ fun CreatePostScreen(
             fontWeight = FontWeight.Black,
             fontSize = 19.sp,
             textAlign = TextAlign.Start,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground,
         )
 
@@ -150,7 +153,7 @@ fun CreatePostScreen(
             text = "Be as descriptive as possible",
             fontSize = 16.sp,
             textAlign = TextAlign.Start,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground,
         )
 
@@ -234,7 +237,7 @@ fun CreatePostScreen(
             Button(
                 onClick = {
                     isLoading = true
-                    viewModel.createPost(
+                    viewModel.createEditPost(
                         onSuccess = {
                             isLoading = false
                             Toast.makeText(context, "Post created successfully!", Toast.LENGTH_SHORT).show()
@@ -252,7 +255,7 @@ fun CreatePostScreen(
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text("Post", fontSize = 16.sp)
+                Text(if (editing) "Update" else "Post", fontSize = 16.sp)
             }
         }
     }
