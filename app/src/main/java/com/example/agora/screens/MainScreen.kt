@@ -63,11 +63,11 @@ fun NavigationHost(
             val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
             PostDetailScreen(postDetailViewModel, navController)
         }
+        composable(BottomNavItem.Post.route) { PostScreen(navController) }
         composable("createPost") {
             val createPostViewModel: CreatePostViewModel = viewModel()
             CreatePostScreen(navController, createPostViewModel, auth)
         }
-        composable(BottomNavItem.Post.route) { PostScreen(navController) }
         composable(BottomNavItem.Wishlist.route) {
             val wishlistViewModel: WishlistViewModel = viewModel()
             WishlistScreen(wishlistViewModel, navController)

@@ -5,39 +5,42 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun PostScreen(navController: NavController) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp),
     ) {
-        Text(
-            text = "Post Screen",
-            fontSize = 40.sp,
-            textAlign = TextAlign.Center
-        )
-
         Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Box(modifier = Modifier.width(120.dp))
 
-        Button(onClick = { navController.navigate("createPost") }) {
-            Text(text = "Create Post")
+            Text(
+                text = "Post",
+                fontSize = 19.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+
+            TextButton(
+                onClick = { navController.navigate("createPost") },
+                contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
+                modifier = Modifier.width(120.dp)
+            ) {
+                Text(
+                    text = "Create Post",
+                    fontSize = 15.sp,
+                )
+            }
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PostPreview() {
-    val navController = rememberNavController()
-    PostScreen(navController = navController)
-}
-
-
