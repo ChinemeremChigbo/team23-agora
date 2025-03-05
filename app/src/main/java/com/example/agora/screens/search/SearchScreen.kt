@@ -216,7 +216,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
 
             Spacer(Modifier.size(16.dp))
 
-            BasicPostGrid(posts, navController)
+            BasicPostGrid(posts, navController, "post_detail")
         }
     }
 }
