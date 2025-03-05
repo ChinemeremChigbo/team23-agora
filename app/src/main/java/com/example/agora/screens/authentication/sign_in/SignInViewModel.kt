@@ -24,8 +24,8 @@ class SignInViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
-        var emailValue = email.value
-        var passwordValue = password.value
+        var emailValue = email.value.trim()
+        var passwordValue = password.value.trim()
 
         viewModelScope.launch {
             try {
