@@ -31,7 +31,7 @@ class PostDetailViewModel (
     }
 
     private fun fetchPostDetails(postId: String) {
-        PostUtils.getPost(postId, { post ->
+        PostUtils.getPostById(postId, { post ->
             _post.value = post
             ProfileSettingUtils.getUserById(post!!.userId, { user -> _user.value = user })
         })

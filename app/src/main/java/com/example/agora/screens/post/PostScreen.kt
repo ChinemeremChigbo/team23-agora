@@ -9,10 +9,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 @Composable
-fun PostScreen(navController: NavController) {
+fun PostScreen(
+    navController: NavController,
+    viewModel: PostViewModel = viewModel(),
+) {
+    val userPosts by viewModel.userPosts.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
     Column(
         modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp),
     ) {
