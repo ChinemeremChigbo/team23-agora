@@ -51,6 +51,8 @@ fun NavigationHost(
     auth: FirebaseAuth,
     modifier: Modifier = Modifier
 ) {
+    // This is NavHost for main screen navigation only
+    //  DONOT use it for navigation inside each screen!!!
     NavHost(
         navController = navController,
         startDestination = BottomNavItem.Explore.route,
@@ -60,27 +62,9 @@ fun NavigationHost(
             val exploreViewModel: ExploreViewModel = viewModel()
             ExploreScreen(exploreViewModel, navController)
         }
-        composable(
-            route = "search/{searchText}",
-        ) { backStackEntry ->
-            val search = backStackEntry.arguments?.getString("searchText") ?: ""
-            val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModelFactory(search))
-            SearchScreen(searchViewModel, navController)
-        }
-        composable(
-            route = "post_detail/{postId}",
-        ) { backStackEntry ->
-            val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
-            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
-            PostDetailScreen(postDetailViewModel, navController)
-        }
         composable(BottomNavItem.Post.route) {
-
             val postViewModel: PostViewModel = viewModel()
-            PostScreen(navController, postViewModel) }
-        composable("createPost") {
-            val createPostViewModel: CreatePostViewModel = viewModel()
-            CreatePostScreen(navController, createPostViewModel)
+            PostScreen(navController, postViewModel)
         }
         composable(BottomNavItem.Wishlist.route) {
             val wishlistViewModel: WishlistViewModel = viewModel()
