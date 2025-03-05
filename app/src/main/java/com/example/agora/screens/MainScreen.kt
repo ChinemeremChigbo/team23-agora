@@ -1,11 +1,13 @@
 package com.example.agora.screens
 
+import android.app.Application
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,6 +19,7 @@ import com.example.agora.screens.inbox.InboxScreen
 import com.example.agora.screens.post.CreatePostScreen
 import com.example.agora.screens.post.PostScreen
 import com.example.agora.screens.post.CreatePostViewModel
+import com.example.agora.screens.post.CreatePostViewModelFactory
 import com.example.agora.screens.post.PostViewModel
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
@@ -75,11 +78,15 @@ fun NavigationHost(
             PostDetailScreen(postDetailViewModel, navController)
         }
         composable(BottomNavItem.Post.route) {
-
             val postViewModel: PostViewModel = viewModel()
-            PostScreen(navController, postViewModel) }
-        composable("createPost") {
-            val createPostViewModel: CreatePostViewModel = viewModel()
+            PostScreen(navController, postViewModel)
+        }
+        composable(
+            route = "post_edit/{postId}"
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId") ?: ""
+            val application = LocalContext.current.applicationContext as Application
+            val createPostViewModel: CreatePostViewModel = viewModel(factory = CreatePostViewModelFactory(application, postId))
             CreatePostScreen(navController, createPostViewModel)
         }
         composable(BottomNavItem.Wishlist.route) {

@@ -23,7 +23,6 @@ fun PostScreen(
     viewModel: PostViewModel = viewModel(),
 ) {
     val userPosts by viewModel.userPosts.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
 
     Column(
         modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp),
@@ -44,7 +43,7 @@ fun PostScreen(
             )
 
             TextButton(
-                onClick = { navController.navigate("createPost") },
+                onClick = { navController.navigate("post_edit/") },
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
                 modifier = Modifier.width(120.dp)
             ) {
@@ -60,7 +59,7 @@ fun PostScreen(
         BasicPostGrid(
             userPosts,
             navController,
-            "post_detail",  // todo: update to post_edit
+            "post_edit",
             { modifier -> EditButton(modifier) }
         )
     }
