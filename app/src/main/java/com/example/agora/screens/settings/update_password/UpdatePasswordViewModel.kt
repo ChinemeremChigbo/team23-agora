@@ -19,25 +19,20 @@ class UpdatePasswordViewModel : ViewModel() {
             val credential = EmailAuthProvider.getCredential(user.email!!, currentPassword)
 
             viewModelScope.launch {
-                user.reauthenticate(credential)
-                    .addOnSuccessListener {
-                        user.updatePassword(newPassword)
-                            .addOnSuccessListener {
-                                Log.d("UpdatePasswordViewModel", "Password updated successfully")
-                                passwordUpdated.value = true
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e(
-                                    "UpdatePasswordViewModel",
-                                    "Error updating password: ${e.message}"
-                                )
-                                errorMessage.value = e.message
-                            }
+                user.reauthenticate(credential).addOnSuccessListener {
+                    user.updatePassword(newPassword).addOnSuccessListener {
+                        Log.d("UpdatePasswordViewModel", "Password updated successfully")
+                        passwordUpdated.value = true
+                    }.addOnFailureListener { e ->
+                        Log.e(
+                            "UpdatePasswordViewModel", "Error updating password: ${e.message}"
+                        )
+                        errorMessage.value = e.message
                     }
-                    .addOnFailureListener { e ->
-                        Log.e("UpdatePasswordViewModel", "Reauthentication failed: ${e.message}")
-                        errorMessage.value = "Incorrect current password."
-                    }
+                }.addOnFailureListener { e ->
+                    Log.e("UpdatePasswordViewModel", "Reauthentication failed: ${e.message}")
+                    errorMessage.value = "Incorrect current password."
+                }
             }
         } else {
             errorMessage.value = "User not logged in."

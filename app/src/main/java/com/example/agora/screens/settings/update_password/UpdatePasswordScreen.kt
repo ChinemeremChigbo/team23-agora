@@ -46,8 +46,7 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdatePasswordScreen(
-    navController: NavController,
-    viewModel: UpdatePasswordViewModel = viewModel()
+    navController: NavController, viewModel: UpdatePasswordViewModel = viewModel()
 ) {
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
@@ -63,10 +62,7 @@ fun UpdatePasswordScreen(
 
     Scaffold(topBar = {}) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
+            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
             Row(
@@ -117,9 +113,7 @@ fun UpdatePasswordScreen(
                         viewModel.errorMessage.value = "Passwords do not match!"
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
+                modifier = Modifier.fillMaxWidth().height(60.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
@@ -142,8 +136,7 @@ fun PasswordField(label: String, value: String, onValueChange: (String) -> Unit)
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
