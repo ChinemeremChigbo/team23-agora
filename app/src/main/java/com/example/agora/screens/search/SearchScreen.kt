@@ -49,7 +49,7 @@ import com.example.agora.ui.components.BasicPostGrid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavController) {
+fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: NavController, screenNavController: NavController) {
     val searchText by viewModel.searchText.collectAsState()
     val posts by viewModel.posts.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
@@ -93,7 +93,12 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
                                         if (isExpanded) {
                                             viewModel.onExpandedChange((false))
                                         } else {
-                                            navController.navigate(BottomNavItem.Explore.route)
+                                            // clear navigation path so that swiping back do not return to search result
+                                            screenNavController.popBackStack(screenNavController.graph.startDestinationId, inclusive = true)
+                                            parentNavController.navigate(BottomNavItem.Explore.route) {
+                                                popUpTo(parentNavController.graph.startDestinationId) { inclusive = false }
+                                            }
+
                                         }
                                     }
                                     )
@@ -216,7 +221,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), navController: NavCon
 
             Spacer(Modifier.size(16.dp))
 
-            BasicPostGrid(posts, navController)
+            BasicPostGrid(posts, screenNavController)
         }
     }
 }
