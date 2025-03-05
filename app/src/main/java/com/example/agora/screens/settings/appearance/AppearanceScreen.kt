@@ -51,16 +51,12 @@ fun AppearanceScreen(
 
     Scaffold(topBar = {}) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
                 .padding(16.dp),
         ) {
             val text by viewModel.text.observeAsState("Settings")
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -87,22 +83,19 @@ fun AppearanceScreen(
             ThemeSelectionButton(
                 label = "System Default",
                 selected = themeMode == ThemeMode.SYSTEM,
-                onClick = { viewModel.setThemeMode(ThemeMode.SYSTEM) }
-            )
+                onClick = { viewModel.setThemeMode(ThemeMode.SYSTEM) })
             Spacer(modifier = Modifier.height(12.dp))
 
             ThemeSelectionButton(
                 label = "Light Mode",
                 selected = themeMode == ThemeMode.LIGHT,
-                onClick = { viewModel.setThemeMode(ThemeMode.LIGHT) }
-            )
+                onClick = { viewModel.setThemeMode(ThemeMode.LIGHT) })
             Spacer(modifier = Modifier.height(12.dp))
 
             ThemeSelectionButton(
                 label = "Dark Mode",
                 selected = themeMode == ThemeMode.DARK,
-                onClick = { viewModel.setThemeMode(ThemeMode.DARK) }
-            )
+                onClick = { viewModel.setThemeMode(ThemeMode.DARK) })
         }
     }
 }
@@ -111,9 +104,7 @@ fun AppearanceScreen(
 fun ThemeSelectionButton(label: String, selected: Boolean, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp),
+        modifier = Modifier.fillMaxWidth().height(60.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent,
@@ -129,8 +120,7 @@ fun ThemeSelectionButton(label: String, selected: Boolean, onClick: () -> Unit) 
             Text(label, fontSize = 16.sp, fontWeight = FontWeight.Bold) // ✅ Bold Text
 
             RadioButton(
-                selected = selected,
-                onClick = null
+                selected = selected, onClick = null
             )
         }
     }

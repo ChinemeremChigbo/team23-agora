@@ -50,9 +50,7 @@ import com.google.firebase.auth.FirebaseAuth
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    auth: FirebaseAuth,
-    navController: NavController,
-    viewModel: ProfileViewModel = viewModel()
+    auth: FirebaseAuth, navController: NavController, viewModel: ProfileViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -74,12 +72,8 @@ fun ProfileScreen(
 
     Scaffold { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(scrollState)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(scrollState)
+                .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -109,10 +103,7 @@ fun ProfileScreen(
 
             ProfileTextField("Full Name", fullName, viewModel::updateFullName)
             ProfileTextField(
-                "Phone Number",
-                phoneNumber,
-                viewModel::updatePhoneNumber,
-                KeyboardType.Phone
+                "Phone Number", phoneNumber, viewModel::updatePhoneNumber, KeyboardType.Phone
             )
 
             var expandedCountry by remember { mutableStateOf(false) }
@@ -122,8 +113,7 @@ fun ProfileScreen(
                 items = countries,
                 expanded = expandedCountry,
                 onExpandedChange = { expandedCountry = it },
-                onItemClick = { viewModel.updateCountry(it) }
-            )
+                onItemClick = { viewModel.updateCountry(it) })
 
             var expandedState by remember { mutableStateOf(false) }
             DropdownField(
@@ -132,26 +122,19 @@ fun ProfileScreen(
                 items = if (country == countries[0]) provinces else states,
                 expanded = expandedState,
                 onExpandedChange = { expandedState = it },
-                onItemClick = { viewModel.updateState(it) }
-            )
+                onItemClick = { viewModel.updateState(it) })
 
             ProfileTextField("City", city, viewModel::updateCity)
             ProfileTextField("Street Address", street, viewModel::updateStreet)
             ProfileTextField(
-                "Postal/ZIP Code",
-                postalCode,
-                viewModel::updatePostalCode,
-                KeyboardType.Number
+                "Postal/ZIP Code", postalCode, viewModel::updatePostalCode, KeyboardType.Number
             )
 
             OutlinedTextField(
                 value = bio,
                 onValueChange = { viewModel.updateBio(it) },
                 label = { Text("Bio") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = bottomPadding)
-                    .height(120.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding).height(120.dp),
                 shape = RoundedCornerShape(16.dp),
                 maxLines = 5,
                 singleLine = false,
@@ -166,22 +149,16 @@ fun ProfileScreen(
                 Button(
                     onClick = {
                         isLoading = true
-                        viewModel.saveProfile(
-                            onSuccess = {
-                                isLoading = false
-                                Toast.makeText(context, "Profile updated!", Toast.LENGTH_SHORT)
-                                    .show()
-                            },
-                            onError = { error ->
-                                isLoading = false
-                                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                            }
-                        )
+                        viewModel.saveProfile(onSuccess = {
+                            isLoading = false
+                            Toast.makeText(context, "Profile updated!", Toast.LENGTH_SHORT).show()
+                        }, onError = { error ->
+                            isLoading = false
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                        })
                     },
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp),
+                    modifier = Modifier.fillMaxWidth().height(60.dp),
                 ) {
                     Text("Save Changes", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
@@ -201,9 +178,7 @@ fun ProfileTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
         shape = RoundedCornerShape(16.dp),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
     )
@@ -220,34 +195,24 @@ fun DropdownField(
     onItemClick: (String) -> Unit
 ) {
     ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { onExpandedChange(!expanded) }
-    ) {
+        expanded = expanded, onExpandedChange = { onExpandedChange(!expanded) }) {
         OutlinedTextField(
             value = value,
             onValueChange = {},
             label = { Text(label) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             shape = RoundedCornerShape(16.dp),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            }
-        )
+            })
         ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) }
-        ) {
+            expanded = expanded, onDismissRequest = { onExpandedChange(false) }) {
             items.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(item) },
-                    onClick = {
-                        onItemClick(item)
-                        onExpandedChange(false)
-                    }
-                )
+                DropdownMenuItem(text = { Text(item) }, onClick = {
+                    onItemClick(item)
+                    onExpandedChange(false)
+                })
             }
         }
     }

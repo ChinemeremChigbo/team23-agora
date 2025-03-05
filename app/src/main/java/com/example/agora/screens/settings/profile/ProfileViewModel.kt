@@ -39,8 +39,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private fun loadUserProfile() {
         val userId = auth.currentUser?.uid
         if (userId != null) {
-            db.collection("users").document(userId).get()
-                .addOnSuccessListener { document ->
+            db.collection("users").document(userId).get().addOnSuccessListener { document ->
                     if (document.exists()) {
                         val userData = document.toObject(User::class.java)
                         userData?.let { user ->
@@ -55,8 +54,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                             postalCode.value = user.address.getPostalCode()
                         }
                     }
-                }
-                .addOnFailureListener { e ->
+                }.addOnFailureListener { e ->
                     Log.e("ProfileViewModel", "Error loading profile: ${e.message}")
                 }
         }
@@ -96,8 +94,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun saveProfile(
-        onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onSuccess: () -> Unit, onError: (String) -> Unit
     ) {
         if (userId.isEmpty()) {
             onError("User not found")
@@ -117,14 +114,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         )
 
         viewModelScope.launch {
-            db.collection("users").document(userId)
-                .update(updatedData)
-                .addOnSuccessListener {
+            db.collection("users").document(userId).update(updatedData).addOnSuccessListener {
                     Log.d("ProfileViewModel", "Profile updated successfully!")
                     loadUserProfile()
                     onSuccess()
-                }
-                .addOnFailureListener { e ->
+                }.addOnFailureListener { e ->
                     Log.e("ProfileViewModel", "Error updating profile: ${e.message}")
                     onError(e.localizedMessage ?: "Profile update failed")
                 }

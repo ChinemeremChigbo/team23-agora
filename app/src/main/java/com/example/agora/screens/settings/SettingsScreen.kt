@@ -92,10 +92,7 @@ fun SettingsScreen(
 
     Scaffold { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
@@ -146,9 +143,7 @@ fun SettingsScreen(
                                 it.startActivity(it.intent)
                             }
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp),
+                        modifier = Modifier.fillMaxWidth().height(60.dp),
                         border = BorderStroke(1.dp, Color(0xFFED3241)),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFED3241)),
                         shape = RoundedCornerShape(12.dp)
@@ -177,14 +172,11 @@ fun SettingsScreen(
 
 fun updateProfileImageInFirestore(userId: String, imageUrl: String) {
     val db = FirebaseFirestore.getInstance()
-    db.collection("users").document(userId)
-        .update("profileImage", imageUrl)
-        .addOnSuccessListener {
-            Log.d("ProfileUpdate", "Profile image updated successfully in Firestore.")
-        }
-        .addOnFailureListener { e ->
-            Log.e("ProfileUpdate", "Error updating profile image: ${e.message}")
-        }
+    db.collection("users").document(userId).update("profileImage", imageUrl).addOnSuccessListener {
+        Log.d("ProfileUpdate", "Profile image updated successfully in Firestore.")
+    }.addOnFailureListener { e ->
+        Log.e("ProfileUpdate", "Error updating profile image: ${e.message}")
+    }
 }
 
 
@@ -199,23 +191,16 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
         uri?.let {
             isUploading = true
 
-            uploadImageToS3(
-                context,
-                it,
-                onSuccess = { uploadedImageUrl ->
-                    isUploading = false
-                    onProfileImageChange(uploadedImageUrl)
-                    updateProfileImageInFirestore(currentUser.userId, uploadedImageUrl)
-                },
-                onFailure = { errorMessage ->
-                    isUploading = false
-                    Toast.makeText(
-                        context,
-                        "Image upload failed: $errorMessage",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )
+            uploadImageToS3(context, it, onSuccess = { uploadedImageUrl ->
+                isUploading = false
+                onProfileImageChange(uploadedImageUrl)
+                updateProfileImageInFirestore(currentUser.userId, uploadedImageUrl)
+            }, onFailure = { errorMessage ->
+                isUploading = false
+                Toast.makeText(
+                    context, "Image upload failed: $errorMessage", Toast.LENGTH_SHORT
+                ).show()
+            })
         }
     }
 
@@ -231,51 +216,34 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 24.dp),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier
-                .size(90.dp)
-                .clickable {
-                    checkAndRequestPermission(context, permissionLauncher, imagePickerLauncher)
-                },
-            contentAlignment = Alignment.BottomEnd
+            modifier = Modifier.size(90.dp).clickable {
+                checkAndRequestPermission(context, permissionLauncher, imagePickerLauncher)
+            }, contentAlignment = Alignment.BottomEnd
         ) {
             Image(
                 painter = rememberAsyncImagePainter(
-                    model = currentUser.profileImage?.takeIf { it.isNotBlank() }
-                        ?: "https://thispersondoesnotexist.com/",
-                ),
+                model = currentUser.profileImage?.takeIf { it.isNotBlank() }
+                    ?: "https://thispersondoesnotexist.com/",
+            ),
                 contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(90.dp)
-                    .clip(RoundedCornerShape(24.dp))
-            )
+                modifier = Modifier.size(90.dp).clip(RoundedCornerShape(24.dp)))
 
             if (isUploading) {
                 CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.Center)
+                    modifier = Modifier.size(24.dp).align(Alignment.Center)
                 )
             } else {
                 Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .offset(x = 12.dp, y = 12.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF006FFD))
-                        .clickable {
+                    modifier = Modifier.size(36.dp).offset(x = 12.dp, y = 12.dp).clip(CircleShape)
+                        .background(Color(0xFF006FFD)).clickable {
                             checkAndRequestPermission(
-                                context,
-                                permissionLauncher,
-                                imagePickerLauncher
+                                context, permissionLauncher, imagePickerLauncher
                             )
-                        },
-                    contentAlignment = Alignment.Center
+                        }, contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
@@ -296,9 +264,7 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
         )
 
         Text(
-            text = currentUser.email ?: "N/A",
-            fontSize = 14.sp,
-            color = Color(0xFF71727A)
+            text = currentUser.email ?: "N/A", fontSize = 14.sp, color = Color(0xFF71727A)
         )
     }
 }
@@ -331,11 +297,9 @@ fun SettingsOption(title: String, icon: ImageVector, onClick: () -> Unit) {
 
     Column {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick() }
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+            modifier = Modifier.fillMaxWidth().clickable { onClick() }.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
@@ -354,6 +318,3 @@ fun SettingsOption(title: String, icon: ImageVector, onClick: () -> Unit) {
         HorizontalDivider(color = dividerColor, thickness = Dp.Hairline)
     }
 }
-
-
-
