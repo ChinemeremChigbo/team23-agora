@@ -1,6 +1,10 @@
 package com.example.agora.screens.post
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.agora.ui.components.BasicPostGrid
 
 @Composable
 fun PostScreen(
@@ -48,6 +53,57 @@ fun PostScreen(
                     fontSize = 15.sp,
                 )
             }
+        }
+
+        Spacer(Modifier.size(40.dp))
+
+        BasicPostGrid(userPosts, navController, edit = true)
+    }
+}
+
+@Composable
+fun EditButton(modifier: Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+    Box (
+        modifier = modifier
+    ) {
+        IconButton(
+            onClick = { expanded = !expanded },
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = CircleShape
+                )
+                .size(35.dp)
+                .padding(5.dp)
+                .align(Alignment.TopEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "Edit button",
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.align(Alignment.TopEnd)
+        ) {
+            DropdownMenuItem(
+                text = { Text("Delete") },
+                onClick = {
+                    expanded = false
+                    // todo: add dialogue, functionality
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Mark Resolved") },
+                onClick = {
+                    expanded = false
+                    // todo: add dialogue, functionality
+                }
+            )
         }
     }
 }
