@@ -52,7 +52,7 @@ fun WishlistScreen(viewModel: WishlistViewModel = viewModel(), parentNavControll
 
                 Spacer(Modifier.size(40.dp))
 
-                BasicPostGrid(posts, nestedNavController)
+                BasicPostGrid(posts, nestedNavController, "post_detail")
             }
         }
         // Post Detail Screen
