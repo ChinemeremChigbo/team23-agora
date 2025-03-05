@@ -4,10 +4,7 @@ package com.example.agora.screens.explore
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,7 +40,6 @@ import com.example.agora.ui.components.PostPreview
 fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavController) {
     val searchText by viewModel.searchText.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
-    val recentSearches by viewModel.recentSearches.collectAsState()
     val postList by viewModel.postList.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
 
@@ -58,7 +54,9 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavC
                 SearchBarDefaults.InputField(
                     query = searchText,
                     onQueryChange = viewModel::onSearchTextChange,
-                    onSearch = { viewModel.onSearchSubmitted(searchText) },
+                    onSearch = {
+                        navController.navigate("search/${searchText}")
+                    },
                     expanded = isExpanded,
                     onExpandedChange = { viewModel.onExpandedChange(it) },
                     placeholder = { Text("Search") },
@@ -74,34 +72,8 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), navController: NavC
             },
             expanded = isExpanded,
             onExpandedChange = { viewModel.onExpandedChange(it) }
-        ) {
-            if (recentSearches.isNotEmpty()) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        "RECENT SEARCHES",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+        ) {}
 
-                    recentSearches.forEach() { search ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(70.dp)
-                                .padding(vertical = 4.dp)
-                                .clickable { viewModel.onSearchSubmitted(search) },
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(search, modifier = Modifier.weight(1f).padding(4.dp))
-                            // TODO (jennifer): add ability to clear later
-                        }
-                    }
-                }
-            }
-        }
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier
                 .fillMaxWidth()

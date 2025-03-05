@@ -95,35 +95,35 @@ sealed class BottomNavItem(
     var icon: Int,
     var route: String
 ) {
-    object Explore :
+    data object Explore :
         BottomNavItem(
             "Explore",
             R.drawable.ic_explore,
             "/explore"
         )
 
-    object Post :
+    data object Post :
         BottomNavItem(
             "Post",
             R.drawable.ic_post,
             "/post"
         )
 
-    object Wishlist :
+    data object Wishlist :
         BottomNavItem(
             "Wishlist",
             R.drawable.ic_wishlist,
             "/wishlist"
         )
 
-    object Inbox :
+    data object Inbox :
         BottomNavItem(
             "Inbox",
             R.drawable.ic_comments,
             "/inbox"
         )
 
-    object Settings :
+    data object Settings :
         BottomNavItem(
             "Settings",
             R.drawable.ic_settings,

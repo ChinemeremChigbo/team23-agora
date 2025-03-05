@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Post
 import com.example.agora.model.data.User
 import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.repository.ProfileSettingUtils
 import com.example.agora.model.repository.WishlistUtils
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,14 +31,10 @@ class PostDetailViewModel (
     }
 
     private fun fetchPostDetails(postId: String) {
-        // TODO: will also need a separate query for the user details to display in the user section
-        PostUtils.getPostById(postId, { post -> _post.value = post})
-        _user.value = User(
-            fullName = "test user",
-            bio = "Hi! I am a student at the University of Waterloo",
-            email = "test@test.com",
-            profileImage = "https://picsum.photos/200"
-        )
+        PostUtils.getPostById(postId, { post ->
+            _post.value = post
+            ProfileSettingUtils.getUserById(post!!.userId, { user -> _user.value = user })
+        })
     }
 
     fun checkIfPostInWishlist(postId: String) {

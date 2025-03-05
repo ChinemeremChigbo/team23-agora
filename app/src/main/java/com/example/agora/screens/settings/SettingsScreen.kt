@@ -29,7 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun SettingsScreen(auth: FirebaseAuth) {
     val context = LocalContext.current
     var currentUser by remember { mutableStateOf(User()) }
-    // refetch usr object everytime it navigate to this gage
+    // Refetch user object everytime it navigate to this page
     LaunchedEffect(key1 = Unit) {
         UserManager.fetchUser(auth.uid!!){
             if (it != null) {
