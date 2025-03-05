@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SearchViewModel(initialSearchText: String = ""): ViewModel() {
-
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()
 
@@ -28,6 +27,9 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     private val _sortBy = MutableStateFlow<String>("Newest")
     val sortBy = _sortBy.asStateFlow()
 
+    private val _selectedPriceIntervals = MutableStateFlow<List<String>>(emptyList())
+    val selectedPriceIntervals = _selectedPriceIntervals.asStateFlow()
+
     fun changeCategory(category: Category?) {
         _selectedCategory.value = category
         fetchResults()
@@ -36,6 +38,14 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     fun changeSort(sortBy: String) {
         _sortBy.value = sortBy
         fetchResults()
+    }
+
+    fun togglePriceInterval(interval: String) {
+        if (_selectedPriceIntervals.value.contains(interval)) {
+            _selectedPriceIntervals.value = _selectedPriceIntervals.value - interval
+        } else {
+            _selectedPriceIntervals.value = _selectedPriceIntervals.value + interval
+        }
     }
 
     fun onSearchTextChange(text: String) {
@@ -62,13 +72,31 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     }
 
     fun fetchResults() {
-        SearchFilterUtils.getPosts(
-            category = _selectedCategory.value,
-            searchString = _searchText.value,
-            sortByPrice = if (_sortBy.value != "Newest") true else false,
-            priceLowToHi = if (_sortBy.value == "Low cost") true else false,
-        ) { posts ->
-            _posts.value = posts.map { post -> Post.convertDBEntryToPostDetail(post)}
+        _posts.value = emptyList()
+        if (_selectedPriceIntervals.value.isEmpty()) {
+            SearchFilterUtils.getPosts(
+                category = _selectedCategory.value,
+                searchString = _searchText.value,
+                sortByPrice = if (_sortBy.value != "Newest") true else false,
+                priceLowToHi = if (_sortBy.value == "Low cost") true else false,
+            ) { posts ->
+                _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post)}
+            }
+        } else {
+            for (interval in _selectedPriceIntervals.value) {
+                val minPrice = SearchFilterUtils.priceFilterOptions.get(interval)?.first
+                val maxPrice = SearchFilterUtils.priceFilterOptions.get(interval)?.second
+                SearchFilterUtils.getPosts(
+                    category = _selectedCategory.value,
+                    searchString = _searchText.value,
+                    sortByPrice = if (_sortBy.value != "Newest") true else false,
+                    priceLowToHi = if (_sortBy.value == "Low cost") true else false,
+                    minPrice = minPrice,
+                    maxPrice = maxPrice
+                ) { posts ->
+                    _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post) }
+                }
+            }
         }
     }
 }
