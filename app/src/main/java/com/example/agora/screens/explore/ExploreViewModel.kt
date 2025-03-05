@@ -23,9 +23,6 @@ class ExploreViewModel : ViewModel() {
     private val _isExpanded = MutableStateFlow(false)
     val isExpanded = _isExpanded.asStateFlow()
 
-    private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
-    val recentSearches = _recentSearches.asStateFlow()
-
     private val _postList = MutableStateFlow<List<Pair<String, List<Post>>>>(listOf())
     val postList: StateFlow<List<Pair<String, List<Post>>>> = _postList.asStateFlow()
 
@@ -38,15 +35,6 @@ class ExploreViewModel : ViewModel() {
 
     fun onExpandedChange(expanded: Boolean) {
         _isExpanded.value = expanded
-    }
-
-    fun onSearchSubmitted(query: String) {
-        if (query.isNotBlank() && !_recentSearches.value.contains(query)) {
-            _recentSearches.value =
-                listOf(query) + _recentSearches.value.take(4) // Store up to 5 recent searches
-        }
-        _searchText.value = query
-        _isExpanded.value = false
     }
 
     init {

@@ -1,47 +1,121 @@
 package com.example.agora.screens.post
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.net.Uri
+import androidx.lifecycle.AndroidViewModel
 import com.example.agora.model.data.Category
 import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.util.UserManager
+import com.example.agora.util.uploadImageToS3
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.MutableStateFlow
 
-class CreatePostViewModel: ViewModel() {
+class CreatePostViewModel(application: Application): AndroidViewModel(application) {
+    private val context = application.applicationContext
+//    val userId = UserManager.currentUser!!.userId
+    val auth = FirebaseAuth.getInstance()
+    val userId = auth.currentUser!!.uid // todo: get current user with UserManager
+    val uploadedUrls = mutableListOf<String>()
 
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> get() = _error
+    var images = MutableStateFlow<List<Uri>>(emptyList())
+    var title = MutableStateFlow("")
+    var price = MutableStateFlow("")
+    var category = MutableStateFlow("")
+    var description = MutableStateFlow("")
 
+    fun updateImages(newImages: List<Uri>) {
+        images.value = newImages
+    }
+
+    fun updateTitle(newTitle: String) {
+        title.value = newTitle
+    }
+
+    fun updatePrice(newPrice: String) {
+        price.value = newPrice
+    }
+
+    fun updateCategory(newCategory: String) {
+        category.value = newCategory
+    }
+
+    fun updateDescription(newDescription: String) {
+        description.value = newDescription
+    }
 
     /** Create new post */
     fun createPost(
-        title: String,
-        description: String,
-        price: Double,
-        category: Category,
-        images: List<String>,
-        userId: String
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
     ) {
-        val validationError = validatePost(title, description, price)
-        if (validationError != null) {
-            _error.value = validationError
-            return
-        }
-        _error.value = null
+        // Check fields are non empty
+        if (!checkRequiredFields{ errorMessage -> onError(errorMessage) }) return
 
-        PostUtils.createPost(
-            title, description, price, category, images, userId,
-            onSuccess = {}, // Refresh posts after adding
-            onFailure = { e -> _error.value = "Failed to create post: ${e.message}" }
-        )
+        // Validate price, category
+        val priceDouble = try {
+            price.value.toDouble()
+        } catch (e: NumberFormatException) {
+            onError("Price is poorly formatted"); return
+        }
+
+        val categoryEnum = try {
+            Category.entries.first { it.value == category.value }
+        } catch (e: NoSuchElementException) {
+            onError("No such category found"); return
+        }
+
+        // Update images
+        if (!uploadImages{ errorMessage -> onError(errorMessage) }) return
+
+        // Create post
+        try {
+            PostUtils.createPost(
+                title = title.value,
+                description = description.value,
+                price = priceDouble,
+                category = categoryEnum,
+                images = uploadedUrls,
+                userId = userId,
+                onSuccess = { onSuccess() },
+                onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
+            )
+        } catch (e: Exception) {
+            onError(e.localizedMessage ?: "Post failed")
+        }
     }
 
-    /** Validate user input before creating post */
-    private fun validatePost(title: String, description: String, price: Double): String? {
-        return when {
-            title.isBlank() -> "Title cannot be empty"
-            description.isBlank() -> "Description cannot be empty"
-            price < 0.0 -> "Price must be greater than zero"
-            else -> null
+    private fun checkRequiredFields(onError: (String) -> Unit): Boolean {
+        val fields = mapOf(
+            "Title" to title.value,
+            "Price" to price.value,
+            "Category" to category.value,
+            "Description" to description.value,
+        )
+
+        for ((key, value) in fields) {
+            if (value.isEmpty()) {
+                onError("$key field cannot be empty")
+                return false
+            }
         }
+        return true
+    }
+
+    private fun uploadImages(onError: (String) -> Unit): Boolean {
+        var uploadSuccessful = true
+        images.value.forEach { uri ->
+            uploadImageToS3(
+                context,
+                uri,
+                onSuccess = { uploadedImageUrl ->
+                    uploadedUrls.add(uploadedImageUrl)
+                },
+                onFailure = { errorMessage ->
+                    onError("Image upload failed: $errorMessage")
+                    uploadSuccessful = false
+                }
+            )
+        }
+        return uploadSuccessful
     }
 }

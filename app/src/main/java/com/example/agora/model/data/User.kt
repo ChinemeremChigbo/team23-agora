@@ -51,7 +51,7 @@ class User(
     }
 
     /**
-     * sample uage:
+     * sample usage:
      * val updates = mapOf(
      *     "bio" to "Updated bio",
      *     "phoneNumber" to "9876543210"
@@ -81,6 +81,7 @@ class User(
     companion object {
         fun convertDBEntryToUser(entry: Map<String, Any>): User {
             return User(
+                userId = entry["userId"].toString(),
                 status = UserStatus.entries.find { it.name == entry["status"] } ?: UserStatus.DEACTIVATED,
                 username = entry["username"].toString(),
                 fullName = entry["fullName"].toString(),

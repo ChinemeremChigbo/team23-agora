@@ -143,7 +143,8 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 Icon(
                                     imageVector = if (inWishlist) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
                                     contentDescription = "Add to wishlist",
-                                    modifier = Modifier.size(32.dp)
+                                    tint = if (inWishlist) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.size(32.dp),
                                 )
                             }
                         }
@@ -173,7 +174,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                         ) {
                             Row {
                                 AsyncImage(
-                                    model = post.images[0],
+                                    model = user?.profileImage,
                                     contentDescription = "User Avatar",
                                     modifier = Modifier
                                         .size(27.dp)
@@ -183,7 +184,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 Spacer(Modifier.size(10.dp))
 
                                 Text(
-                                    text = "test user",
+                                    text = user?.fullName ?: "Unknown",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.ExtraBold
                                 )
