@@ -24,13 +24,9 @@ class PostUtils {
                 .addOnSuccessListener { document ->
                     val addressMap = document.get("address") as? Map<*, *>
                     if (addressMap != null) {
-                        val address = Address.create(
-                            street = addressMap["address"] as? String ?: "",
-                            city = addressMap["city"] as? String ?: "",
-                            state = addressMap["state"] as? String ?: "",
-                            postalCode = addressMap["postalCode"] as? String ?: "",
-                            country = addressMap["country"] as? String ?: ""
-                        ) as? Address
+                        val address = (addressMap  as? Map<String, Any>)?.let {
+                            Address.convertDBEntryToAddress(it)
+                        }
                         if (address != null) {
                             onSuccess(address)
                         } else {
