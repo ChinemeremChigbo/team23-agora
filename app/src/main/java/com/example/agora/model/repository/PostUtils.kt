@@ -93,7 +93,7 @@ class PostUtils {
 
 
         /** Get a specific post by ID */
-        fun getPost(postId: String, callback: (Post?) -> Unit) {
+        fun getPostById(postId: String, callback: (Post?) -> Unit) {
             val db = FirebaseFirestore.getInstance()
 
             db.collection("posts").document(postId)
