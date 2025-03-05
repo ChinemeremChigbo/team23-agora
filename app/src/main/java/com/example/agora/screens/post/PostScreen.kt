@@ -17,7 +17,7 @@ import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun PostScreen(
-    navController: NavController,
+    parentNavController: NavController,
     viewModel: PostViewModel = viewModel(),
 ) {
     val userPosts by viewModel.userPosts.collectAsState()
@@ -48,7 +48,7 @@ fun PostScreen(
                     )
 
                     TextButton(
-                        onClick = { navController.navigate("createPost") },
+                        onClick = { nestedNavController.navigate("createPost") },
                         contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
                         modifier = Modifier.width(120.dp)
                     ) {
