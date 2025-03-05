@@ -1,12 +1,18 @@
 package com.example.agora
+
+import AppearanceViewModel
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.agora.model.util.FirebaseTestUtil
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.agora.model.util.UserManager
 import com.example.agora.screens.MainScreen
+import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
 import com.example.agora.ui.theme.AgoraTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -29,7 +35,11 @@ class MainActivity : ComponentActivity() {
         auth = Firebase.auth
 
         setContent {
-            AgoraTheme {
+            val appearanceViewModel: AppearanceViewModel =
+                viewModel(factory = AppearanceViewModelFactory(this))
+            val themeMode by appearanceViewModel.themeMode.collectAsState()
+
+            AgoraTheme(themeMode = themeMode) {
                 MainScreen(auth)
             }
         }
