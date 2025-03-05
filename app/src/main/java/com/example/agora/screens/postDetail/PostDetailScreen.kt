@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Favorite
@@ -63,6 +65,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
     val _user by viewModel.user.collectAsState()
     val user = _user
     val inWishlist by viewModel.inWishlist.collectAsState()
+    val scrollState = rememberScrollState() // Enables scrolling
 
     val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -96,7 +99,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
             },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
         )
-        Column(verticalArrangement = Arrangement.Center) {
+        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.verticalScroll(scrollState)) {
             if (post != null) {
                 AsyncImage(
                     model = post.images[0],
