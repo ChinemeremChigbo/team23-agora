@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.agora.ui.components.BasicPostGrid
 
 @Composable
 fun PostScreen(
@@ -58,12 +59,68 @@ fun PostScreen(
                         )
                     }
                 }
+                Spacer(Modifier.size(40.dp))
+
+                BasicPostGrid(
+                    userPosts,
+                    nestedNavController,
+                    "post_detail",  // todo: update to post_edit
+                    { modifier -> EditButton(modifier) }
+                )
 
             }
         }
         composable("createPost") {
             val createPostViewModel: CreatePostViewModel = viewModel()
             CreatePostScreen(nestedNavController, createPostViewModel)
+        }
+    }
+}
+
+
+@Composable
+fun EditButton(modifier: Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+    Box (
+        modifier = modifier
+    ) {
+        IconButton(
+            onClick = { expanded = !expanded },
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = CircleShape
+                )
+                .size(35.dp)
+                .padding(5.dp)
+                .align(Alignment.TopEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "Edit button",
+                modifier = Modifier.size(32.dp),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.align(Alignment.TopEnd)
+        ) {
+            DropdownMenuItem(
+                text = { Text("Delete") },
+                onClick = {
+                    expanded = false
+                    // todo: add dialogue, functionality
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Mark Resolved") },
+                onClick = {
+                    expanded = false
+                    // todo: add dialogue, functionality
+                }
+            )
         }
     }
 }
