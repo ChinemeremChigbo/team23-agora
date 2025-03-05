@@ -143,5 +143,5 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
             SearchScreen(searchViewModel, parentNavController, nestedNavController)
         }
     }
-    }
+}
 

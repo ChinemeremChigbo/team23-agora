@@ -18,6 +18,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.agora.screens.postDetail.PostDetailScreen
+import com.example.agora.screens.postDetail.PostDetailViewModel
+import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 import com.example.agora.ui.components.BasicPostGrid
 
 @Composable
@@ -77,6 +80,14 @@ fun PostScreen(
         composable("createPost") {
             val createPostViewModel: CreatePostViewModel = viewModel()
             CreatePostScreen(nestedNavController, createPostViewModel)
+        }
+        // Post Detail Screen
+        composable(
+            route = "post_detail/{postId}",
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
+            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
+            PostDetailScreen(postDetailViewModel, nestedNavController)
         }
     }
 }
