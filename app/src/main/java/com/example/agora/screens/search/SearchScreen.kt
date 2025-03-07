@@ -221,7 +221,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
 
             Spacer(Modifier.size(16.dp))
 
-            BasicPostGrid(posts, screenNavController, "post_detail")
+            BasicPostGrid(posts, screenNavController)
         }
     }
 }
