@@ -1,6 +1,5 @@
 package com.example.agora.screens.post
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -37,7 +36,6 @@ fun PostScreen(
     val userPosts by viewModel.userPosts.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
     val nestedNavController = rememberNavController()
-    var isEditMode by remember { mutableStateOf(false) }
 
     NavHost(
         navController = nestedNavController,
@@ -56,13 +54,12 @@ fun PostScreen(
             Column(
                 modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
             ) {
-                Spacer(modifier = Modifier.height(20.dp))
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(30.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Box(modifier = Modifier.width(60.dp))
+                    Box(modifier = Modifier.width(100.dp))
 
                     Text(
                         text = "My Posts",
@@ -71,15 +68,25 @@ fun PostScreen(
                         textAlign = TextAlign.Center,
                     )
 
-                    CollapsiblePostOptions(nestedNavController, {isEditMode = !isEditMode} )
+                    TextButton(
+                        onClick = { nestedNavController.navigate("createPost") },
+                        modifier = Modifier.width(100.dp),
+                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
+                    ) {
+                        Text(
+                            text = "Create Post",
+                            fontSize = 15.sp,
+                        )
+                    }
                 }
+
                 Spacer(Modifier.size(40.dp))
 
                 BasicPostGrid(
                     userPosts,
                     nestedNavController,
                     "post_detail",  // todo: update to post_edit
-                    if (isEditMode) { { modifier -> EditButton(modifier) } } else null
+                    { modifier -> EditButton(modifier) }
                 )
 
             }

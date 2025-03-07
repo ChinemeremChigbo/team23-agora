@@ -92,16 +92,16 @@ fun SettingsScreen(
 
     Scaffold { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
+            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(21.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Spacer(modifier = Modifier.height(12.dp))
+//                Spacer(modifier = Modifier.height(21.dp))
                 Box(
-                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxWidth().height(30.dp), contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = text, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold
+                        text = text, fontSize = 19.sp, fontWeight = FontWeight.Bold
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
