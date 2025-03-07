@@ -85,10 +85,8 @@ fun PostScreen(
                 BasicPostGrid(
                     userPosts,
                     nestedNavController,
-                    "post_detail",  // todo: update to post_edit
                     { modifier -> EditButton(modifier) }
                 )
-
             }
         }
         composable("createPost") {
@@ -121,7 +119,7 @@ fun EditButton(modifier: Modifier) {
                     shape = CircleShape
                 )
                 .size(35.dp)
-                .padding(5.dp)
+                .padding(3.dp)
                 .align(Alignment.TopEnd)
         ) {
             Icon(
@@ -137,7 +135,7 @@ fun EditButton(modifier: Modifier) {
             modifier = Modifier.align(Alignment.TopEnd)
         ) {
             DropdownMenuItem(
-                text = { Text("Delete") },
+                text = { Text("Edit") },
                 onClick = {
                     expanded = false
                     // todo: add dialogue, functionality
@@ -150,50 +148,13 @@ fun EditButton(modifier: Modifier) {
                     // todo: add dialogue, functionality
                 }
             )
-        }
-    }
-}
-
-@Composable
-fun CollapsiblePostOptions(nestedNavController: NavController, onToggleEditMode: () -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Column {
-        // Arrow Button to Expand/Collapse
-        IconButton(onClick = { expanded = !expanded }, modifier = Modifier.width(60.dp)) {
-            Icon(
-                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                contentDescription = "Toggle Options"
-            )
-        }
-
-        // AnimatedVisibility for smooth expand/collapse effect
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
             DropdownMenuItem(
-                text = { Text("Create Post") },
+                text = { Text("Delete") },
                 onClick = {
-                    nestedNavController.navigate("createPost")
-                    expanded = false // Collapse menu
-                },
-                leadingIcon = {
-                    Icon(Icons.Default.Add, contentDescription = "Create Post")
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Edit Post") },
-                onClick = {
-                    onToggleEditMode()
-                    expanded = false // Collapse menu
-                },
-                leadingIcon = {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit Posts")
+                    expanded = false
+                    // todo: add dialogue, functionality
                 }
             )
         }
-
     }
 }
-
