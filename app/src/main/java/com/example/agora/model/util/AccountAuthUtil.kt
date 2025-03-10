@@ -12,11 +12,10 @@ class AccountAuthUtil {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val user = result.user
             if (user != null && !user.isEmailVerified) {
-                sendVerificationEmail()
+                sendVerificationEmail(email)
                 auth.signOut()
                 throw Exception("Please verify your email before logging in, check your email inbox!")
             }
-            // TODO: create currentUser auth listener which should grab the login info (i.e. uuid)
         }
 
         suspend fun accountSignUp(auth: FirebaseAuth, email: String, password: String): String {
@@ -24,7 +23,7 @@ class AccountAuthUtil {
             // send verification email
             println("FirebaseAuth sending verification email for ${result.user?.email}...")
 
-            sendVerificationEmail()
+            sendVerificationEmail(email)
             return result.user!!.uid
         }
 
@@ -50,13 +49,12 @@ class AccountAuthUtil {
             }
         }
 
-        private fun sendVerificationEmail(){
-            EmailTemplate.verificationCode = EmailTemplate.generateVerificationCode()
+        private fun sendVerificationEmail(email: String){
             val emailRequest = EmailRequest(
                 sender = Sender("Agora", "agoraapp.help@gmail.com"),
-                to = listOf(Recipient("j35zhan@uwaterloo.ca", "User")),
+                to = listOf(Recipient(email, "User")),
                 subject = "Verify your email for Agora",
-                htmlContent = EmailTemplate.htmlContent
+                htmlContent = EmailTemplate.generateHtmlContent()
             )
 
             BrevoClient.service.sendEmail(emailRequest).enqueue(object : retrofit2.Callback<EmailResponse> {

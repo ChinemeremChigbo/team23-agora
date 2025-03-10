@@ -26,12 +26,14 @@ data class Recipient(val email: String, val name: String)
 data class EmailResponse(val messageId: String)
 
 object EmailTemplate {
-    fun generateVerificationCode(): String {
+    private fun generateVerificationCode(): String {
         val randomCode = (100000..999999).random().toString() // 6-digit code
         return randomCode
     }
-    var verificationCode = ""
-    val htmlContent = """
+    var verificationCode = "123456"
+    fun generateHtmlContent(): String {
+        verificationCode = generateVerificationCode()
+        val htmlContent = """
     <!DOCTYPE html>
     <html>
     <head>
@@ -82,4 +84,6 @@ object EmailTemplate {
     </body>
     </html>
 """.trimIndent()
+        return htmlContent
+    }
 }
