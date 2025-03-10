@@ -12,7 +12,7 @@ class AccountAuthUtil {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val user = result.user
             if (user != null && !user.isEmailVerified) {
-                sendVerificationEmail(auth)
+                sendVerificationEmail()
                 auth.signOut()
                 throw Exception("Please verify your email before logging in, check your email inbox!")
             }
@@ -24,7 +24,7 @@ class AccountAuthUtil {
             // send verification email
             println("FirebaseAuth sending verification email for ${result.user?.email}...")
 
-            result.user!!.sendEmailVerification().await()
+            sendVerificationEmail()
             return result.user!!.uid
         }
 
@@ -50,13 +50,28 @@ class AccountAuthUtil {
             }
         }
 
-        private suspend fun sendVerificationEmail(auth: FirebaseAuth){
-            val user = auth.currentUser
-            println("FirebaseAuth sendVerificationEmail")
-            if (user != null) {
-                println("FirebaseAuth resending verification email for ${user.email}")
-            }
-            user?.sendEmailVerification()?.await()
+        private fun sendVerificationEmail(){
+            EmailTemplate.verificationCode = EmailTemplate.generateVerificationCode()
+            val emailRequest = EmailRequest(
+                sender = Sender("Agora", "agoraapp.help@gmail.com"),
+                to = listOf(Recipient("j35zhan@uwaterloo.ca", "User")),
+                subject = "Verify your email for Agora",
+                htmlContent = EmailTemplate.htmlContent
+            )
+
+            BrevoClient.service.sendEmail(emailRequest).enqueue(object : retrofit2.Callback<EmailResponse> {
+                override fun onResponse(call: retrofit2.Call<EmailResponse>, response: retrofit2.Response<EmailResponse>) {
+                    if (response.isSuccessful) {
+                        println("Brevo Email sent successfully: ${response.body()?.messageId}")
+                    } else {
+                        println("Brevo Failed to send email: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<EmailResponse>, t: Throwable) {
+                    println("Brevo Error: ${t.message}")
+                }
+            })
         }
 
         suspend fun deleteAccount(auth: FirebaseAuth) {
