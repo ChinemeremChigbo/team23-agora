@@ -1,7 +1,6 @@
 package com.example.agora.model.util
 
 import com.example.agora.BuildConfig
-import com.example.agora.util.loadBrevoCredentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
