@@ -96,7 +96,6 @@ fun PostEditScreen(
             }
         )
 
-        // todo cindy: add static carousel
         Text(
             text = "Add Photos",
             fontWeight = FontWeight.Black,
