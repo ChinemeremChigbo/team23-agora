@@ -1,18 +1,22 @@
-package com.example.agora.screens.post
+package com.example.agora.screens.postEdit
 
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Category
 import com.example.agora.model.repository.PostUtils
-import com.example.agora.model.util.UserManager
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.*
 
-class CreatePostViewModel(application: Application) : AndroidViewModel(application) {
+class PostEditViewModel(
+    application: Application,
+    postId: String
+): AndroidViewModel(application) {
     private val context get() = getApplication<Application>().applicationContext
 
     //    val userId = UserManager.currentUser!!.userId
@@ -24,6 +28,12 @@ class CreatePostViewModel(application: Application) : AndroidViewModel(applicati
     var price = MutableStateFlow("")
     var category = MutableStateFlow("")
     var description = MutableStateFlow("")
+
+    // Prepopulate if editing
+    val editing = postId.isNotEmpty()
+    init {
+        if (editing) fetchPostDetails(postId)
+    }
 
     fun updateImages(newImages: List<Uri>) {
         images.value = newImages
@@ -45,8 +55,19 @@ class CreatePostViewModel(application: Application) : AndroidViewModel(applicati
         description.value = newDescription
     }
 
-    /** Create new post */
-    fun createPost(
+    private fun fetchPostDetails(postId: String) {
+        PostUtils.getPostById(postId, { post ->
+            if (post != null) {
+//            updateImages(post.images)   // todo: cindy
+                updateTitle(post.title)
+                updatePrice(post.price.toString())
+                updateCategory(post.category.value)
+                updateDescription(post.description)
+            }
+        })
+    }
+
+    fun upsertPost(
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     ) {
@@ -70,17 +91,21 @@ class CreatePostViewModel(application: Application) : AndroidViewModel(applicati
             try {
                 // Upload images and wait for completion
                 val uploadedUrls = uploadImages()
-                // Create post
-                PostUtils.createPost(
-                    title = title.value,
-                    description = description.value,
-                    price = priceDouble,
-                    category = categoryEnum,
-                    images = uploadedUrls,
-                    userId = userId,
-                    onSuccess = { onSuccess() },
-                    onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
-                )
+
+                if (editing) {  // Edit post
+                    // todo: add backend request
+                } else {        // Create post
+                    PostUtils.createPost(
+                        title = title.value,
+                        description = description.value,
+                        price = priceDouble,
+                        category = categoryEnum,
+                        images = uploadedUrls,
+                        userId = userId,
+                        onSuccess = { onSuccess() },
+                        onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
+                    )
+                }
             } catch (e: Exception) {
                 onError(e.localizedMessage ?: "Post failed")
             }
@@ -119,5 +144,13 @@ class CreatePostViewModel(application: Application) : AndroidViewModel(applicati
         }
         uploadJobs.awaitAll() // wait for all uploads to complete
     }
+}
 
+class PostEditViewModelFactory(
+    private val application: Application,
+    private val postId: String
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return PostEditViewModel(application, postId) as T
+    }
 }

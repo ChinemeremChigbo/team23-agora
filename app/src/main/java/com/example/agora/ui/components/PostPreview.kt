@@ -19,7 +19,7 @@ import coil.compose.AsyncImage
 import com.example.agora.model.data.Post
 
 @Composable
-fun PostPreview(post: Post, onClick: () -> Unit, additionalContent: @Composable ((Modifier) -> Unit)? = null) {
+fun PostPreview(post: Post, onClick: () -> Unit, additionalContent: @Composable ((Modifier, Post) -> Unit)? = null) {
     Box {
         Column (
             Modifier
@@ -47,7 +47,10 @@ fun PostPreview(post: Post, onClick: () -> Unit, additionalContent: @Composable 
         }
 
         if (additionalContent != null) {
-            additionalContent(Modifier.align(Alignment.TopEnd).offset(x = (-5).dp, y = 5.dp))
+            additionalContent(
+                Modifier.align(Alignment.TopEnd).offset(x = (-5).dp, y = 5.dp),
+                post
+            )
         }
     }
 }
