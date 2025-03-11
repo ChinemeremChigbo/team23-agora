@@ -229,7 +229,11 @@ fun PostEditScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (isLoading) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center)
+            )
         } else {
             Button(
                 onClick = {
