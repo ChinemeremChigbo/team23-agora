@@ -1,4 +1,4 @@
-package com.example.agora.screens.post
+package com.example.agora.screens.postEdit
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -30,11 +30,12 @@ import com.example.agora.model.data.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePostScreen(
+fun PostEditScreen(
     navController: NavController,
-    viewModel: CreatePostViewModel = viewModel(),
+    viewModel: PostEditViewModel = viewModel(),
 ) {
     val context = LocalContext.current
+    val editing = viewModel.editing
     var isLoading by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
@@ -69,7 +70,7 @@ fun CreatePostScreen(
             }
 
             Text(
-                text = "Create Post",
+                text = "${ if(editing) "Edit" else "Create" } Post",
                 fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -234,7 +235,7 @@ fun CreatePostScreen(
             Button(
                 onClick = {
                     isLoading = true
-                    viewModel.createPost(
+                    viewModel.upsertPost(
                         onSuccess = {
                             isLoading = false
                             Toast.makeText(context, "Post created successfully!", Toast.LENGTH_SHORT).show()
@@ -252,8 +253,7 @@ fun CreatePostScreen(
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text("Post", fontSize = 16.sp)
-            }
+                Text(if (editing) "Update" else "Post", fontSize = 16.sp)            }
         }
     }
 }

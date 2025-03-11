@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 import com.example.agora.model.data.Post
 
 @Composable
-fun BasicPostGrid(posts: List<Post>, navController: NavController, additionalContent: @Composable ((Modifier) -> Unit)? = null) {
+fun BasicPostGrid(posts: List<Post>, navController: NavController, additionalContent: @Composable ((Modifier, Post) -> Unit)? = null) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // 2 columns
         modifier = Modifier.fillMaxSize(),
