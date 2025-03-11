@@ -19,16 +19,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.explore.ExploreScreen
 import com.example.agora.screens.explore.ExploreViewModel
 import com.example.agora.screens.inbox.InboxScreen
-import com.example.agora.screens.post.CreatePostScreen
 import com.example.agora.screens.post.PostScreen
-import com.example.agora.screens.post.CreatePostViewModel
 import com.example.agora.screens.post.PostViewModel
-import com.example.agora.screens.postDetail.PostDetailScreen
-import com.example.agora.screens.postDetail.PostDetailViewModel
-import com.example.agora.screens.postDetail.PostDetailViewModelFactory
-import com.example.agora.screens.search.SearchScreen
-import com.example.agora.screens.search.SearchViewModel
-import com.example.agora.screens.search.SearchViewModelFactory
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.settings.appearance.AppearanceScreen
 import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
