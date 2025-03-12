@@ -1,6 +1,7 @@
 package com.example.agora.screens.post
 
 import android.app.Application
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -100,7 +101,7 @@ fun PostScreen(
                 BasicPostGrid(
                     userPosts,
                     nestedNavController,
-                    { modifier, post -> PostMenu(modifier, post, nestedNavController) }
+                    { modifier, post -> PostMenu(modifier, post, nestedNavController, viewModel) }
                 )
             }
         }
@@ -125,7 +126,13 @@ fun PostScreen(
 }
 
 @Composable
-fun PostMenu(modifier: Modifier, post: Post, navController: NavController) {
+fun PostMenu(
+    modifier: Modifier,
+    post: Post,
+    navController: NavController,
+    postViewModel: PostViewModel
+) {
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     Box (
         modifier = modifier
@@ -164,14 +171,44 @@ fun PostMenu(modifier: Modifier, post: Post, navController: NavController) {
                 text = { Text("Mark Resolved") },
                 onClick = {
                     expanded = false
+                    postViewModel.resolvePost(
+                        postId = post.postId,
+                        onSuccess = {
+                            Toast.makeText(
+                                context,
+                                "Post resolved successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navController.popBackStack()
+                        },
+                        onError = { errorMessage ->
+                            Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    )
                     // todo: add dialogue, functionality
                 }
             )
             DropdownMenuItem(
                 text = { Text("Delete") },
                 onClick = {
+                    // todo: add confirm dialogue
                     expanded = false
-                    // todo: add dialogue, functionality
+                    postViewModel.deletePost(
+                        postId = post.postId,
+                        onSuccess = {
+                            Toast.makeText(
+                                context,
+                                "Post deleted successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            navController.popBackStack()
+                        },
+                        onError = { errorMessage ->
+                            Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    )
                 }
             )
         }
