@@ -19,9 +19,6 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     private val _isExpanded = MutableStateFlow(false)
     val isExpanded = _isExpanded.asStateFlow()
 
-    private val _recentSearches = MutableStateFlow<List<String>>(listOf(initialSearchText))
-    val recentSearches = _recentSearches.asStateFlow()
-
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     val selectedCategory = _selectedCategory.asStateFlow()
 
@@ -62,11 +59,6 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
     }
 
     fun onSearchSubmitted(query: String) {
-        val trimmedQuery = query.trim().lowercase()
-        if (query.isNotBlank() && !_recentSearches.value.contains(trimmedQuery)) {
-            _recentSearches.value =
-                listOf(trimmedQuery) + _recentSearches.value.take(4) // Store up to 5 recent searches
-        }
         _searchText.value = query
         _isExpanded.value = false
         fetchResults()

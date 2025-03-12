@@ -54,7 +54,6 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
     val searchText by viewModel.searchText.collectAsState()
     val posts by viewModel.posts.collectAsState()
     val isExpanded by viewModel.isExpanded.collectAsState()
-    val recentSearches by viewModel.recentSearches.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val sortBy by viewModel.sortBy.collectAsState()
 
@@ -109,34 +108,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
                 },
                 expanded = isExpanded,
                 onExpandedChange = { viewModel.onExpandedChange(it) }
-            ) {
-                if (recentSearches.isNotEmpty()) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            "RECENT SEARCHES",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        recentSearches.forEach() { search ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(70.dp)
-                                    .padding(vertical = 4.dp)
-                                    .clickable { viewModel.onSearchSubmitted(search) },
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(search, modifier = Modifier.weight(1f).padding(4.dp))
-                                // TODO (jennifer): add ability to clear later
-                            }
-                        }
-                    }
-                }
-            }
+            ) {}
 
             ScrollableTabRow(
                 selectedTabIndex = tabIndex,
