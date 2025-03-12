@@ -137,6 +137,7 @@ class PostUtils {
             onSuccess: () -> Unit,
             onFailure: (Exception) -> Unit
         ) {
+//            todo: add s3 deleting functionality
             val db = FirebaseFirestore.getInstance()
             db.collection("posts").document(postId)
                 .delete()
