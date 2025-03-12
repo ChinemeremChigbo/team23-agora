@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -34,12 +36,11 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.agora.model.data.Category
@@ -53,6 +54,7 @@ import com.example.agora.ui.components.EmptyState
 fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: NavController, screenNavController: NavController) {
     val searchText by viewModel.searchText.collectAsState()
     val posts by viewModel.posts.collectAsState()
+    val isLoading by viewModel.isLoading.observeAsState(true)
     val isExpanded by viewModel.isExpanded.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val sortBy by viewModel.sortBy.collectAsState()
@@ -194,7 +196,14 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
 
             Spacer(Modifier.size(16.dp))
 
-            if (posts.isEmpty()) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                        .padding(16.dp)
+                )
+            } else if (posts.isEmpty()) {
                 EmptyState("No results found")
             } else {
                 BasicPostGrid(posts, screenNavController)

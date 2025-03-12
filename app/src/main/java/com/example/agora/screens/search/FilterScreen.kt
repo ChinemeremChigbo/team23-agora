@@ -87,7 +87,7 @@ fun FilterScreen(viewModel: SearchViewModel = viewModel(), onCancel: () -> Unit)
 
         Button(
             onClick = {
-                viewModel.fetchResults()
+                viewModel.getSuspendedResults()
                 onCancel()
             },
             shape = RoundedCornerShape(16.dp),
