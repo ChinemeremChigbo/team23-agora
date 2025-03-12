@@ -46,6 +46,7 @@ import com.example.agora.model.data.Category
 import com.example.agora.model.repository.SortOptions
 import com.example.agora.screens.BottomNavItem
 import com.example.agora.ui.components.BasicPostGrid
+import com.example.agora.ui.components.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -221,7 +222,11 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
 
             Spacer(Modifier.size(16.dp))
 
-            BasicPostGrid(posts, screenNavController)
+            if (posts.isEmpty()) {
+                EmptyState("No results found")
+            } else {
+                BasicPostGrid(posts, screenNavController)
+            }
         }
     }
 }
