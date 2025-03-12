@@ -21,7 +21,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.agora.screens.authentication.sign_up.RegisterViewModel
+import com.example.agora.ui.components.EmailVerificationDialog
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +31,8 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
     val context = LocalContext.current
     val scrollState = rememberScrollState() // Enables scrolling
     var isLoading by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var showVerificationDialog by remember { mutableStateOf(false) }
 
     var fullName = viewModel.fullName.collectAsState()
     var email = viewModel.email.collectAsState()
@@ -51,6 +54,12 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if(showVerificationDialog){
+            EmailVerificationDialog({
+                showVerificationDialog = false
+                showSuccessDialog = true
+            })
+        }
 
         // Title
         Row(
@@ -281,7 +290,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                         auth,
                         onSuccess = {
                             isLoading = false
-                            showDialog = true
+                            showVerificationDialog = true
                         },
                         onError = { errorMessage ->
                             isLoading = false
@@ -301,8 +310,8 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                     textAlign = TextAlign.Center
                 )
             }
-            RegistrationSuccessDialog(showDialog) {
-                showDialog = false // Close dialog when dismissed
+            RegistrationSuccessDialog(showSuccessDialog) {
+                showSuccessDialog = false // Close dialog when dismissed
                 navController.popBackStack()
             }
         }
@@ -311,17 +320,24 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
 
 @Composable
 fun RegistrationSuccessDialog(showDialog: Boolean, onDismiss: () -> Unit) {
-    if (showDialog) {
-        AlertDialog(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            onDismissRequest = onDismiss, // Allows dismissing by tapping outside
-            confirmButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("OK", color = MaterialTheme.colorScheme.primary)
-                }
-            },
-            title = { Text("Registration Success!", color = MaterialTheme.colorScheme.primary) },
-            text = { Text("One last step: check your email to verify your account", color = MaterialTheme.colorScheme.onPrimaryContainer) }
-        )
+    if(showDialog){
+        var isVisible by remember { mutableStateOf(true) }
+
+        // Auto-dismiss after 2 seconds
+        LaunchedEffect(Unit) {
+            delay(2000)
+            isVisible = false
+            onDismiss()
+        }
+
+        if (isVisible) {
+            AlertDialog(
+                onDismissRequest = { isVisible = false },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                title = { Text("Success") },
+                text = { Text("Your registration is complete. Redirecting...", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                confirmButton = {}
+            )
+        }
     }
 }
