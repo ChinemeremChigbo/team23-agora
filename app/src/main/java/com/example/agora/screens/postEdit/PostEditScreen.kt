@@ -239,9 +239,9 @@ fun PostEditScreen(
                 onClick = {
                     isLoading = true
                     viewModel.upsertPost(
-                        onSuccess = {
+                        onSuccess = {successMessage ->
                             isLoading = false
-                            Toast.makeText(context, "Post created successfully!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
                             navController.popBackStack()
                             // todo: refresh post/explore screen?
                         },
