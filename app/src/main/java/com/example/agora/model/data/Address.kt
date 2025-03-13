@@ -35,7 +35,7 @@ class Address constructor(
     companion object {
         // returns either the successfully made address, or a string error
         fun create(street: String, city: String, state: String, postalCode: String, country: String): Address? {
-            val countryCode: String? = getCountryCode(country) ?: return null
+            val countryCode: String? = getCountryCode(country)
 
             if (countryCode != "US" && countryCode != "CA") {
                 println("invalid country code $countryCode from $country")
@@ -77,22 +77,6 @@ class Address constructor(
                 postalCode = entry["postalCode"].toString())
             return ad
         }
-
-        fun getLatLng(postalCode: String, countryCode: String): Pair<Double, Double>? {
-            val url = "http://api.zippopotam.us/$countryCode/$postalCode"
-            val connection = URL(url).openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-
-            return if (connection.responseCode == 200) {
-                val response = connection.inputStream.bufferedReader().readText()
-                val json = JSONObject(response)
-                val place = json.getJSONArray("places").getJSONObject(0)
-
-                Pair(place.getDouble("latitude"), place.getDouble("longitude"))
-            } else {
-                null
-            }
-        }
     }
 
     // Methods
@@ -115,6 +99,22 @@ class Address constructor(
         }
 
         return -1.0
+    }
+
+    private fun getLatLng(postalCode: String, countryCode: String): Pair<Double, Double>? {
+        val url = "http://api.zippopotam.us/$countryCode/$postalCode"
+        val connection = URL(url).openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+
+        return if (connection.responseCode == 200) {
+            val response = connection.inputStream.bufferedReader().readText()
+            val json = JSONObject(response)
+            val place = json.getJSONArray("places").getJSONObject(0)
+
+            Pair(place.getDouble("latitude"), place.getDouble("longitude"))
+        } else {
+            null
+        }
     }
 
     private fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
