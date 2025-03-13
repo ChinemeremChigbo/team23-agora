@@ -1,8 +1,10 @@
 package com.example.agora.screens.wishlist
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -44,11 +46,16 @@ fun WishlistScreen(viewModel: WishlistViewModel = viewModel(), parentNavControll
                 modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    text = "Wishlist",
-                    fontSize = 19.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Box(
+                    modifier = Modifier.height(30.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Wishlist",
+                        fontSize = 19.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
                 Spacer(Modifier.size(40.dp))
 
