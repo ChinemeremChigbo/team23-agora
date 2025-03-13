@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.agora.model.data.User
 import com.example.agora.screens.authentication.sign_up.RegisterViewModel
 import com.example.agora.ui.components.EmailVerificationDialog
 import com.google.firebase.auth.FirebaseAuth
@@ -46,6 +47,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
     var confirmPassword = viewModel.confirmPassword.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var newUser by remember { mutableStateOf(User()) }
 
     Column(
         modifier = Modifier
@@ -56,6 +58,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
     ) {
         if(showVerificationDialog){
             EmailVerificationDialog({
+                newUser.setUserEmailAsVerified()
                 showVerificationDialog = false
                 showSuccessDialog = true
             })
@@ -288,7 +291,8 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                     isLoading = true
                     viewModel.register(
                         auth,
-                        onSuccess = {
+                        onSuccess = { user ->
+                            newUser = user
                             isLoading = false
                             showVerificationDialog = true
                         },
