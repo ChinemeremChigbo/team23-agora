@@ -47,12 +47,12 @@ fun CreatePostScreen(
 
     Column(
         modifier = Modifier
-            .padding(top=40.dp, bottom=0.dp, start=21.dp, end=21.dp)
+            .padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp)
             .verticalScroll(scrollState),
     ) {
         // Title
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(30.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
