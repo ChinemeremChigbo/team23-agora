@@ -17,7 +17,8 @@ class User(
     var email: String = "",
     var phoneNumber: String = "",
     var address: Address = Address(),
-    var wishList: MutableMap<String, Timestamp> = mutableMapOf()
+    var wishList: MutableMap<String, Timestamp> = mutableMapOf(),
+    var isEmailVerified: Boolean = false,
 ) {
     // Methods
     // NOTE: we don't need login method as Firebase handle password management
@@ -68,6 +69,10 @@ class User(
             }
     }
 
+    fun setUserEmailAsVerified() {
+        updateInfo(mapOf("isEmailVerified" to true))
+    }
+
     fun updateUserStatus(newStatus: UserStatus) {
         status = newStatus
         updateInfo(mapOf("status" to newStatus.name))
@@ -87,6 +92,7 @@ class User(
                 address = (entry["address"] as? Map<String, Any>)?.let {
                     Address.convertDBEntryToAddress(it)
                 } ?: Address(),
+                isEmailVerified = entry["isEmailVerified"]?.toString()?.toBooleanStrictOrNull() ?: false
             )
         }
     }

@@ -1,6 +1,5 @@
 package com.example.agora.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,14 +27,19 @@ import androidx.compose.ui.unit.dp
 import com.example.agora.model.util.EmailTemplate
 
 @Composable
-fun EmailVerificationDialog(onSuccess: () -> Unit) {
+fun EmailVerificationDialog(onSuccess: () -> Unit, onDismiss: (() -> Unit)? = null) {
     var showDialog by remember { mutableStateOf(true) }
     var verificationCode by remember { mutableStateOf(TextFieldValue("")) }
     var isCodeValid by remember { mutableStateOf(true) }
 
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = {
+                if (onDismiss != null) {
+                    onDismiss()
+                }
+                showDialog = false
+                               },
             title = { Text("Enter Verification Code") },
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             text = {
@@ -84,7 +88,12 @@ fun EmailVerificationDialog(onSuccess: () -> Unit) {
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showDialog = false }
+                    onClick = {
+                        if (onDismiss != null) {
+                            onDismiss()
+                        }
+                        showDialog = false
+                    }
                 ) {
                     Text("Cancel")
                 }
