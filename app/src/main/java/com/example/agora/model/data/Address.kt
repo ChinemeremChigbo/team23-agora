@@ -70,7 +70,6 @@ class Address constructor(
         }
 
         fun convertDBEntryToAddress(entry: Map<String, Any>): Address?{
-            println("converting post detail.... ${entry}")
             val ad = create(country = entry["country"].toString(),
                 city = entry["city"].toString(),
                 state = entry["state"].toString(),
