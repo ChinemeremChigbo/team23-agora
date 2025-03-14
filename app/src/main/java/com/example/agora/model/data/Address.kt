@@ -70,12 +70,11 @@ class Address constructor(
         }
 
         fun convertDBEntryToAddress(entry: Map<String, Any>): Address?{
-            val ad = create(country = entry["country"].toString(),
+            return create(country = entry["country"].toString(),
                 city = entry["city"].toString(),
                 state = entry["state"].toString(),
                 street = entry["address"].toString(),
                 postalCode = entry["postalCode"].toString())
-            return ad
         }
     }
 
