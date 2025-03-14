@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Post
+import com.example.agora.model.data.PostStatus
 import com.example.agora.model.repository.PostUtils
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,8 +16,11 @@ import kotlinx.coroutines.launch
 
 class PostViewModel : ViewModel() {
 
-    private val _userPosts = MutableStateFlow<List<Post>>(emptyList())
-    val userPosts: StateFlow<List<Post>> = _userPosts.asStateFlow()
+    private val _activePosts = MutableStateFlow<List<Post>>(emptyList())
+    val activePosts: StateFlow<List<Post>> = _activePosts.asStateFlow()
+
+    private val _resolvedPosts = MutableStateFlow<List<Post>>(emptyList())
+    val resolvedPosts: StateFlow<List<Post>> = _resolvedPosts.asStateFlow()
 
     private val _isLoading = MutableLiveData<Boolean>(true)
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -36,7 +40,8 @@ class PostViewModel : ViewModel() {
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
         PostUtils.getPostsByUser(userId) { posts ->
-            _userPosts.value = posts
+            _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
+            _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
             _isLoading.value = false
         }
     }
