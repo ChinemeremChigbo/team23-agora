@@ -16,13 +16,12 @@ import kotlinx.coroutines.*
 
 class PostEditViewModel(
     application: Application,
-    postId: String
+    private val postId: String
 ): AndroidViewModel(application) {
     private val context get() = getApplication<Application>().applicationContext
     val userId = UserManager.currentUser!!.userId
 
     private var initialImageUris: List<Uri> = emptyList()
-    var postId = MutableStateFlow("")
     var images = MutableStateFlow<List<Uri>>(emptyList())
     var title = MutableStateFlow("")
     var price = MutableStateFlow("")
@@ -35,9 +34,6 @@ class PostEditViewModel(
         if (editing) fetchPostDetails(postId)
     }
 
-    private fun updatePostId(newPostId: String) {
-        postId.value = newPostId
-    }
     fun updateImages(newImages: List<Uri>) {
         images.value = newImages
     }
@@ -64,7 +60,6 @@ class PostEditViewModel(
                 val uris = post.images.map { Uri.parse(it) }
                 initialImageUris = uris
                 updateImages(uris)
-                updatePostId(postId)
                 updateTitle(post.title)
                 updatePrice(post.price.toString())
                 updateCategory(post.category.value)
@@ -100,7 +95,7 @@ class PostEditViewModel(
 
                 if (editing) {  // Edit post
                     PostUtils.editPost(
-                        postId = postId.value,
+                        postId = postId,
                         title = title.value,
                         description = description.value,
                         price = priceDouble,
