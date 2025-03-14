@@ -90,9 +90,9 @@ fun SettingsScreen(
     }
     val text by viewModel.text.observeAsState("Settings")
 
-    Scaffold { paddingValues ->
+    Scaffold { _ ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(21.dp),
+            modifier = Modifier.fillMaxSize().padding(21.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {

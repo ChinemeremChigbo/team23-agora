@@ -16,6 +16,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BREVO_API_KEY", "\"${project.findProperty("BREVO_API_KEY") ?: ""}\"")
     }
 
     buildTypes {
@@ -57,6 +58,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
 
     val composeBom = platform("androidx.compose:compose-bom:2025.01.01")
     implementation(composeBom)

@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -41,7 +42,13 @@ fun PostPreview(post: Post, onClick: () -> Unit, additionalContent: @Composable 
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier.padding(21.dp)
             ) {
-                Text(post.title, fontSize = 16.sp)
+                Text(
+                    post.title,
+                    fontSize = 16.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.width(200.dp)
+                )
                 Text("$" + String.format("%.2f", post.price), fontSize = 19.sp, fontWeight = FontWeight.Bold)
             }
         }
