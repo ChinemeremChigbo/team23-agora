@@ -38,7 +38,6 @@ class PostEditViewModel(
     private fun updatePostId(newPostId: String) {
         postId.value = newPostId
     }
-
     fun updateImages(newImages: List<Uri>) {
         images.value = newImages
     }
