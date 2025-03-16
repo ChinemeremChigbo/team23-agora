@@ -1,6 +1,7 @@
 package com.example.agora.screens.inbox
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,16 +28,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.agora.model.data.Notification
 
 @Composable
-fun InboxScreen() {
-    val notif = Notification(
-        targetUser = "user123",
-        eventInfo = "bicycle 12345"
-    )
-    val notifications: List<Notification> = listOf(notif, notif, notif, notif)
+fun InboxScreen(viewModel: InboxViewModel = viewModel(), navController: NavController) {
+    val notifications by viewModel.notifications.collectAsState()
 
     Column(
         modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp).fillMaxSize(),
@@ -55,14 +56,14 @@ fun InboxScreen() {
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             items(notifications) { notification ->
-                Notification(notification)
+                NotificationItem(notification, { viewModel.viewNotification() })
             }
         }
     }
 }
 
 @Composable
-fun Notification(details: Notification) {
+fun NotificationItem(details: Notification, onClick: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(21.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -70,8 +71,10 @@ fun Notification(details: Notification) {
             .clip(RoundedCornerShape(21.dp))
             .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
+            .clickable(onClick = onClick)
     ) {
         AsyncImage(
+            // TODO: have BE include this img in notif response
             model = "https://picsum.photos/200",
             contentDescription = "Preview image",
             contentScale = ContentScale.FillWidth,
