@@ -51,8 +51,8 @@ class PostViewModel : ViewModel() {
             PostUtils.deletePost(
                 postId = postId,
                 onSuccess = {
-//                    val updatedPosts = _userPosts.value.filter { it.postId != postId }
-//                    _userPosts.value = updatedPosts
+                    val updatedPosts = _activePosts.value.filter { it.postId != postId }
+                    _activePosts.value = updatedPosts
                     onSuccess()
                 },
                 onFailure = { e ->
@@ -63,7 +63,7 @@ class PostViewModel : ViewModel() {
         }
     }
 
-    fun resolveActivatePost(postId: String, postStatus: PostStatus, onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun resolvePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             PostUtils.resolvePost(
                 postId = postId,
