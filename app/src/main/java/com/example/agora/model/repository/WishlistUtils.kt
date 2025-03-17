@@ -114,8 +114,9 @@ class WishlistUtils {
                             .addOnSuccessListener { document ->
                                 resultList[index] = if (document != null && document.exists()) {
                                     val data = document.data
-                                    if (data?.get("status").toString() == PostStatus.DELETED.name) {
-                                        null // Exclude this post as it's deleted
+                                    // TODO: identify resolved post separately and mark as grey
+                                    if (data?.get("status").toString() != PostStatus.ACTIVE.name) {
+                                        null // Exclude this post as it's deleted or resolved
                                     } else {
                                         data
                                     }
