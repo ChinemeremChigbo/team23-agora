@@ -100,20 +100,34 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             onError("User not found")
             return
         }
+
         println("WOOO")
         println(country.value)
-        val updatedData = mapOf(
-            "fullName" to fullName.value,
-            "phoneNumber" to phoneNumber.value,
-            "bio" to bio.value,
-            "address.country" to country.value,
-            "address.state" to state.value,
-            "address.city" to city.value,
-            "address.street" to street.value,
-            "address.postalCode" to postalCode.value
-        )
 
         viewModelScope.launch {
+            val userAddress = Address.createAndValidate(
+                street.value,
+                city.value,
+                state.value,
+                postalCode.value,
+                country.value
+            )
+            if (userAddress == null) {
+                onError("Invalid Address!")
+                return@launch
+            }
+            val updatedData = mapOf(
+                "fullName" to fullName.value,
+                "phoneNumber" to phoneNumber.value,
+                "bio" to bio.value,
+                "address.country" to userAddress.getCountry(),
+                "address.state" to userAddress.getState(),
+                "address.city" to userAddress.getCity(),
+                "address.street" to userAddress.getStreet(),
+                "address.postalCode" to userAddress.getPostalCode(),
+                "address.lat" to userAddress.getLatLng().latitude,
+                "address.lng" to userAddress.getLatLng().longitude,
+            )
             db.collection("users").document(userId).update(updatedData).addOnSuccessListener {
                     Log.d("ProfileViewModel", "Profile updated successfully!")
                     loadUserProfile()
