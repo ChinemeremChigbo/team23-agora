@@ -9,6 +9,7 @@ import com.example.agora.model.data.Post
 import com.example.agora.model.data.PostStatus
 import com.example.agora.model.repository.PostUtils
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +25,9 @@ class PostViewModel : ViewModel() {
 
     private val _isLoading = MutableLiveData<Boolean>(true)
     val isLoading: LiveData<Boolean> get() = _isLoading
+
+    private val _isRefreshing = MutableLiveData<Boolean>(false)
+    val isRefreshing: LiveData<Boolean> get() = _isRefreshing
 
     init {
         viewModelScope.launch {
@@ -51,8 +55,8 @@ class PostViewModel : ViewModel() {
             PostUtils.deletePost(
                 postId = postId,
                 onSuccess = {
-                    val updatedPosts = _activePosts.value.filter { it.postId != postId }
-                    _activePosts.value = updatedPosts
+//                    val updatedPosts = _activePosts.value.filter { it.postId != postId }
+//                    _activePosts.value = updatedPosts
                     onSuccess()
                 },
                 onFailure = { e ->
@@ -77,4 +81,21 @@ class PostViewModel : ViewModel() {
         }
     }
 
+    private fun setRefreshing(value: Boolean) {
+        _isRefreshing.value = value
+    }
+
+    fun refreshPosts() {
+        viewModelScope.launch {
+            setRefreshing(true)
+            delay(1000)
+            val auth = FirebaseAuth.getInstance()
+            val userId = auth.currentUser?.uid ?: return@launch
+            PostUtils.getPostsByUser(userId) { posts ->
+                _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
+                _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
+            }
+            setRefreshing(false)
+        }
+    }
 }
