@@ -1,3 +1,4 @@
+secrets.properties
 gradle.properties
 *.iml
 .gradle
