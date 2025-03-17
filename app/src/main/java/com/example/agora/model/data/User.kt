@@ -68,11 +68,6 @@ class User(
             }
     }
 
-    // TODO: wait for eddie to setup S3
-    fun updateProfileImage() {
-        updateInfo(mapOf("profileImage" to ""))
-    }
-
     fun updateUserStatus(newStatus: UserStatus) {
         status = newStatus
         updateInfo(mapOf("status" to newStatus.name))
