@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -36,6 +37,7 @@ import com.example.agora.screens.postEdit.PostEditViewModel
 import com.example.agora.screens.postEdit.PostEditViewModelFactory
 import com.example.agora.ui.components.BasicPostGrid
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostScreen(
     parentNavController: NavController,
@@ -44,6 +46,7 @@ fun PostScreen(
     val activePosts by viewModel.activePosts.collectAsState()
     val resolvedPosts by viewModel.resolvedPosts.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
+    val isRefreshing by viewModel.isRefreshing.observeAsState(true)
     val nestedNavController = rememberNavController()
 
     NavHost(
@@ -64,7 +67,9 @@ fun PostScreen(
                 modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(30.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -100,17 +105,32 @@ fun PostScreen(
 
                 Spacer(Modifier.size(20.dp))
 
-                if (selectedOption == PostStatus.ACTIVE) {
-                    BasicPostGrid(
-                        activePosts,
-                        nestedNavController,
-                        { modifier, post -> PostMenu(modifier, post, nestedNavController, viewModel) }
-                    )
-                } else {
-                    BasicPostGrid(
-                        resolvedPosts,
-                        nestedNavController,
-                    )
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        viewModel.refreshPosts()
+                    },
+                ) {
+                    // Post Grid
+                    if (selectedOption == PostStatus.ACTIVE) {
+                        BasicPostGrid(
+                            activePosts,
+                            nestedNavController,
+                            { modifier, post ->
+                                PostMenu(
+                                    modifier,
+                                    post,
+                                    nestedNavController,
+                                    viewModel
+                                )
+                            }
+                        )
+                    } else {
+                        BasicPostGrid(
+                            resolvedPosts,
+                            nestedNavController,
+                        )
+                    }
                 }
             }
         }
@@ -188,7 +208,6 @@ fun PostMenu(
                                 "Post resolved successfully!",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            navController.popBackStack()
                         },
                         onError = { errorMessage ->
                             Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
@@ -209,7 +228,6 @@ fun PostMenu(
                                 "Post deleted successfully!",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            navController.popBackStack()
                         },
                         onError = { errorMessage ->
                             Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
