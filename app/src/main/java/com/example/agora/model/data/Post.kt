@@ -13,7 +13,6 @@ enum class Category(val value: String) {
 }
 
 class Post(
-    private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
     var postId: String = "",
     var status: PostStatus = PostStatus.ACTIVE,
     var createdAt: Timestamp? = Timestamp.now(),
