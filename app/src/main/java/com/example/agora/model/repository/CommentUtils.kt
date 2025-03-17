@@ -1,5 +1,7 @@
 package com.example.agora.model.repository
 
+import com.example.agora.model.data.Comment
+import com.example.agora.model.data.Post
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
@@ -54,13 +56,10 @@ class CommentUtils {
                 .addOnFailureListener { onFailure(it) }
         }
 
-
-        /** Create a new comment in Firestore for a given post */
         fun createComment(
             postId: String,
-            creatorId: String,
+            userId: String,
             text: String,
-            parentCommentID: String = "",
             onSuccess: (String) -> Unit,
             onFailure: (Exception) -> Unit
         ) {
@@ -80,11 +79,10 @@ class CommentUtils {
 
             val newComment = hashMapOf(
                 "commentId" to commentId,
-                "creatorId" to creatorId,
+                "userId" to userId,
                 "text" to text,
                 "createdAt" to Timestamp.now(),
                 "mentions" to mentionIds,
-                "parentCommentID" to parentCommentID
             )
 
             db.collection("comments").document(commentId)
@@ -99,20 +97,40 @@ class CommentUtils {
                         .addOnFailureListener { onFailure(it) }
                 }
                 .addOnFailureListener { onFailure(it) }
+
+            // todo: send notification
         }
 
         fun deleteComment(
             commentId: String,
+            postId: String,
             onSuccess: () -> Unit,
             onFailure: (Exception) -> Unit
         ) {
             val db = FirebaseFirestore.getInstance()
+            val commentRef = db.collection("comments").document(commentId)
+            val postRef = db.collection("posts").document(postId)
+
+            commentRef.delete()
+                .addOnSuccessListener {
+                    postRef.update("comments", FieldValue.arrayRemove(commentId))
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { onFailure(it) }
+                }
+                .addOnFailureListener { onFailure(it) }
+        }
+
+        fun getComment(commentId: String, callback: (Comment?) -> Unit) {
+            val db = FirebaseFirestore.getInstance()
 
             db.collection("comments").document(commentId)
-                .delete()
-                .addOnSuccessListener { onSuccess() }
-                .addOnFailureListener { exception ->
-                    onFailure(Exception("Failed to delete comment: ${exception.message}"))
+                .get()
+                .addOnSuccessListener { comment ->
+                    if (comment.exists()) {
+                        callback(comment.data?.let { Comment.convertDBEntryToComment(it) })
+                    } else {
+                        callback(null)
+                    }
                 }
         }
     }
