@@ -41,6 +41,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
 }
 
@@ -105,9 +106,9 @@ dependencies {
 
     // Firebase Authentication
     implementation("com.google.firebase:firebase-auth")
-    // Firebase Firestore
+    // Firebase FireStore
     implementation("com.google.firebase:firebase-firestore")
-    // For fetching images from a givesn url
+    // For fetching images from a given url
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     // Import AWS Android SDK
