@@ -26,7 +26,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.agora.MainActivity
 import com.example.agora.R
-import com.example.agora.ui.theme.AgoraTheme
+import com.example.agora.model.data.User
+import com.example.agora.model.util.AccountAuthUtil
+import com.example.agora.ui.components.EmailVerificationDialog
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -51,8 +53,24 @@ fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: Si
     val emailState = viewModel.email.collectAsState()
     val passwordState = viewModel.password.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
+    var showVerificationDialog by remember { mutableStateOf(false) }
+    var user by remember { mutableStateOf(User()) }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        if(showVerificationDialog){
+            EmailVerificationDialog(
+                onSuccess = {
+                    user.setUserEmailAsVerified()
+                    showVerificationDialog = false
+                    isLoading = false
+                    navigateToMainActivity(context)
+                },
+                onDismiss = {
+                    isLoading = false
+                    AccountAuthUtil.signOut(auth)
+                }
+            )
+        }
         LoginImage()
 
         Column(
@@ -109,18 +127,9 @@ fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: Si
             )
             Spacer(modifier = Modifier.height(2.dp))
 
-            TextButton(
-                onClick = { /* TODO: Handle forgot password here */ },
-                modifier = Modifier.align(Alignment.Start),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-            ) {
-                Text(
-                    text = "Forgot Password?",
-                    fontSize = 14.sp,
-                )
-            }
 
-            Spacer(modifier = Modifier.height(6.dp))
+
+            Spacer(modifier = Modifier.height(20.dp))
             if (isLoading) {
                 CircularProgressIndicator() // ✅ Show Loading Indicator
             } else {
@@ -133,6 +142,10 @@ fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: Si
                             onSuccess = {
                                 isLoading = false
                                 navigateToMainActivity(context)
+                            },
+                            onPending = { currentUser ->
+                                user = currentUser
+                                showVerificationDialog = true
                             },
                             onError = { errorMessage ->
                                 isLoading = false

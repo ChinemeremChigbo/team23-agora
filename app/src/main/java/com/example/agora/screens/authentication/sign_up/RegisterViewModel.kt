@@ -74,7 +74,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     fun register(
         auth: FirebaseAuth,
-        onSuccess: () -> Unit,
+        onSuccess: (User) -> Unit,
         onError: (String) -> Unit
     ) {
         // Step 0-1: check all required fields are non empty
@@ -100,7 +100,8 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                     country = country.value,
                     city = city.value,
                     state = state.value,
-                    postalCode = postalCode.value
+                    postalCode = postalCode.value,
+                    street = address.value,
                 )
                 // step 2: register user with our database
                 val newUser = User(
@@ -109,10 +110,11 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                     fullName = fullName.value,
                     email = email.value,
                     phoneNumber = phoneNumber.value,
-                    address = userAddress
+                    address = userAddress,
+                    isEmailVerified = false,
                 )
                 newUser.register()
-                onSuccess()
+                onSuccess(newUser)
             } catch (e: Exception) {
                 onError(e.localizedMessage ?: "Registration failed")
             }
