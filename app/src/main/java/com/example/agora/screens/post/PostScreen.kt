@@ -40,7 +40,8 @@ fun PostScreen(
     parentNavController: NavController,
     viewModel: PostViewModel = viewModel(),
 ) {
-    val userPosts by viewModel.userPosts.collectAsState()
+    val activePosts by viewModel.activePosts.collectAsState()
+    val resolvedPosts by viewModel.resolvedPosts.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
     val nestedNavController = rememberNavController()
 
@@ -98,8 +99,9 @@ fun PostScreen(
 
                 Spacer(Modifier.size(20.dp))
 
+                val postsToShow = if (selectedOption == "Active") activePosts else resolvedPosts
                 BasicPostGrid(
-                    userPosts,
+                    postsToShow,
                     nestedNavController,
                     { modifier, post -> PostMenu(modifier, post, nestedNavController, viewModel) }
                 )
