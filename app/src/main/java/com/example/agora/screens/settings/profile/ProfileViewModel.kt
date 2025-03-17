@@ -41,8 +41,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         if (userId != null) {
             db.collection("users").document(userId).get().addOnSuccessListener { document ->
                     if (document.exists()) {
-                        val userData = document.toObject(User::class.java)
-                        userData?.let { user ->
+                        val user = document.data?.let { User.convertDBEntryToUser(it) }
+                        if(user != null) {
                             this.userId = user.userId
                             fullName.value = user.fullName
                             phoneNumber.value = user.phoneNumber
