@@ -131,18 +131,14 @@ class PostUtils {
                 }
         }
 
+
         /** Delete an existing post */
         fun deletePost(
             postId: String,
             onSuccess: () -> Unit,
             onFailure: (Exception) -> Unit
         ) {
-//            todo: add s3 deleting functionality
-            val db = FirebaseFirestore.getInstance()
-            db.collection("posts").document(postId)
-                .delete()
-                .addOnSuccessListener { onSuccess() }
-                .addOnFailureListener { onFailure(it) }
+            updatePostStatus(postId, PostStatus.DELETED, onSuccess, onFailure)
         }
 
         /** Mark a post as resolved */
@@ -151,11 +147,24 @@ class PostUtils {
             onSuccess: () -> Unit,
             onFailure: (Exception) -> Unit
         ) {
+            updatePostStatus(postId, PostStatus.RESOLVED, onSuccess, onFailure)
+        }
+
+        private fun updatePostStatus(
+            postId: String,
+            newStatus: PostStatus,
+            onSuccess: () -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
             val db = FirebaseFirestore.getInstance()
             db.collection("posts").document(postId)
-                .update("status", PostStatus.RESOLVED.name)
-                .addOnSuccessListener { onSuccess() }
-                .addOnFailureListener { onFailure(it) }
+                .update(mapOf("status" to newStatus.name))
+                .addOnSuccessListener {
+                    onSuccess()
+                }
+                .addOnFailureListener { e ->
+                    onFailure(e)
+                }
         }
 
         /** Get all posts by a specific user, sorted by "createdAt"*/

@@ -2,6 +2,7 @@ package com.example.agora.model.data
 
 import com.example.agora.model.util.DataUtil
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 
 enum class PostStatus(val value: String) {
     ACTIVE("Active"), RESOLVED("Resolved"), DELETED("Deleted")
@@ -12,6 +13,7 @@ enum class Category(val value: String) {
 }
 
 class Post(
+    private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
     var postId: String = "",
     var status: PostStatus = PostStatus.ACTIVE,
     var createdAt: Timestamp? = Timestamp.now(),
@@ -24,9 +26,6 @@ class Post(
     var userId: String = "",
     var address: Address = Address(),
 ) {
-    fun updateInfo(newInfo: Map<String, Any>) {
-        // TODO
-    }
 
     fun addComment(text: String) {
         val comment = Comment(text = text, creatorId = "")
@@ -35,14 +34,6 @@ class Post(
             // TODO: create a notification
         }
         comments.add(comment)
-    }
-
-    fun removeComment(comment: Comment) {
-        // TODO
-    }
-
-    fun changeStatus(newStatus: PostStatus) {
-        status = newStatus
     }
 
     companion object {
