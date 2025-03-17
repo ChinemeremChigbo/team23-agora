@@ -11,7 +11,7 @@ import com.google.firebase.firestore.Query
 
 class PostUtils {
     companion object {
-        private const val DEFAULT_IMAGE = "https://files.catbox.moe/dtg63k.jpg"
+        const val DEFAULT_IMAGE = "https://files.catbox.moe/dtg63k.jpg"
 
         /** Fetch User's Address from Firestore */
         private fun fetchUserAddress(

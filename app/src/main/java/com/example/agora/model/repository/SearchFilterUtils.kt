@@ -31,7 +31,7 @@ class SearchFilterUtils {
         ) {
             val db = FirebaseFirestore.getInstance()
 
-            var query: Query = db.collection("posts").whereNotIn("status", listOf(PostStatus.DELETED.name))
+            var query: Query = db.collection("posts").whereIn("status", listOf(PostStatus.ACTIVE.name))
 
             minPrice?.let {
                 query = query.whereGreaterThanOrEqualTo("price", minPrice)
