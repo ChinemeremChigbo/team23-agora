@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.R
 import com.example.agora.model.data.User
 import com.example.agora.model.data.Address
+import com.example.agora.model.repository.ProfileSettingUtils
 import com.example.agora.model.util.UserManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -104,6 +105,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         println("WOOO")
         println(country.value)
 
+        if(!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)){
+            onError("Invalid phone number!")
+            return
+        }
+
         viewModelScope.launch {
             val userAddress = Address.createAndValidate(
                 street.value,
@@ -113,7 +119,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 country.value
             )
             if (userAddress == null) {
-                onError("Invalid Address!")
+                onError("Invalid address!")
                 return@launch
             }
             val updatedData = mapOf(
