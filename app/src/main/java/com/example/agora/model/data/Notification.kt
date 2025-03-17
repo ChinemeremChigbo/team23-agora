@@ -3,37 +3,18 @@ package com.example.agora.model.data
 import java.util.*
 import com.google.firebase.Timestamp
 
-enum class NotificationStatus {
-    READ, UNREAD
-}
 
 class Notification(
-    private var targetUser: String = "",
-    private var status: NotificationStatus = NotificationStatus.UNREAD,
-    private var createdAt: Timestamp = Timestamp.now(),
-    private var eventInfo: String = ""
+    var postId: String = "",
+    var userId: String = "",
+    var message: String = "",
+    var commentId: String = "",
+    var eventInfo: String = "",
+    var createdAt: Timestamp?
 ) {
-
-    // Getters and Setters
-    fun getTargetUser(): String = targetUser
-    fun setTargetUser(value: String) { targetUser = value }
-
-    fun getStatus(): NotificationStatus = status
-    fun setStatus(value: NotificationStatus) { status = value }
-
-    fun getCreatedAt(): Timestamp = createdAt
-    fun setCreatedAt(value: Timestamp) { createdAt = value }
-
-    fun getEventInfo(): String = eventInfo
-    fun setEventInfo(value: String) { eventInfo = value }
-
-    // Methods
-    fun getFormattedNotification(): String {
-        // TODO
-        return ""
-    }
-
-    fun changeStatus(newStatus: NotificationStatus) {
-        status = newStatus
+    companion object {
+        fun convertDBEntryToNotification() {
+            // todo
+        }
     }
 }
