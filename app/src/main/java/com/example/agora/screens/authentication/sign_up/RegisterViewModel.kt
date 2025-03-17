@@ -91,18 +91,19 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         if(!isValidEmail(emailValue)) { onError("Only uwaterloo email allowed!"); return }
 
         // TODO: Step 0-4: confirm address + phone number are valid
+        val userAddress = Address.create(
+            country = country.value,
+            city = city.value,
+            state = state.value,
+            postalCode = postalCode.value,
+            street = address.value
+        )
+        if(userAddress==null) { onError("Invalid address!") }
 
         viewModelScope.launch {
             try {
                 // step 1: register user with firebase auth + send verification email
                 userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
-                val userAddress = Address(
-                    country = country.value,
-                    city = city.value,
-                    state = state.value,
-                    postalCode = postalCode.value,
-                    street = address.value,
-                )
                 // step 2: register user with our database
                 val newUser = User(
                     userId = userId,
@@ -110,7 +111,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                     fullName = fullName.value,
                     email = email.value,
                     phoneNumber = phoneNumber.value,
-                    address = userAddress,
+                    address = userAddress!!,
                     isEmailVerified = false,
                 )
                 newUser.register()
@@ -145,6 +146,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                 return false
             }
         }
+
         return true
     }
 }
