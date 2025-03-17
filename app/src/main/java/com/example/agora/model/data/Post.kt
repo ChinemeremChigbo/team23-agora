@@ -3,8 +3,8 @@ package com.example.agora.model.data
 import com.example.agora.model.util.DataUtil
 import com.google.firebase.Timestamp
 
-enum class PostStatus {
-    ACTIVE, RESOLVED, DELETED
+enum class PostStatus(val value: String) {
+    ACTIVE("Active"), RESOLVED("Resolved"), DELETED("Deleted")
 }
 
 enum class Category(val value: String) {

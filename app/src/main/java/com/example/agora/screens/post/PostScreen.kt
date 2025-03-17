@@ -27,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.agora.model.data.Post
+import com.example.agora.model.data.PostStatus
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
@@ -90,20 +91,20 @@ fun PostScreen(
 
                 Spacer(Modifier.size(20.dp))
 
-                var selectedOption by remember { mutableStateOf("Active") }
+                var selectedOption by remember { mutableStateOf(PostStatus.ACTIVE) }
                 SegmentedControl(
-                    options = listOf("Active", "Resolved"),
+                    options = listOf(PostStatus.ACTIVE, PostStatus.RESOLVED),
                     selectedOption = selectedOption,
                     onOptionSelected = { selectedOption = it }
                 )
 
                 Spacer(Modifier.size(20.dp))
 
-                val postsToShow = if (selectedOption == "Active") activePosts else resolvedPosts
+                val postsToShow = if (selectedOption == PostStatus.ACTIVE) activePosts else resolvedPosts
                 BasicPostGrid(
                     postsToShow,
                     nestedNavController,
-                    { modifier, post -> PostMenu(modifier, post, nestedNavController, viewModel) }
+                    { modifier, post -> PostMenu(modifier, post, nestedNavController, viewModel, selectedOption) }
                 )
             }
         }
@@ -132,7 +133,8 @@ fun PostMenu(
     modifier: Modifier,
     post: Post,
     navController: NavController,
-    postViewModel: PostViewModel
+    postViewModel: PostViewModel,
+    postState: PostStatus
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -173,8 +175,9 @@ fun PostMenu(
                 text = { Text("Mark Resolved") },
                 onClick = {
                     expanded = false
-                    postViewModel.resolvePost(
+                    postViewModel.resolveActivatePost(
                         postId = post.postId,
+                        postStatus = postState,
                         onSuccess = {
                             Toast.makeText(
                                 context,
@@ -219,9 +222,9 @@ fun PostMenu(
 
 @Composable
 fun SegmentedControl(
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit
+    options: List<PostStatus>,
+    selectedOption: PostStatus,
+    onOptionSelected: (PostStatus) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -244,7 +247,7 @@ fun SegmentedControl(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = option,
+                    text = option.value,
                     fontSize = 15.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                     color = if (isSelected) Color.Black else Color.Gray,
