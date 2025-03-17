@@ -100,12 +100,18 @@ fun PostScreen(
 
                 Spacer(Modifier.size(20.dp))
 
-                val postsToShow = if (selectedOption == PostStatus.ACTIVE) activePosts else resolvedPosts
-                BasicPostGrid(
-                    postsToShow,
-                    nestedNavController,
-                    { modifier, post -> PostMenu(modifier, post, nestedNavController, viewModel, selectedOption) }
-                )
+                if (selectedOption == PostStatus.ACTIVE) {
+                    BasicPostGrid(
+                        activePosts,
+                        nestedNavController,
+                        { modifier, post -> PostMenu(modifier, post, nestedNavController, viewModel) }
+                    )
+                } else {
+                    BasicPostGrid(
+                        resolvedPosts,
+                        nestedNavController,
+                    )
+                }
             }
         }
         // Post Detail Screen
@@ -134,7 +140,6 @@ fun PostMenu(
     post: Post,
     navController: NavController,
     postViewModel: PostViewModel,
-    postState: PostStatus
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -175,9 +180,8 @@ fun PostMenu(
                 text = { Text("Mark Resolved") },
                 onClick = {
                     expanded = false
-                    postViewModel.resolveActivatePost(
+                    postViewModel.resolvePost(
                         postId = post.postId,
-                        postStatus = postState,
                         onSuccess = {
                             Toast.makeText(
                                 context,
@@ -191,13 +195,11 @@ fun PostMenu(
                                 .show()
                         }
                     )
-                    // todo: add dialogue, functionality
                 }
             )
             DropdownMenuItem(
                 text = { Text("Delete") },
                 onClick = {
-                    // todo: add confirm dialogue
                     expanded = false
                     postViewModel.deletePost(
                         postId = post.postId,
