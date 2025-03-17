@@ -173,6 +173,7 @@ class PostUtils {
 
             db.collection("posts")
                 .whereEqualTo("userId", userId)
+                .whereNotIn("status", listOf(PostStatus.DELETED.name))
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener { posts ->
