@@ -55,10 +55,18 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if(showVerificationDialog){
-            EmailVerificationDialog({
-                showVerificationDialog = false
-                showSuccessDialog = true
-            })
+            EmailVerificationDialog(
+                onSuccess = {
+                    showVerificationDialog = false
+                    showSuccessDialog = true
+                    isLoading = false
+                },
+                onDismiss = {
+                    showSuccessDialog = false
+                    showVerificationDialog = false
+                    isLoading = false
+                }
+            )
         }
 
         // Title
@@ -289,7 +297,6 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                     viewModel.register(
                         auth,
                         onSuccess = {
-                            isLoading = false
                             showVerificationDialog = true
                         },
                         onError = { errorMessage ->
@@ -315,6 +322,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                 navController.popBackStack()
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
