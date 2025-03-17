@@ -4,27 +4,28 @@ import java.util.*
 import com.google.firebase.Timestamp
 
 class Comment(
-    private val commentId: String = "",
-    private val creatorId: String = "",
-    private var text: String = "",
-    private var mentions: Array<String> = arrayOf(),
-    private var createdAt: Timestamp = Timestamp.now()
+    val commentId: String = "",
+    val creatorId: String = "",
+    var text: String = "",
+    var createdAt: Timestamp? = Timestamp.now(),
+    var mentions: List<String> = listOf(),
+    var parentCommentID: String = ""
 ) {
 
     // Getters and Setters
 
-    // comment and creator id should not be changeable
-    fun getCommentId(): String = commentId
-    fun getCreatorId(): String = creatorId
-
-    fun getText(): String = text
-    fun setText(value: String) { text = value }
-
-    fun getMentions(): Array<String> = mentions
-    fun setMentions(value: Array<String>) { mentions = value }
-
-    fun getCreatedAt(): Timestamp = createdAt
-    fun setCreatedAt(value: Timestamp) { createdAt = value }
+//    // comment and creator id should not be changeable
+//    fun getCommentId(): String = commentId
+//    fun getCreatorId(): String = creatorId
+//
+//    fun getText(): String = text
+//    fun setText(value: String) { text = value }
+//
+//    fun getMentions(): Array<String> = mentions
+//    fun setMentions(value: Array<String>) { mentions = value }
+//
+//    fun getCreatedAt(): Timestamp = createdAt
+//    fun setCreatedAt(value: Timestamp) { createdAt = value }
 
     // returns a list of usernames
     fun findMentions(): List<String> {
@@ -35,7 +36,7 @@ class Comment(
         // TODO
     }
 
-    fun getFormattedComment(): String {
-        return getText()
-    }
+//    fun getFormattedComment(): String {
+//        return getText()
+//    }
 }

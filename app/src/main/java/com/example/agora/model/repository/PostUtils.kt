@@ -56,6 +56,7 @@ class PostUtils {
                     val db = FirebaseFirestore.getInstance()
                     val postId = db.collection("posts").document().id
                     val validImages = images.ifEmpty { listOf(DEFAULT_IMAGE) }
+                    val comments = emptyList<String>() // posts should not be made with comments
 
                     val newPost = hashMapOf(
                         "postId" to postId,
@@ -64,6 +65,7 @@ class PostUtils {
                         "price" to price,
                         "category" to category.name,
                         "images" to validImages,
+                        "comments" to comments,
                         "createdAt" to Timestamp.now(),
                         "userId" to userId,
                         "status" to PostStatus.ACTIVE.name,
