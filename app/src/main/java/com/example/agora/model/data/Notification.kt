@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp
 
 
 class Notification(
+    var notificationId: String = "",
     var postId: String = "",
     var userId: String = "",
     var message: String = "",
@@ -16,6 +17,7 @@ class Notification(
     companion object {
         fun convertDBEntryToNotification(entry: Map<String, Any>): Notification {
             return Notification(
+                notificationId = entry["notificationId"]?.toString() ?: "",
                 postId = entry["postId"]?.toString() ?: "",
                 userId = entry["userId"]?.toString() ?: "",
                 message = entry["message"]?.toString() ?: "",

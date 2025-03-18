@@ -9,6 +9,7 @@ import com.example.agora.model.data.Notification
 class NotificationUtils {
     companion object {
         fun addNotification(
+            notificationId: String,
             userId: String,
             postId: String,
             creatorId: String, // the id of the user who wrote the comment
@@ -24,6 +25,7 @@ class NotificationUtils {
             var message = "New comment on post abc from user xyz"
 
             val notificationData = hashMapOf(
+                "notificationId" to notificationId,
                 "userId" to userId,
                 "postId" to postId,
                 "message" to message,
