@@ -28,70 +28,75 @@ import androidx.compose.ui.unit.dp
 import com.example.agora.model.util.EmailTemplate
 
 @Composable
-fun EmailVerificationDialog(onSuccess: () -> Unit) {
-    var showDialog by remember { mutableStateOf(true) }
+fun EmailVerificationDialog(onSuccess: () -> Unit, onDismiss: (() -> Unit)? = null) {
     var verificationCode by remember { mutableStateOf(TextFieldValue("")) }
     var isCodeValid by remember { mutableStateOf(true) }
 
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Enter Verification Code") },
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text("Please enter the 6-digit verification code sent to your email.", color = MaterialTheme.colorScheme.onPrimaryContainer)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    TextField(
-                        value = verificationCode,
-                        onValueChange = {
-                            // Ensure only digits are entered and it's a 6-digit code
-                            if (it.text.length <= 6 && it.text.all { char -> char.isDigit() }) {
-                                verificationCode = it
-                            }
-                        },
-                        label = { Text("Verification Code") },
-                        placeholder = { Text("Enter 6 digits") },
-                        singleLine = true,
-                        keyboardActions = KeyboardActions.Default,
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    if (!isCodeValid) {
-                        Text("Invalid code!", color = Color.Red)
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        if (verificationCode.text.length == 6 && verificationCode.text.equals(EmailTemplate.verificationCode)) {
-                            // Handle successful verification here
-                            onSuccess()
-                            showDialog = false // Close the dialog
-                        } else {
-                            isCodeValid = false // Show error if the code is not valid
+    AlertDialog(
+        onDismissRequest = {
+            if (onDismiss != null) {
+                onDismiss()
+            }
+                           },
+        title = { Text("Enter Verification Code") },
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text("Please enter the 6-digit verification code sent to your email.", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    value = verificationCode,
+                    onValueChange = {
+                        // Ensure only digits are entered and it's a 6-digit code
+                        if (it.text.length <= 6 && it.text.all { char -> char.isDigit() }) {
+                            verificationCode = it
                         }
-                    }
-                ) {
-                    Text("Verify")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDialog = false }
-                ) {
-                    Text("Cancel")
+                    },
+                    label = { Text("Verification Code") },
+                    placeholder = { Text("Enter 6 digits") },
+                    singleLine = true,
+                    keyboardActions = KeyboardActions.Default,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                if (!isCodeValid) {
+                    Text("Invalid code!", color = Color.Red)
                 }
             }
-        )
-    }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (verificationCode.text.length == 6 && verificationCode.text.equals(EmailTemplate.verificationCode)) {
+                        // Handle successful verification here
+                        onSuccess()
+                    } else {
+                        isCodeValid = false // Show error if the code is not valid
+                    }
+                }
+            ) {
+                Text("Verify")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    if (onDismiss != null) {
+                        onDismiss()
+                    }
+                }
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 }
+
 
 @Preview(showBackground = true)
 @Composable

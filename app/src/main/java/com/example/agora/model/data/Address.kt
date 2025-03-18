@@ -34,18 +34,19 @@ class Address constructor(
 
     companion object {
         // returns either the successfully made address, or a string error
-        fun create(street: String, city: String, state: String, postalCode: String, country: String): Any {
-            val countryCode: String? = getCountryCode(country) ?: return "Invalid Country"
+        fun create(street: String, city: String, state: String, postalCode: String, country: String): Address? {
+            val countryCode: String? = getCountryCode(country)
 
             if (countryCode != "US" && countryCode != "CA") {
-                return "Country must be United States or Canada"
+                println("invalid country code $countryCode from $country")
+                return null
             }
 
             if (!isValidPostalCode(postalCode, countryCode)) {
-                return "Invalid postal or zip code"
+               println("invalid postal code $postalCode")
+                return null
             }
-
-            return Address(street, city, state, postalCode, countryCode)
+            return Address(street, city, state, postalCode, country)
         }
 
         private fun isValidPostalCode(postalCode: String, countryCode: String): Boolean {
@@ -58,7 +59,7 @@ class Address constructor(
             "CA" to "[A-Z]\\d[A-Z] \\d[A-Z]\\d", // Canada: A1A 1A1
         )
 
-        private fun getCountryCode(countryName: String): String? {
+        fun getCountryCode(countryName: String): String? {
             for (countryCode in Locale.getISOCountries()) {
                 val locale = Locale("", countryCode)
                 if (locale.displayCountry.equals(countryName, ignoreCase = true)) {
@@ -68,14 +69,12 @@ class Address constructor(
             return null // no country name found
         }
 
-        fun convertDBEntryToAddress(entry: Map<String, Any>): Address{
-            return Address(
-                country = entry["country"].toString(),
+        fun convertDBEntryToAddress(entry: Map<String, Any>): Address?{
+            return create(country = entry["country"].toString(),
                 city = entry["city"].toString(),
                 state = entry["state"].toString(),
                 street = entry["address"].toString(),
-                postalCode = entry["postalCode"].toString(),
-            )
+                postalCode = entry["postalCode"].toString())
         }
     }
 
