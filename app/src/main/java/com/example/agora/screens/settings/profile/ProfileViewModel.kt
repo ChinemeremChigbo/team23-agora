@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.R
 import com.example.agora.model.data.User
 import com.example.agora.model.data.Address
+import com.example.agora.model.repository.ProfileSettingUtils
 import com.example.agora.model.util.UserManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,8 +42,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         if (userId != null) {
             db.collection("users").document(userId).get().addOnSuccessListener { document ->
                     if (document.exists()) {
-                        val userData = document.toObject(User::class.java)
-                        userData?.let { user ->
+                        val user = document.data?.let { User.convertDBEntryToUser(it) }
+                        if(user != null) {
                             this.userId = user.userId
                             fullName.value = user.fullName
                             phoneNumber.value = user.phoneNumber
@@ -100,20 +101,39 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             onError("User not found")
             return
         }
+
         println("WOOO")
         println(country.value)
-        val updatedData = mapOf(
-            "fullName" to fullName.value,
-            "phoneNumber" to phoneNumber.value,
-            "bio" to bio.value,
-            "address.country" to country.value,
-            "address.state" to state.value,
-            "address.city" to city.value,
-            "address.street" to street.value,
-            "address.postalCode" to postalCode.value
-        )
+
+        if(!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)){
+            onError("Invalid phone number!")
+            return
+        }
 
         viewModelScope.launch {
+            val userAddress = Address.createAndValidate(
+                street.value,
+                city.value,
+                state.value,
+                postalCode.value,
+                country.value
+            )
+            if (userAddress == null) {
+                onError("Invalid address!")
+                return@launch
+            }
+            val updatedData = mapOf(
+                "fullName" to fullName.value,
+                "phoneNumber" to phoneNumber.value,
+                "bio" to bio.value,
+                "address.country" to userAddress.getCountry(),
+                "address.state" to userAddress.getState(),
+                "address.city" to userAddress.getCity(),
+                "address.street" to userAddress.getStreet(),
+                "address.postalCode" to userAddress.getPostalCode(),
+                "address.lat" to userAddress.getLatLng().latitude,
+                "address.lng" to userAddress.getLatLng().longitude,
+            )
             db.collection("users").document(userId).update(updatedData).addOnSuccessListener {
                     Log.d("ProfileViewModel", "Profile updated successfully!")
                     loadUserProfile()

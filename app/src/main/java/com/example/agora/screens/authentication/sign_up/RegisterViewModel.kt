@@ -9,6 +9,8 @@ import com.example.agora.R
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.User
 import com.example.agora.model.data.UserStatus
+import com.example.agora.model.repository.AddressUtils
+import com.example.agora.model.repository.ProfileSettingUtils
 import com.example.agora.model.util.AccountAuthUtil
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,41 +85,47 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         // Step 0-2: confirm password fields are the same
         if (password.value != confirmPassword.value) { onError("Passwords do not match"); return }
 
-
         val emailValue = email.value
         val passwordValue = password.value
 
         // Step 0-3: confirm email is uwaterloo school email
         if(!isValidEmail(emailValue)) { onError("Only uwaterloo email allowed!"); return }
 
-        // TODO: Step 0-4: confirm address + phone number are valid
-        val userAddress = Address.create(
-            country = country.value,
-            city = city.value,
-            state = state.value,
-            postalCode = postalCode.value,
-            street = address.value
-        )
-        if(userAddress==null) { onError("Invalid address!") }
 
         viewModelScope.launch {
-            try {
-                // step 1: register user with firebase auth + send verification email
-                userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
-                // step 2: register user with our database
-                val newUser = User(
-                    userId = userId,
-                    username = email.value.substringBefore("@uwaterloo.ca"),
-                    fullName = fullName.value,
-                    email = email.value,
-                    phoneNumber = phoneNumber.value,
-                    address = userAddress!!,
-                    isEmailVerified = false,
-                )
-                newUser.register()
-                onSuccess(newUser)
-            } catch (e: Exception) {
-                onError(e.localizedMessage ?: "Registration failed")
+            // Step 0-4: confirm address + phone number are valid
+            if(!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)){
+                onError("Invalid phone number!")
+                return@launch
+            }
+            val userAddress = Address.createAndValidate(
+                country = country.value,
+                city = city.value,
+                state = state.value,
+                postalCode = postalCode.value,
+                street = address.value
+            )
+            if(userAddress==null) {
+                onError("Invalid address!")
+            } else {
+                try {
+                    // step 1: register user with firebase auth + send verification email
+                    userId = AccountAuthUtil.accountSignUp(auth, emailValue, passwordValue)
+                    // step 2: register user with our database
+                    val newUser = User(
+                        userId = userId,
+                        username = email.value.substringBefore("@uwaterloo.ca"),
+                        fullName = fullName.value,
+                        email = email.value,
+                        phoneNumber = phoneNumber.value,
+                        address = userAddress!!,
+                        isEmailVerified = false,
+                    )
+                    newUser.register()
+                    onSuccess(newUser)
+                } catch (e: Exception) {
+                    onError(e.localizedMessage ?: "Registration failed")
+                }
             }
         }
     }

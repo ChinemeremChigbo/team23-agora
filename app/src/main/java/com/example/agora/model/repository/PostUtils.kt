@@ -72,7 +72,9 @@ class PostUtils {
                             "city" to address.getCity(),
                             "state" to address.getState(),
                             "postalCode" to address.getPostalCode(),
-                            "country" to address.getCountry()
+                            "country" to address.getCountry(),
+                            "lat" to address.getLatLng().latitude,
+                            "lng" to address.getLatLng().longitude
                         )
                     )
 

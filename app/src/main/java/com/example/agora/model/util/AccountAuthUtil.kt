@@ -31,6 +31,7 @@ class AccountAuthUtil {
         }
 
         fun signOut(auth: FirebaseAuth) {
+            UserManager.currentUser = null
             auth.signOut()
         }
 
