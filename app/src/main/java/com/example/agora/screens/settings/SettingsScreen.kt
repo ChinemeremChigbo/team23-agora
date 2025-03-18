@@ -96,7 +96,6 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-//                Spacer(modifier = Modifier.height(21.dp))
                 Box(
                     modifier = Modifier.fillMaxWidth().height(30.dp), contentAlignment = Alignment.Center
                 ) {

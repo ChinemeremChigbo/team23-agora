@@ -1,5 +1,6 @@
 package com.example.agora.model.repository
 
+import com.example.agora.model.data.PostStatus
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
 
@@ -112,9 +113,15 @@ class WishlistUtils {
                             .get()
                             .addOnSuccessListener { document ->
                                 resultList[index] = if (document != null && document.exists()) {
-                                    document.data
+                                    val data = document.data
+                                    // TODO: identify resolved post separately and mark as grey
+                                    if (data?.get("status").toString() != PostStatus.ACTIVE.name) {
+                                        null // Exclude this post as it's deleted or resolved
+                                    } else {
+                                        data
+                                    }
                                 } else {
-                                    emptyMap()
+                                    null
                                 }
                                 remaining--
                                 if (remaining == 0) {
