@@ -228,7 +228,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             fontSize = 16.sp
                         )
                     }
-//                    MapScreen(post.address)
+                    MapScreen(post.address)
                     HorizontalDivider(thickness = 1.dp)
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text(
@@ -254,7 +254,10 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                             postId = post.postId,
                                             userId = user.userId,
                                             text = commentField.value,
-                                            onSuccess = { viewModel.updateComment("") },
+                                            onSuccess = {
+                                                viewModel.updateComment("")
+                                                viewModel.fetchComments(post.postId)
+                                            },
                                             onFailure = { Toast.makeText(context, "Failed to create comment", Toast.LENGTH_SHORT).show() },
                                         )
                                     }
@@ -446,7 +449,7 @@ fun CommentItem(
 
                 Column (verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     Text(
-                        text = user.fullName,
+                        text = "${user.fullName} | @${user.username}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.ExtraBold
                     )

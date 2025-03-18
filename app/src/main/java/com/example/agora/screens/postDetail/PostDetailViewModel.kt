@@ -43,11 +43,7 @@ class PostDetailViewModel (
             _post.value = post
             ProfileSettingUtils.getUserById(post!!.userId, { user -> _user.value = user })
         })
-        CommentUtils.getPostComments(
-            postId,
-            { comments -> _comments.value = comments},
-            { _comments.value = emptyList() }
-        )
+        fetchComments(postId)
     }
 
     fun checkIfPostInWishlist(postId: String) {
@@ -64,6 +60,14 @@ class PostDetailViewModel (
 
     fun fetchUser(userId: String, callback: (User?) -> Unit) {
         ProfileSettingUtils.getUserById(userId, { user -> callback(user) })
+    }
+
+    fun fetchComments(postId: String) {
+        CommentUtils.getPostComments(
+            postId,
+            { comments -> _comments.value = comments},
+            { _comments.value = emptyList() }
+        )
     }
 }
 
