@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.example.agora.model.data.Notification
 
 class NotificationUtils {
     companion object {
@@ -19,7 +20,8 @@ class NotificationUtils {
             val notificationRef = db.collection("notifications").document()
 
             // todo
-            var message = "New comment on post $postName from user $creatorUsername"
+//            var message = "New comment on post $postName from user $creatorUsername"
+            var message = "New comment on post abc from user xyz"
 
             val notificationData = hashMapOf(
                 "userId" to userId,
@@ -37,35 +39,24 @@ class NotificationUtils {
 
         fun getUserNotifications(
             userId: String,
-            onSuccess: (List<Map<String, Any>>) -> Unit,
+            callback: (List<Notification>) -> Unit,
             onFailure: (Exception) -> Unit
         ) {
             val db = FirebaseFirestore.getInstance()
-            val userRef = db.collection("users").document(userId)
 
-            userRef.get()
+            db.collection("users").document(userId).get()
                 .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val notificationIds = document.get("notifications") as? List<String> ?: emptyList()
+                    val notificationIds = document.get("notifications") as? List<String> ?: return@addOnSuccessListener callback(emptyList())
 
-                        if (notificationIds.isEmpty()) {
-                            onSuccess(emptyList())
-                            return@addOnSuccessListener
+                    db.collection("notifications")
+                        .whereIn(FieldPath.documentId(), notificationIds)
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            val notifications = snapshot.documents.mapNotNull { it.data?.let(Notification::convertDBEntryToNotification) }
+                                .sortedByDescending { it.createdAt }
+                            callback(notifications)
                         }
-
-                        db.collection("notifications")
-                            .whereIn(FieldPath.documentId(), notificationIds)
-                            .get()
-                            .addOnSuccessListener { querySnapshot ->
-                                val notifications = querySnapshot.documents
-                                    .mapNotNull { it.data }
-                                    .sortedByDescending { it["createdAt"] as? Timestamp }
-                                onSuccess(notifications)
-                            }
-                            .addOnFailureListener { onFailure(it) }
-                    } else {
-                        onFailure(Exception("User not found"))
-                    }
+                        .addOnFailureListener(onFailure)
                 }
                 .addOnFailureListener { onFailure(it) }
         }
