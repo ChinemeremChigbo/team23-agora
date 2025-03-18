@@ -1,6 +1,7 @@
 package com.example.agora.model.repository
 
 import com.example.agora.model.data.Category
+import com.example.agora.model.data.PostStatus
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -30,7 +31,7 @@ class SearchFilterUtils {
         ) {
             val db = FirebaseFirestore.getInstance()
 
-            var query: Query = db.collection("posts")
+            var query: Query = db.collection("posts").whereIn("status", listOf(PostStatus.ACTIVE.name))
 
             minPrice?.let {
                 query = query.whereGreaterThanOrEqualTo("price", minPrice)

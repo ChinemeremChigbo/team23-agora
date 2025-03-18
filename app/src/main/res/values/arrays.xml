@@ -2,7 +2,7 @@
 <resources>
     <string-array name="countries">
         <item>Canada</item>
-        <item>United States of America</item>
+        <item>United States</item>
     </string-array>
 
     <string-array name="provinces">

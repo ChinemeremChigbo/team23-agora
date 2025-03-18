@@ -20,25 +20,34 @@ import coil.compose.AsyncImage
 import com.example.agora.model.data.Post
 
 @Composable
-fun PostPreview(post: Post, onClick: () -> Unit, additionalContent: @Composable ((Modifier, Post) -> Unit)? = null) {
+fun PostPreview(
+    post: Post,
+    onClick: () -> Unit,
+    additionalContent: @Composable ((Modifier, Post) -> Unit)? = null
+) {
     Box {
-        Column (
+        Column(
             Modifier
                 .clip(RoundedCornerShape(10.dp))
                 .background(MaterialTheme.colorScheme.surface)
                 .width(221.dp)
-                .clickable(onClick={onClick()})
+                .clickable(onClick = { onClick() })
         ) {
             AsyncImage(
                 model = post.images[0],
-                contentDescription = "My Image",
-                contentScale = ContentScale.FillWidth,
+                contentDescription = "Post Image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .background(Color.LightGray)
-                    .height(160.dp)
                     .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 10.dp,
+                            topEnd = 10.dp
+                        )
+                    )
             )
-            Column (
+            Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier.padding(21.dp)
             ) {
@@ -49,7 +58,11 @@ fun PostPreview(post: Post, onClick: () -> Unit, additionalContent: @Composable 
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.width(200.dp)
                 )
-                Text("$" + String.format("%.2f", post.price), fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    "$" + String.format("%.2f", post.price),
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 

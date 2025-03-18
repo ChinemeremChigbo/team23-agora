@@ -2,6 +2,7 @@ package com.example.agora.screens.postEdit
 
 import android.app.Application
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,11 +16,12 @@ import kotlinx.coroutines.*
 
 class PostEditViewModel(
     application: Application,
-    postId: String
+    private val postId: String
 ): AndroidViewModel(application) {
     private val context get() = getApplication<Application>().applicationContext
     val userId = UserManager.currentUser!!.userId
 
+    private var initialImageUris: List<Uri> = emptyList()
     var images = MutableStateFlow<List<Uri>>(emptyList())
     var title = MutableStateFlow("")
     var price = MutableStateFlow("")
@@ -55,7 +57,9 @@ class PostEditViewModel(
     private fun fetchPostDetails(postId: String) {
         PostUtils.getPostById(postId, { post ->
             if (post != null) {
-                updateImages(post.images.map { Uri.parse(it) })
+                val uris = post.images.map { Uri.parse(it) }
+                initialImageUris = uris
+                updateImages(uris)
                 updateTitle(post.title)
                 updatePrice(post.price.toString())
                 updateCategory(post.category.value)
@@ -65,7 +69,7 @@ class PostEditViewModel(
     }
 
     fun upsertPost(
-        onSuccess: () -> Unit,
+        onSuccess: (String) -> Unit,
         onError: (String) -> Unit
     ) {
         viewModelScope.launch {
@@ -90,7 +94,18 @@ class PostEditViewModel(
                 val uploadedUrls = uploadImages()
 
                 if (editing) {  // Edit post
-                    // todo: add backend request
+                    PostUtils.editPost(
+                        postId = postId,
+                        title = title.value,
+                        description = description.value,
+                        price = priceDouble,
+                        category = categoryEnum,
+                        images = uploadedUrls,
+                        onSuccess = {
+                            onSuccess("Post edited successfully!")
+                        },
+                        onFailure = { e -> onError(e.localizedMessage ?: "Edit Post failed") }
+                    )
                 } else {        // Create post
                     PostUtils.createPost(
                         title = title.value,
@@ -99,8 +114,8 @@ class PostEditViewModel(
                         category = categoryEnum,
                         images = uploadedUrls,
                         userId = userId,
-                        onSuccess = { onSuccess() },
-                        onFailure = { e -> onError(e.localizedMessage ?: "Post failed") }
+                        onSuccess = { onSuccess("Post created successfully!") },
+                        onFailure = { e -> onError(e.localizedMessage ?: "Create Post failed") }
                     )
                 }
             } catch (e: Exception) {
@@ -127,6 +142,11 @@ class PostEditViewModel(
     }
 
     private suspend fun uploadImages(): List<String> = withContext(Dispatchers.IO) {
+        // compare current images with originally loaded images
+        if (editing && images.value == initialImageUris) {
+            Log.d("PostEditViewModel", "No new images detected, skipping upload")
+            return@withContext initialImageUris.map { it.toString() }
+        }
         val uploadJobs = images.value.map { uri ->
             async {
                 val deferred = CompletableDeferred<String>()

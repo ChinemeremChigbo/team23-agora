@@ -11,7 +11,7 @@ import com.google.firebase.firestore.Query
 
 class PostUtils {
     companion object {
-        private const val DEFAULT_IMAGE = "https://files.catbox.moe/dtg63k.jpg"
+        const val DEFAULT_IMAGE = "https://files.catbox.moe/dtg63k.jpg"
 
         /** Fetch User's Address from Firestore */
         private fun fetchUserAddress(
@@ -105,16 +105,85 @@ class PostUtils {
                 }
         }
 
+        /** Edit an existing post */
+        fun editPost(
+            postId: String,
+            title: String,
+            description: String,
+            price: Double,
+            category: Category,
+            images: List<String>,
+            onSuccess: () -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
+            val db = FirebaseFirestore.getInstance()
+            val updatedPost = hashMapOf(
+                "title" to title,
+                "description" to description,
+                "price" to price,
+                "category" to category.name,
+                "images" to images.ifEmpty { listOf(DEFAULT_IMAGE) }
+            )
+
+            db.collection("posts").document(postId)
+                .update(updatedPost as Map<String, Any>)
+                .addOnSuccessListener { onSuccess() }
+                .addOnFailureListener { e ->
+                    onFailure(Exception("Failed to edit post: ${e.message}"))
+                }
+        }
+
+
+        /** Delete an existing post */
+        fun deletePost(
+            postId: String,
+            onSuccess: () -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
+            updatePostStatus(postId, PostStatus.DELETED, onSuccess, onFailure)
+        }
+
+        /** Mark a post as resolved */
+        fun resolvePost(
+            postId: String,
+            onSuccess: () -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
+            updatePostStatus(postId, PostStatus.RESOLVED, onSuccess, onFailure)
+        }
+
+        private fun updatePostStatus(
+            postId: String,
+            newStatus: PostStatus,
+            onSuccess: () -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("posts").document(postId)
+                .update(mapOf("status" to newStatus.name))
+                .addOnSuccessListener {
+                    onSuccess()
+                }
+                .addOnFailureListener { e ->
+                    onFailure(e)
+                }
+        }
+
         /** Get all posts by a specific user, sorted by "createdAt"*/
-        fun getPostsByUser (userId: String, callback: (List<Post>) -> Unit) {
+        fun getPostsByUser(userId: String, callback: (List<Post>) -> Unit) {
             val db = FirebaseFirestore.getInstance()
 
             db.collection("posts")
                 .whereEqualTo("userId", userId)
+                .whereNotIn("status", listOf(PostStatus.DELETED.name))
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener { posts ->
-                    val postList = posts.mapNotNull { it.data.let { data -> Post.convertDBEntryToPostDetail(data) } }
+                    val postList = posts.mapNotNull {
+                        it.data.let { data ->
+                            Post.convertDBEntryToPostDetail(data)
+                        }
+                    }
                     callback(postList)
                 }
                 .addOnFailureListener {
