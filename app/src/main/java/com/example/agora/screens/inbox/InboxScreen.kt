@@ -13,15 +13,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,11 +42,13 @@ import com.example.agora.model.data.Notification
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
+import com.example.agora.ui.components.EmptyState
 
 @Composable
 fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: NavController) {
     val nestedNavController = rememberNavController()
     val notifications by viewModel.notifications.collectAsState()
+    val isLoading by viewModel.isLoading.observeAsState(true)
 
     NavHost(
         navController = nestedNavController,
@@ -51,7 +56,7 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
     ) {
         composable("inboxList") {
             LaunchedEffect(nestedNavController.currentBackStackEntry) {
-                viewModel.getNotifications()
+                viewModel.getSuspendedResults()
             }
 
             Column(
@@ -72,11 +77,23 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
 
                 Spacer(Modifier.size(40.dp))
 
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    items(notifications) { notification ->
-                        NotificationItem(
-                            notification,
-                            { viewModel.viewNotification(notification, nestedNavController) })
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.Center)
+                            .padding(16.dp)
+                    )
+                } else if (notifications.isEmpty()) {
+                    // TODO: fix after rebase with main
+                    EmptyState("No results found")
+                } else {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        items(notifications) { notification ->
+                            NotificationItem(
+                                notification,
+                                { viewModel.viewNotification(notification, nestedNavController) })
+                        }
                     }
                 }
             }
