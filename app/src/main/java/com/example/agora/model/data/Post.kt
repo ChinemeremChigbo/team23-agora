@@ -27,8 +27,8 @@ class Post(
 ) {
 
     fun addComment(text: String) {
-        val comment = Comment(text = text, creatorId = "")
-        val mentions: List<String> = comment.findMentions()
+        val comment = Comment(text = text)
+        val mentions: List<String> = emptyList()
         for (mention in mentions) {
             // TODO: create a notification
         }

@@ -221,7 +221,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             fontSize = 16.sp
                         )
                     }
-                    MapScreen(post.address)
+//                    MapScreen(post.address)
                     HorizontalDivider(thickness = 1.dp)
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text(
