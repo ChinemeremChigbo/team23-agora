@@ -1,6 +1,9 @@
 package com.example.agora.screens
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.agora.R
@@ -33,7 +37,8 @@ fun BottomNavigation(
     )
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.background,
+        modifier = Modifier.height(74.dp)
     ) {
         items.forEach { item ->
             AddItem(
@@ -57,22 +62,16 @@ fun RowScope.AddItem(
             (currentRoute == screen.route || settingsSubRoutes.contains(currentRoute))
 
     NavigationBarItem(
-        // Text that shows below the icon
-        label = {
-            Text(text = screen.title)
-        },
-
         // The icon resource
         icon = {
             Icon(
                 painterResource(id = screen.icon),
                 contentDescription = screen.title,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(28.dp)
             )
         },
 
         // Display if the icon it is select or not
-
         selected = if (screen is BottomNavItem.Settings) isSettingsSelected else currentRoute == screen.route,
         // Always show the label below the icon or not
         alwaysShowLabel = false,
