@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -36,6 +37,7 @@ import com.example.agora.screens.postEdit.PostEditScreen
 import com.example.agora.screens.postEdit.PostEditViewModel
 import com.example.agora.screens.postEdit.PostEditViewModelFactory
 import com.example.agora.ui.components.BasicPostGrid
+import com.example.agora.ui.components.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,23 +115,51 @@ fun PostScreen(
                 ) {
                     // Post Grid
                     if (selectedOption == PostStatus.ACTIVE) {
-                        BasicPostGrid(
-                            activePosts,
-                            nestedNavController,
-                            { modifier, post ->
-                                PostMenu(
-                                    modifier,
-                                    post,
-                                    nestedNavController,
-                                    viewModel
-                                )
+                        if (activePosts.isEmpty()) {
+                            EmptyState(
+                                title = "Nothing here for now",
+                                msg = "This is where you'll find your active posts",
+                                icon = Icons.Default.Image
+                            ) {
+                                Button(
+                                    onClick = { nestedNavController.navigate("post_edit/") }
+                                ) {
+                                    Text(text = "Create post")
+                                }
                             }
-                        )
+                        } else {
+                            BasicPostGrid(
+                                activePosts,
+                                nestedNavController,
+                                { modifier, post ->
+                                    PostMenu(
+                                        modifier,
+                                        post,
+                                        nestedNavController,
+                                        viewModel
+                                    )
+                                }
+                            )
+                        }
                     } else {
-                        BasicPostGrid(
-                            resolvedPosts,
-                            nestedNavController,
-                        )
+                        if (resolvedPosts.isEmpty()) {
+                            EmptyState(
+                                title = "Nothing here for now",
+                                msg = "This is where you'll find your resolved posts",
+                                icon = Icons.Default.Image
+                            ) {
+                                Button(
+                                    onClick = { selectedOption = PostStatus.ACTIVE }
+                                ) {
+                                    Text(text = "See active posts")
+                                }
+                            }
+                        } else {
+                            BasicPostGrid(
+                                resolvedPosts,
+                                nestedNavController,
+                            )
+                        }
                     }
                 }
             }
