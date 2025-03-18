@@ -1,5 +1,6 @@
 package com.example.agora.screens.postDetail
 
+import android.provider.ContactsContract.Profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Post
@@ -25,7 +26,10 @@ class PostDetailViewModel (
     private val _inWishlist = MutableStateFlow(false)
     val inWishlist = _inWishlist.asStateFlow()
 
-    var comment = MutableStateFlow("")
+    private val _comments = MutableStateFlow<List<Post>>(emptyList())
+    val comments = _comments.asStateFlow()
+
+    var commentField = MutableStateFlow("")
 
     init {
         fetchPostDetails(postId)
@@ -48,7 +52,11 @@ class PostDetailViewModel (
     }
 
     fun updateComment(newVal: String) {
-        comment.value = newVal
+        commentField.value = newVal
+    }
+
+    fun fetchUser(userId: String, callback: (User?) -> Unit) {
+        ProfileSettingUtils.getUserById(userId, { user -> callback(user) })
     }
 }
 

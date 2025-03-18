@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.agora.model.data.Comment
 import com.example.agora.model.data.User
 import com.example.agora.model.repository.WishlistUtils
 import com.example.agora.ui.components.ImageCarousel
@@ -81,7 +82,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
     var showContactModal by remember { mutableStateOf(false) }
     var showReportModal by remember { mutableStateOf(false) }
 
-    var comment = viewModel.comment.collectAsState()
+    var commentField = viewModel.commentField.collectAsState()
 
     if (showContactModal && user != null) {
         ContactModal(user, { showContactModal = false })
@@ -228,30 +229,34 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             text = "Comments",
                             fontSize = 21.sp
                         )
-                        TextField(
-                            value = comment.value,
-                            onValueChange = { viewModel.updateComment(it) },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("Leave a comment...") },
-                            colors = TextFieldDefaults.colors(
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                            ),
-                            shape = RoundedCornerShape(16.dp),
-                            trailingIcon = {
-                                IconButton(onClick = { viewModel.updateComment("test") }) { // todo: update onClick
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.Send,
-                                        contentDescription = "Create comment"
-                                    )
-                                }
-                            },
+//                        TextField(
+//                            value = commentField.value,
+//                            onValueChange = { viewModel.updateComment(it) },
+//                            modifier = Modifier.fillMaxWidth(),
+//                            placeholder = { Text("Leave a comment...") },
+//                            colors = TextFieldDefaults.colors(
+//                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+//                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+//                                unfocusedIndicatorColor = Color.Transparent,
+//                                focusedIndicatorColor = Color.Transparent,
+//                            ),
+//                            shape = RoundedCornerShape(16.dp),
+//                            trailingIcon = {
+//                                IconButton(onClick = { viewModel.updateComment("test") }) { // todo: update onClick
+//                                    Icon(
+//                                        imageVector = Icons.AutoMirrored.Filled.Send,
+//                                        contentDescription = "Create comment"
+//                                    )
+//                                }
+//                            },
+//                        )
+                        val dummyComment1 = Comment(
+                            commentId = "123",
+                            userId = "d2UKMJ5KnjO1nF6IDHTJGk4zFKI3",
+                            postId = "BIiCI4TSGkj9JNfQCnme",
+                            text = "comment text!!!",
                         )
-                        if (user != null) {
-                            CommentItem(user)
-                        }
+                        CommentItem(viewModel, dummyComment1)
                     }
                 }
             } else {
@@ -383,41 +388,59 @@ fun ReportModal(user: User, onDismiss: () -> Unit) {
 
 @Composable
 fun CommentItem(
-    user: User,
+    viewModel: PostDetailViewModel,
+    comment: Comment
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
-            .padding(21.dp)
-    ) {
-        Row {
-            AsyncImage(
-                model = user.profileImage,
-                contentDescription = "User Avatar",
-                modifier = Modifier
-                    .size(27.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .padding()
-            )
+    var user by remember { mutableStateOf<User?>(null) }
 
-            Spacer(Modifier.size(10.dp))
+    LaunchedEffect(comment.userId) {
+        viewModel.fetchUser(comment.userId, { fetchedUser ->
+            if (fetchedUser == null) {
+                Log.e(
+                    "ProfileDetailScreen",
+                    "User ${comment.userId} not found for comment ${comment.commentId}"
+                )
+            } else {
+                user = fetchedUser
+            }
+        })
+    }
 
-            Column (verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                Text(
-                    text = user.fullName,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
-                Text(
-                    text = "This is my comment"
+    user?.let { user ->
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
+                .padding(21.dp)
+        ) {
+            Row {
+                AsyncImage(
+                    model = user.profileImage,
+                    contentDescription = "User Avatar",
+                    modifier = Modifier
+                        .size(27.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .padding()
                 )
 
-                Text(
-                    text = "Reply",
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { }
-                )
+                Spacer(Modifier.size(10.dp))
+
+                Column (verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                    Text(
+                        text = user.fullName,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                    Text(
+                        text = comment.text
+                    )
+
+                    Text(
+                        text = "Reply",
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { }
+                    )
+                }
             }
         }
     }
