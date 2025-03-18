@@ -52,8 +52,7 @@ fun PostScreen(
     val nestedNavController = rememberNavController()
 
     NavHost(
-        navController = nestedNavController,
-        startDestination = "postList"
+        navController = nestedNavController, startDestination = "postList"
     ) {
         // Post List Screen
         composable("postList") {
@@ -102,8 +101,7 @@ fun PostScreen(
                 SegmentedControl(
                     options = listOf(PostStatus.ACTIVE, PostStatus.RESOLVED),
                     selectedOption = selectedOption,
-                    onOptionSelected = { selectedOption = it }
-                )
+                    onOptionSelected = { selectedOption = it })
 
                 Spacer(Modifier.size(20.dp))
 
@@ -122,24 +120,17 @@ fun PostScreen(
                                 icon = Icons.Default.Image
                             ) {
                                 Button(
-                                    onClick = { nestedNavController.navigate("post_edit/") }
-                                ) {
+                                    onClick = { nestedNavController.navigate("post_edit/") }) {
                                     Text(text = "Create post")
                                 }
                             }
                         } else {
                             BasicPostGrid(
-                                activePosts,
-                                nestedNavController,
-                                { modifier, post ->
+                                activePosts, nestedNavController, { modifier, post ->
                                     PostMenu(
-                                        modifier,
-                                        post,
-                                        nestedNavController,
-                                        viewModel
+                                        modifier, post, nestedNavController, viewModel
                                     )
-                                }
-                            )
+                                })
                         }
                     } else {
                         if (resolvedPosts.isEmpty()) {
@@ -149,8 +140,7 @@ fun PostScreen(
                                 icon = Icons.Default.Image
                             ) {
                                 Button(
-                                    onClick = { selectedOption = PostStatus.ACTIVE }
-                                ) {
+                                    onClick = { selectedOption = PostStatus.ACTIVE }) {
                                     Text(text = "See active posts")
                                 }
                             }
@@ -169,7 +159,8 @@ fun PostScreen(
             route = "post_detail/{postId}",
         ) { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
-            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
+            val postDetailViewModel: PostDetailViewModel =
+                viewModel(factory = PostDetailViewModelFactory(postId))
             PostDetailScreen(postDetailViewModel, nestedNavController)
         }
         // Edit Post Screen
@@ -178,7 +169,8 @@ fun PostScreen(
         ) { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
             val application = LocalContext.current.applicationContext as Application
-            val postEditViewModel: PostEditViewModel = viewModel(factory = PostEditViewModelFactory(application, postId))
+            val postEditViewModel: PostEditViewModel =
+                viewModel(factory = PostEditViewModelFactory(application, postId))
             PostEditScreen(nestedNavController, postEditViewModel)
         }
     }
@@ -193,15 +185,13 @@ fun PostMenu(
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
-    Box (
+    Box(
         modifier = modifier
     ) {
         IconButton(
-            onClick = { expanded = !expanded },
-            modifier = Modifier
+            onClick = { expanded = !expanded }, modifier = Modifier
                 .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape
+                    color = MaterialTheme.colorScheme.primary, shape = CircleShape
                 )
                 .size(35.dp)
                 .padding(3.dp)
@@ -219,69 +209,43 @@ fun PostMenu(
             onDismissRequest = { expanded = false },
             modifier = Modifier.align(Alignment.TopEnd)
         ) {
-            DropdownMenuItem(
-                text = { Text("Edit") },
-                onClick = {
-                    expanded = false
-                    navController.navigate("post_edit/${post.postId}")
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Mark Resolved") },
-                onClick = {
-                    expanded = false
-                    postViewModel.resolvePost(
-                        postId = post.postId,
-                        onSuccess = {
-                            Toast.makeText(
-                                context,
-                                "Post resolved successfully!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                        onError = { errorMessage ->
-                            Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    )
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Delete") },
-                onClick = {
-                    expanded = false
-                    postViewModel.deletePost(
-                        postId = post.postId,
-                        onSuccess = {
-                            Toast.makeText(
-                                context,
-                                "Post deleted successfully!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                        onError = { errorMessage ->
-                            Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    )
-                }
-            )
+            DropdownMenuItem(text = { Text("Edit") }, onClick = {
+                expanded = false
+                navController.navigate("post_edit/${post.postId}")
+            })
+            DropdownMenuItem(text = { Text("Mark Resolved") }, onClick = {
+                expanded = false
+                postViewModel.resolvePost(postId = post.postId, onSuccess = {
+                    Toast.makeText(
+                        context, "Post resolved successfully!", Toast.LENGTH_SHORT
+                    ).show()
+                }, onError = { errorMessage ->
+                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                })
+            })
+            DropdownMenuItem(text = { Text("Delete") }, onClick = {
+                expanded = false
+                postViewModel.deletePost(postId = post.postId, onSuccess = {
+                    Toast.makeText(
+                        context, "Post deleted successfully!", Toast.LENGTH_SHORT
+                    ).show()
+                }, onError = { errorMessage ->
+                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                })
+            })
         }
     }
 }
 
 @Composable
 fun SegmentedControl(
-    options: List<PostStatus>,
-    selectedOption: PostStatus,
-    onOptionSelected: (PostStatus) -> Unit
+    options: List<PostStatus>, selectedOption: PostStatus, onOptionSelected: (PostStatus) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.Center
+            .padding(4.dp), horizontalArrangement = Arrangement.Center
     ) {
         options.forEach { option ->
             val isSelected = option == selectedOption
@@ -294,8 +258,7 @@ fun SegmentedControl(
                     )
                     .clickable { onOptionSelected(option) }
                     .padding(vertical = 7.dp),
-                contentAlignment = Alignment.Center
-            ) {
+                contentAlignment = Alignment.Center) {
                 Text(
                     text = option.value,
                     fontSize = 15.sp,
