@@ -1,8 +1,12 @@
 package com.example.agora.screens.postDetail
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -219,7 +223,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                     }
                     MapScreen(post.address)
                     HorizontalDivider(thickness = 1.dp)
-                    Column {
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Text(
                             text = "Comments",
                             fontSize = 21.sp
@@ -245,6 +249,9 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 }
                             },
                         )
+                        if (user != null) {
+                            CommentItem(user)
+                        }
                     }
                 }
             } else {
@@ -372,4 +379,46 @@ fun ReportModal(user: User, onDismiss: () -> Unit) {
             }
         },
     )
+}
+
+@Composable
+fun CommentItem(
+    user: User,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
+            .padding(21.dp)
+    ) {
+        Row {
+            AsyncImage(
+                model = user.profileImage,
+                contentDescription = "User Avatar",
+                modifier = Modifier
+                    .size(27.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .padding()
+            )
+
+            Spacer(Modifier.size(10.dp))
+
+            Column (verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text(
+                    text = user.fullName,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Text(
+                    text = "This is my comment"
+                )
+
+                Text(
+                    text = "Reply",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { }
+                )
+            }
+        }
+    }
 }
