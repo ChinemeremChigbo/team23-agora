@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -23,11 +24,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -40,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +76,8 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
 
     var showContactModal by remember { mutableStateOf(false) }
     var showReportModal by remember { mutableStateOf(false) }
+
+    var comment = viewModel.comment.collectAsState()
 
     if (showContactModal && user != null) {
         ContactModal(user, { showContactModal = false })
@@ -211,7 +218,34 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                         )
                     }
                     MapScreen(post.address)
-
+                    HorizontalDivider(thickness = 1.dp)
+                    Column {
+                        Text(
+                            text = "Comments",
+                            fontSize = 21.sp
+                        )
+                        TextField(
+                            value = comment.value,
+                            onValueChange = { viewModel.updateComment(it) },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("Leave a comment...") },
+                            colors = TextFieldDefaults.colors(
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                            ),
+                            shape = RoundedCornerShape(16.dp),
+                            trailingIcon = {
+                                IconButton(onClick = { viewModel.updateComment("test") }) { // todo: update onClick
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Send,
+                                        contentDescription = "Create comment"
+                                    )
+                                }
+                            },
+                        )
+                    }
                 }
             } else {
                 CircularProgressIndicator()
