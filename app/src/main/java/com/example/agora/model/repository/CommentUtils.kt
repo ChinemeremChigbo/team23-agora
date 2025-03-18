@@ -5,6 +5,7 @@ import com.example.agora.model.data.Post
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -132,6 +133,30 @@ class CommentUtils {
                         callback(null)
                     }
                 }
+        }
+
+        fun getPostComments(
+            postId: String,
+            callback: (List<Comment>) -> Unit,
+            onFailure: (Exception) -> Unit
+        ) {
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("posts").document(postId).get()
+                .addOnSuccessListener { document ->
+                    val commentIds = document.get("comments") as? List<String> ?: return@addOnSuccessListener callback(emptyList())
+
+                    db.collection("comments")
+                        .whereIn(FieldPath.documentId(), commentIds)
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            val comments = snapshot.documents.mapNotNull { it.data?.let(Comment::convertDBEntryToComment) }
+                                .sortedByDescending { it.createdAt }
+                            callback(comments)
+                        }
+                        .addOnFailureListener(onFailure)
+                }
+                .addOnFailureListener { onFailure(it) }
         }
     }
 }
