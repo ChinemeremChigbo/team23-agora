@@ -1,6 +1,7 @@
 package com.example.agora.screens.postDetail
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -62,6 +63,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.agora.model.data.Comment
 import com.example.agora.model.data.User
+import com.example.agora.model.repository.CommentUtils
 import com.example.agora.model.repository.WishlistUtils
 import com.example.agora.ui.components.ImageCarousel
 import com.example.agora.ui.components.MapScreen
@@ -76,6 +78,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
     val user = _user
     val inWishlist by viewModel.inWishlist.collectAsState()
     val scrollState = rememberScrollState() // Enables scrolling
+    val context = LocalContext.current
 
     val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -244,7 +247,17 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             ),
                             shape = RoundedCornerShape(16.dp),
                             trailingIcon = {
-                                IconButton(onClick = { viewModel.updateComment("test") }) { // todo: update onClick
+                                IconButton(onClick = {
+                                    if (user != null) {
+                                        CommentUtils.createComment(
+                                            postId = post.postId,
+                                            userId = user.userId,
+                                            text = commentField.value,
+                                            onSuccess = { viewModel.updateComment("") },
+                                            onFailure = { Toast.makeText(context, "Failed to create comment", Toast.LENGTH_SHORT).show() },
+                                        )
+                                    }
+                                }) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.Send,
                                         contentDescription = "Create comment"
@@ -272,7 +285,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 viewModel,
                                 comment,
                                 { username ->
-                                    viewModel.updateComment("${commentField.value}@${username}")
+                                    viewModel.updateComment("${commentField.value}@${username} ")
                                 }
                             )
                         }
@@ -298,7 +311,7 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
             Button(
                 onClick = {
                     clipboardManager.setText(AnnotatedString(user.email))
-                    android.widget.Toast.makeText(context, "Copied to clipboard!", android.widget.Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Copied to clipboard!", Toast.LENGTH_SHORT).show()
                 },
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth()
