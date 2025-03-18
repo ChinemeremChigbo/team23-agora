@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,34 +31,63 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.agora.model.data.Notification
+import com.example.agora.screens.postDetail.PostDetailScreen
+import com.example.agora.screens.postDetail.PostDetailViewModel
+import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 
 @Composable
-fun InboxScreen(viewModel: InboxViewModel = viewModel(), navController: NavController) {
+fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: NavController) {
+    val nestedNavController = rememberNavController()
     val notifications by viewModel.notifications.collectAsState()
 
-    Column(
-        modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp).fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    NavHost(
+        navController = nestedNavController,
+        startDestination = "inboxList"
     ) {
-        Box(
-            modifier = Modifier.height(30.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Inbox",
-                fontSize = 19.sp,
-                fontWeight = FontWeight.Bold
-            )
+        composable("inboxList") {
+            LaunchedEffect(nestedNavController.currentBackStackEntry) {
+                viewModel.getNotifications()
+            }
+
+            Column(
+                modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(
+                    modifier = Modifier.height(30.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Inbox",
+                        fontSize = 19.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(Modifier.size(40.dp))
+
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(notifications) { notification ->
+                        NotificationItem(
+                            notification,
+                            { viewModel.viewNotification(notification, nestedNavController) })
+                    }
+                }
+            }
         }
 
-        Spacer(Modifier.size(40.dp))
-
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(notifications) { notification ->
-                NotificationItem(notification, { viewModel.viewNotification() })
-            }
+        composable(
+            route = "post_detail/{postId}",
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
+            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
+            PostDetailScreen(postDetailViewModel, nestedNavController)
         }
     }
 }
@@ -85,7 +115,7 @@ fun NotificationItem(details: Notification, onClick: () -> Unit) {
         )
 
         Text(
-            text = "New comment on post " + details.getEventInfo() + " from " + details.getTargetUser(),
+            text = details.message,
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.surfaceVariant,
             lineHeight = 21.sp
