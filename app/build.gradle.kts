@@ -109,6 +109,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     // For fetching images from a givesn url
     implementation("io.coil-kt:coil-compose:2.5.0")
+    // For image carousel
+    implementation("com.google.accompanist:accompanist-pager:0.31.3-beta")
 
     // Import AWS Android SDK
     implementation("com.amazonaws:aws-android-sdk-s3:2.66.0")
