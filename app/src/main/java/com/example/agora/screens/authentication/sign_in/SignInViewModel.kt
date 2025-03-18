@@ -2,6 +2,7 @@ package com.example.agora.screens.authentication.sign_in
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.agora.model.data.User
 import com.example.agora.model.util.AccountAuthUtil
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ class SignInViewModel : ViewModel() {
     fun signIn(
         auth: FirebaseAuth,
         onSuccess: () -> Unit,
+        onPending: (User) -> Unit,
         onError: (String) -> Unit
     ) {
         var emailValue = email.value.trim()
@@ -34,9 +36,16 @@ class SignInViewModel : ViewModel() {
                     emailValue = "j35zhan@uwaterloo.ca"// TODO: Remove Temporary bypass logic, enable onError
 //                    onError("Please enter email and password")
                 }
-                AccountAuthUtil.accountSignIn(auth, emailValue, passwordValue)
                 // if login failed, auto throw error can will be caught!
-                onSuccess()
+                val currentUser = AccountAuthUtil.accountSignIn(auth, emailValue, passwordValue)
+                if(currentUser.isEmailVerified){
+                    onSuccess()
+                } else {
+                    // prompt user to verify email
+                    AccountAuthUtil.sendVerificationEmail(currentUser.email)
+                    onPending(currentUser)
+                }
+
             }  catch (e: Exception) {
                 onError(e.localizedMessage ?: "Login failed")
             }

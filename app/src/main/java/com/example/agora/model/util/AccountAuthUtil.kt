@@ -4,18 +4,21 @@ import com.example.agora.model.data.User
 import com.example.agora.model.repository.ProfileSettingUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
 class AccountAuthUtil {
     companion object {
-        suspend fun accountSignIn(auth: FirebaseAuth, email: String, password: String) {
+        suspend fun accountSignIn(auth: FirebaseAuth, email: String, password: String): User {
             val result = auth.signInWithEmailAndPassword(email, password).await()
-            val user = result.user
-            if (user != null && !user.isEmailVerified) {
-                sendVerificationEmail(email)
-                auth.signOut()
-                throw Exception("Please verify your email before logging in, check your email inbox!")
+            var currentUser: User? = null
+            result.user?.let {
+                currentUser = ProfileSettingUtils.getUserByIdSync(it.uid)
             }
+            if(currentUser == null){
+                throw Exception("An unexpected error occurred, please try again...")
+            }
+            return currentUser!!
         }
 
         suspend fun accountSignUp(auth: FirebaseAuth, email: String, password: String): String {
@@ -30,6 +33,7 @@ class AccountAuthUtil {
         fun signOut(auth: FirebaseAuth) {
             auth.signOut()
         }
+
 
         fun updatePassword(auth: FirebaseAuth, newPassword: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
             val user: FirebaseUser? = auth.currentUser
@@ -49,7 +53,7 @@ class AccountAuthUtil {
             }
         }
 
-        private fun sendVerificationEmail(email: String){
+        fun sendVerificationEmail(email: String){
             val emailRequest = EmailRequest(
                 sender = Sender("Agora", "agoraapp.help@gmail.com"),
                 to = listOf(Recipient(email, "User")),

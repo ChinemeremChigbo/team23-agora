@@ -1,6 +1,7 @@
 package com.example.agora.screens.post
 
 import android.app.Application
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -26,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.agora.model.data.Post
+import com.example.agora.model.data.PostStatus
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
@@ -34,13 +37,16 @@ import com.example.agora.screens.postEdit.PostEditViewModel
 import com.example.agora.screens.postEdit.PostEditViewModelFactory
 import com.example.agora.ui.components.BasicPostGrid
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostScreen(
     parentNavController: NavController,
     viewModel: PostViewModel = viewModel(),
 ) {
-    val userPosts by viewModel.userPosts.collectAsState()
+    val activePosts by viewModel.activePosts.collectAsState()
+    val resolvedPosts by viewModel.resolvedPosts.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
+    val isRefreshing by viewModel.isRefreshing.observeAsState(true)
     val nestedNavController = rememberNavController()
 
     NavHost(
@@ -61,7 +67,9 @@ fun PostScreen(
                 modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(30.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(30.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -88,20 +96,42 @@ fun PostScreen(
 
                 Spacer(Modifier.size(20.dp))
 
-                var selectedOption by remember { mutableStateOf("Active") }
+                var selectedOption by remember { mutableStateOf(PostStatus.ACTIVE) }
                 SegmentedControl(
-                    options = listOf("Active", "Resolved"),
+                    options = listOf(PostStatus.ACTIVE, PostStatus.RESOLVED),
                     selectedOption = selectedOption,
                     onOptionSelected = { selectedOption = it }
                 )
 
                 Spacer(Modifier.size(20.dp))
 
-                BasicPostGrid(
-                    userPosts,
-                    nestedNavController,
-                    { modifier, post -> PostMenu(modifier, post, nestedNavController) }
-                )
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        viewModel.refreshPosts()
+                    },
+                ) {
+                    // Post Grid
+                    if (selectedOption == PostStatus.ACTIVE) {
+                        BasicPostGrid(
+                            activePosts,
+                            nestedNavController,
+                            { modifier, post ->
+                                PostMenu(
+                                    modifier,
+                                    post,
+                                    nestedNavController,
+                                    viewModel
+                                )
+                            }
+                        )
+                    } else {
+                        BasicPostGrid(
+                            resolvedPosts,
+                            nestedNavController,
+                        )
+                    }
+                }
             }
         }
         // Post Detail Screen
@@ -125,7 +155,13 @@ fun PostScreen(
 }
 
 @Composable
-fun PostMenu(modifier: Modifier, post: Post, navController: NavController) {
+fun PostMenu(
+    modifier: Modifier,
+    post: Post,
+    navController: NavController,
+    postViewModel: PostViewModel,
+) {
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     Box (
         modifier = modifier
@@ -164,14 +200,40 @@ fun PostMenu(modifier: Modifier, post: Post, navController: NavController) {
                 text = { Text("Mark Resolved") },
                 onClick = {
                     expanded = false
-                    // todo: add dialogue, functionality
+                    postViewModel.resolvePost(
+                        postId = post.postId,
+                        onSuccess = {
+                            Toast.makeText(
+                                context,
+                                "Post resolved successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        onError = { errorMessage ->
+                            Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    )
                 }
             )
             DropdownMenuItem(
                 text = { Text("Delete") },
                 onClick = {
                     expanded = false
-                    // todo: add dialogue, functionality
+                    postViewModel.deletePost(
+                        postId = post.postId,
+                        onSuccess = {
+                            Toast.makeText(
+                                context,
+                                "Post deleted successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        onError = { errorMessage ->
+                            Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    )
                 }
             )
         }
@@ -180,9 +242,9 @@ fun PostMenu(modifier: Modifier, post: Post, navController: NavController) {
 
 @Composable
 fun SegmentedControl(
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit
+    options: List<PostStatus>,
+    selectedOption: PostStatus,
+    onOptionSelected: (PostStatus) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -205,7 +267,7 @@ fun SegmentedControl(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = option,
+                    text = option.value,
                     fontSize = 15.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                     color = if (isSelected) Color.Black else Color.Gray,

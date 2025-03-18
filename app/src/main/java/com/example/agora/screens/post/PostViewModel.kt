@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Post
+import com.example.agora.model.data.PostStatus
 import com.example.agora.model.repository.PostUtils
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,11 +17,17 @@ import kotlinx.coroutines.launch
 
 class PostViewModel : ViewModel() {
 
-    private val _userPosts = MutableStateFlow<List<Post>>(emptyList())
-    val userPosts: StateFlow<List<Post>> = _userPosts.asStateFlow()
+    private val _activePosts = MutableStateFlow<List<Post>>(emptyList())
+    val activePosts: StateFlow<List<Post>> = _activePosts.asStateFlow()
+
+    private val _resolvedPosts = MutableStateFlow<List<Post>>(emptyList())
+    val resolvedPosts: StateFlow<List<Post>> = _resolvedPosts.asStateFlow()
 
     private val _isLoading = MutableLiveData<Boolean>(true)
     val isLoading: LiveData<Boolean> get() = _isLoading
+
+    private val _isRefreshing = MutableLiveData<Boolean>(false)
+    val isRefreshing: LiveData<Boolean> get() = _isRefreshing
 
     init {
         viewModelScope.launch {
@@ -36,8 +44,58 @@ class PostViewModel : ViewModel() {
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
         PostUtils.getPostsByUser(userId) { posts ->
-            _userPosts.value = posts
+            _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
+            _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
             _isLoading.value = false
+        }
+    }
+
+    fun deletePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            PostUtils.deletePost(
+                postId = postId,
+                onSuccess = {
+//                    val updatedPosts = _activePosts.value.filter { it.postId != postId }
+//                    _activePosts.value = updatedPosts
+                    onSuccess()
+                },
+                onFailure = { e ->
+                    Log.e("PostViewModel", "Failed to delete post: ${e.localizedMessage}")
+                    onError(e.localizedMessage ?: "Failed to delete post")
+                }
+            )
+        }
+    }
+
+    fun resolvePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            PostUtils.resolvePost(
+                postId = postId,
+                onSuccess = {
+                    onSuccess()
+                },
+                onFailure = { e ->
+                    onError(e.localizedMessage ?: "Failed to resolve post")
+                }
+            )
+        }
+    }
+
+    private fun setRefreshing(value: Boolean) {
+        _isRefreshing.value = value
+    }
+
+    fun refreshPosts() {
+        viewModelScope.launch {
+            setRefreshing(true)
+            delay(1000)
+            val auth = FirebaseAuth.getInstance()
+            val userId = auth.currentUser?.uid ?: return@launch
+            PostUtils.getPostsByUser(userId) { posts ->
+                _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
+                _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
+            }
+            setRefreshing(false)
         }
     }
 }
