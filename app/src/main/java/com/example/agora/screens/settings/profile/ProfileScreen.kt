@@ -72,7 +72,10 @@ fun ProfileScreen(
 
     Scaffold { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(scrollState)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(scrollState)
                 .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -134,7 +137,10 @@ fun ProfileScreen(
                 value = bio,
                 onValueChange = { viewModel.updateBio(it) },
                 label = { Text("Bio") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding).height(120.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = bottomPadding)
+                    .height(120.dp),
                 shape = RoundedCornerShape(16.dp),
                 maxLines = 5,
                 singleLine = false,
@@ -158,7 +164,9 @@ fun ProfileScreen(
                         })
                     },
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
                 ) {
                     Text("Save Changes", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
@@ -178,9 +186,12 @@ fun ProfileTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
         shape = RoundedCornerShape(16.dp),
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        singleLine = true
     )
 }
 
@@ -200,7 +211,9 @@ fun DropdownField(
             value = value,
             onValueChange = {},
             label = { Text(label) },
-            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             shape = RoundedCornerShape(16.dp),
             trailingIcon = {

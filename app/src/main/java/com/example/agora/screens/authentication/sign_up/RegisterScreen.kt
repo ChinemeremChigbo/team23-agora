@@ -282,9 +282,8 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Continue button
         if (isLoading) {
-            CircularProgressIndicator() // ✅ Show Loading Indicator
+            CircularProgressIndicator()
         } else {
             Button(
                 onClick = {
@@ -315,7 +314,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                 )
             }
             RegistrationSuccessDialog(showSuccessDialog) {
-                showSuccessDialog = false // Close dialog when dismissed
+                showSuccessDialog = false
                 navController.popBackStack()
             }
         }
