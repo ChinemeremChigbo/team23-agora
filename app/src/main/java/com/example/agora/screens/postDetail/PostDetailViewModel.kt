@@ -25,6 +25,8 @@ class PostDetailViewModel (
     private val _inWishlist = MutableStateFlow(false)
     val inWishlist = _inWishlist.asStateFlow()
 
+    var comment = MutableStateFlow("")
+
     init {
         fetchPostDetails(postId)
         checkIfPostInWishlist(postId)
@@ -43,6 +45,10 @@ class PostDetailViewModel (
                 _inWishlist.value = inWishlist
             }
         }
+    }
+
+    fun updateComment(newVal: String) {
+        comment.value = newVal
     }
 }
 
