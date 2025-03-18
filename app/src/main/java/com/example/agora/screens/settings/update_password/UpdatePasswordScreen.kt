@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,34 +65,38 @@ fun UpdatePasswordScreen(
 
     Scaffold(topBar = {}) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
+            modifier = Modifier
+                .padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
+
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 TextButton(
                     onClick = { navController.popBackStack() },
+                    modifier = Modifier.width(60.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
-                    modifier = Modifier.width(50.dp),
-                    shape = RoundedCornerShape(16.dp) // ✅ Increased corner radius
                 ) {
-                    Text("Back", color = MaterialTheme.colorScheme.primary, fontSize = 14.sp)
+                    Text(
+                        text = "Back",
+                        fontSize = 15.sp,
+                    )
                 }
-
                 Text(
                     text = "Update Password",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
                 )
-
-                Box(modifier = Modifier.width(50.dp))
+                Box(modifier = Modifier.width(60.dp))
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             PasswordField("Current Password", currentPassword) { currentPassword = it }
             Spacer(modifier = Modifier.height(12.dp))
@@ -113,7 +120,9 @@ fun UpdatePasswordScreen(
                         viewModel.errorMessage.value = "Passwords do not match!"
                     }
                 },
-                modifier = Modifier.fillMaxWidth().height(60.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
