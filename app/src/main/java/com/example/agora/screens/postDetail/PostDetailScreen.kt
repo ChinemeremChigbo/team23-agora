@@ -120,7 +120,9 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                 ImageCarousel(post.images)
                 Column(
                     verticalArrangement = Arrangement.spacedBy(32.dp),
-                    modifier = Modifier.padding(32.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(32.dp)
+                        .fillMaxWidth()
                 ) {
                     Column (verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(
@@ -229,34 +231,51 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             text = "Comments",
                             fontSize = 21.sp
                         )
-//                        TextField(
-//                            value = commentField.value,
-//                            onValueChange = { viewModel.updateComment(it) },
-//                            modifier = Modifier.fillMaxWidth(),
-//                            placeholder = { Text("Leave a comment...") },
-//                            colors = TextFieldDefaults.colors(
-//                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-//                                focusedContainerColor = MaterialTheme.colorScheme.surface,
-//                                unfocusedIndicatorColor = Color.Transparent,
-//                                focusedIndicatorColor = Color.Transparent,
-//                            ),
-//                            shape = RoundedCornerShape(16.dp),
-//                            trailingIcon = {
-//                                IconButton(onClick = { viewModel.updateComment("test") }) { // todo: update onClick
-//                                    Icon(
-//                                        imageVector = Icons.AutoMirrored.Filled.Send,
-//                                        contentDescription = "Create comment"
-//                                    )
-//                                }
-//                            },
-//                        )
+                        TextField(
+                            value = commentField.value,
+                            onValueChange = { viewModel.updateComment(it) },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("Leave a comment...") },
+                            colors = TextFieldDefaults.colors(
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                            ),
+                            shape = RoundedCornerShape(16.dp),
+                            trailingIcon = {
+                                IconButton(onClick = { viewModel.updateComment("test") }) { // todo: update onClick
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Send,
+                                        contentDescription = "Create comment"
+                                    )
+                                }
+                            },
+                        )
+                        // temp
                         val dummyComment1 = Comment(
                             commentId = "123",
                             userId = "d2UKMJ5KnjO1nF6IDHTJGk4zFKI3",
                             postId = "BIiCI4TSGkj9JNfQCnme",
-                            text = "comment text!!!",
+                            text = "comment #1",
                         )
-                        CommentItem(viewModel, dummyComment1)
+                        val dummyComment2 = Comment(
+                            commentId = "123",
+                            userId = "d2UKMJ5KnjO1nF6IDHTJGk4zFKI3",
+                            postId = "BIiCI4TSGkj9JNfQCnme",
+                            text = "comment #2",
+                        )
+                        // temp
+                        val comments = listOf(dummyComment1, dummyComment2)
+                        comments.forEach { comment ->
+                            CommentItem(
+                                viewModel,
+                                comment,
+                                { username ->
+                                    viewModel.updateComment("${commentField.value}@${username}")
+                                }
+                            )
+                        }
                     }
                 }
             } else {
@@ -389,7 +408,8 @@ fun ReportModal(user: User, onDismiss: () -> Unit) {
 @Composable
 fun CommentItem(
     viewModel: PostDetailViewModel,
-    comment: Comment
+    comment: Comment,
+    replyOnClick: (String) -> Unit,
 ) {
     var user by remember { mutableStateOf<User?>(null) }
 
@@ -438,7 +458,7 @@ fun CommentItem(
                     Text(
                         text = "Reply",
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { }
+                        modifier = Modifier.clickable { replyOnClick(user.username) }
                     )
                 }
             }
