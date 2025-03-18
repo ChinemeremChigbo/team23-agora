@@ -86,6 +86,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
     var showReportModal by remember { mutableStateOf(false) }
 
     var commentField = viewModel.commentField.collectAsState()
+    val comments = viewModel.comments.collectAsState()
 
     if (showContactModal && user != null) {
         ContactModal(user, { showContactModal = false })
@@ -265,22 +266,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 }
                             },
                         )
-                        // temp
-                        val dummyComment1 = Comment(
-                            commentId = "123",
-                            userId = "d2UKMJ5KnjO1nF6IDHTJGk4zFKI3",
-                            postId = "BIiCI4TSGkj9JNfQCnme",
-                            text = "comment #1",
-                        )
-                        val dummyComment2 = Comment(
-                            commentId = "123",
-                            userId = "d2UKMJ5KnjO1nF6IDHTJGk4zFKI3",
-                            postId = "BIiCI4TSGkj9JNfQCnme",
-                            text = "comment #2",
-                        )
-                        // temp
-                        val comments = listOf(dummyComment1, dummyComment2)
-                        comments.forEach { comment ->
+                        comments.value.forEach { comment ->
                             CommentItem(
                                 viewModel,
                                 comment,

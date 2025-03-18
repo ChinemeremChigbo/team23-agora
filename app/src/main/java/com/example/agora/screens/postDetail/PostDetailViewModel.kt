@@ -3,8 +3,10 @@ package com.example.agora.screens.postDetail
 import android.provider.ContactsContract.Profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.agora.model.data.Comment
 import com.example.agora.model.data.Post
 import com.example.agora.model.data.User
+import com.example.agora.model.repository.CommentUtils
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.model.repository.ProfileSettingUtils
 import com.example.agora.model.repository.WishlistUtils
@@ -26,7 +28,7 @@ class PostDetailViewModel (
     private val _inWishlist = MutableStateFlow(false)
     val inWishlist = _inWishlist.asStateFlow()
 
-    private val _comments = MutableStateFlow<List<Post>>(emptyList())
+    private val _comments = MutableStateFlow<List<Comment>>(emptyList())
     val comments = _comments.asStateFlow()
 
     var commentField = MutableStateFlow("")
@@ -41,6 +43,11 @@ class PostDetailViewModel (
             _post.value = post
             ProfileSettingUtils.getUserById(post!!.userId, { user -> _user.value = user })
         })
+        CommentUtils.getPostComments(
+            postId,
+            { comments -> _comments.value = comments},
+            { _comments.value = emptyList() }
+        )
     }
 
     fun checkIfPostInWishlist(postId: String) {
