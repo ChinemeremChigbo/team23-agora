@@ -68,6 +68,7 @@ fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: Si
                 onDismiss = {
                     isLoading = false
                     AccountAuthUtil.signOut(auth)
+                    showVerificationDialog = false
                 }
             )
         }

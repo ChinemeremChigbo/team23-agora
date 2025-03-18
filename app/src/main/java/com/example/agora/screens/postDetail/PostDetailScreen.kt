@@ -54,6 +54,7 @@ import coil.compose.AsyncImage
 import com.example.agora.model.data.User
 import com.example.agora.model.repository.WishlistUtils
 import com.example.agora.ui.components.ImageCarousel
+import com.example.agora.ui.components.MapScreen
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -209,6 +210,8 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             fontSize = 16.sp
                         )
                     }
+                    MapScreen(post.address)
+
                 }
             } else {
                 CircularProgressIndicator()

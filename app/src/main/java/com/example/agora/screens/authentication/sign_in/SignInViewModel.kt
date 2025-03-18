@@ -40,10 +40,12 @@ class SignInViewModel : ViewModel() {
                 val currentUser = AccountAuthUtil.accountSignIn(auth, emailValue, passwordValue)
                 if(currentUser.isEmailVerified){
                     onSuccess()
+                } else {
+                    // prompt user to verify email
+                    AccountAuthUtil.sendVerificationEmail(currentUser.email)
+                    onPending(currentUser)
                 }
-                // prompt user to verify email
-                AccountAuthUtil.sendVerificationEmail(currentUser.email)
-                onPending(currentUser)
+
             }  catch (e: Exception) {
                 onError(e.localizedMessage ?: "Login failed")
             }
