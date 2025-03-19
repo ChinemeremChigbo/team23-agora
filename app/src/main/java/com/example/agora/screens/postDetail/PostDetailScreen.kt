@@ -209,7 +209,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
 
                             TextButton(onClick = { showReportModal = true }) {
                                 Text(
-                                    text = "Report post",
+                                    text = "Report Post",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = MaterialTheme.colorScheme.primary,
@@ -394,7 +394,7 @@ fun ReportModal(user: User, onDismiss: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Report post",
+                    text = "Report Post",
                     fontSize = 21.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onBackground
