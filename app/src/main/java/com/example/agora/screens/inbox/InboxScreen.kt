@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -87,8 +89,11 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
                             .padding(16.dp)
                     )
                 } else if (notifications.isEmpty()) {
-                    // TODO: fix after rebase with main
-                    EmptyState("No results found")
+                    EmptyState(
+                        title = "All up to date!",
+                        msg = "This is where you'll find your notifications",
+                        icon = Icons.Default.Inbox
+                    ) {}
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         items(notifications) { notification ->
