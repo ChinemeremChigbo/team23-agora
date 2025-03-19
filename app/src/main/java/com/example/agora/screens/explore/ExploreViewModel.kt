@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.example.agora.model.repository.SearchFilterUtils
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,6 +29,9 @@ class ExploreViewModel : ViewModel() {
 
     private val _isLoading = MutableLiveData<Boolean>(true)
     val isLoading: LiveData<Boolean> get() = _isLoading
+
+    private val _isRefreshing = MutableLiveData<Boolean>(false)
+    val isRefreshing: LiveData<Boolean> get() = _isRefreshing
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
@@ -74,6 +78,16 @@ class ExploreViewModel : ViewModel() {
                     }
                 )
             }
+        }
+    }
+
+    fun refreshFeed() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            delay(1000)
+            val feed = getFeed()
+            _postList.value = feed.filter { it.second.isNotEmpty() }
+            _isRefreshing.value = false
         }
     }
 }
