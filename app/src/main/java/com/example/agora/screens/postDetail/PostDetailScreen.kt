@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +32,8 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -67,6 +70,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.agora.model.data.Comment
+import com.example.agora.model.data.Report
 import com.example.agora.model.data.User
 import com.example.agora.model.repository.CommentUtils
 import com.example.agora.model.repository.WishlistUtils
@@ -97,8 +101,12 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
 
     if (showContactModal && user != null) {
         ContactModal(user, { showContactModal = false })
-    } else if (showReportModal && user != null) {
-        ReportModal(user, { showReportModal = false })
+    } else if (showReportModal && post != null && currentUser != null) {
+        ReportModal(
+            postId = post.postId,
+            reporterId = currentUser.uid,
+            onDismiss = { showReportModal = false }
+        )
     }
 
     LaunchedEffect(navController.currentBackStackEntry) {
@@ -384,13 +392,28 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun ReportModal(user: User, onDismiss: () -> Unit) {
+fun ReportModal(postId: String, reporterId: String, onDismiss: () -> Unit) {
+    var isReporting by remember { mutableStateOf(false) }
+    var reportError by remember { mutableStateOf<String?>(null) }
+    var selectedReason by remember { mutableStateOf<String?>(null) }
+
+    val reportReasons = listOf(
+        "Spam",
+        "Inappropriate Content",
+        "False Information",
+        "Harassment",
+        "Other"
+    )
+
     AlertDialog(
         shape = RoundedCornerShape(21.dp),
         containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = { onDismiss() },
         confirmButton = {
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 OutlinedButton(
                     onClick = onDismiss,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
@@ -400,11 +423,40 @@ fun ReportModal(user: User, onDismiss: () -> Unit) {
                     Text("Cancel")
                 }
                 Button(
-                    onClick = {},
+                    onClick = {
+                        if (selectedReason.isNullOrEmpty()) {
+                            reportError = "Please select a reason!"
+                            return@Button
+                        }
+                        isReporting = true
+                        val report = Report(
+                            postId = postId,
+                            reporterId = reporterId,
+                            reason = selectedReason!!
+                        )
+                        report.submitReport(
+                            onSuccess = {
+                                isReporting = false
+                                onDismiss()
+                            },
+                            onFailure = { error ->
+                                isReporting = false
+                                reportError = error
+                            }
+                        )
+                    },
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    enabled = !isReporting
                 ) {
-                    Text("Report")
+                    if (isReporting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text("Report")
+                    }
                 }
             }
         },
@@ -421,10 +473,44 @@ fun ReportModal(user: User, onDismiss: () -> Unit) {
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "Are you sure you want to report this post? This action cannot be undone.",
+                    text = "Select a reason for reporting this post:",
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     textAlign = TextAlign.Center
                 )
+
+                var expanded by remember { mutableStateOf(false) }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
+                        .clickable { expanded = true }
+                        .padding(10.dp)
+                ) {
+                    Text(text = selectedReason ?: "Select a reason", color = Color.Gray)
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    reportReasons.forEach { reason ->
+                        DropdownMenuItem(
+                            text = { Text(reason) },
+                            onClick = {
+                                selectedReason = reason
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+
+                if (reportError != null) {
+                    Text(
+                        text = reportError ?: "",
+                        color = Color.Red,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         },
     )
