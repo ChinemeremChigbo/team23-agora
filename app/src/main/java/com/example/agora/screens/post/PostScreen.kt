@@ -80,14 +80,6 @@ fun PostScreen(
     ) {
         // Post List Screen
         composable("postList") {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentSize(Alignment.Center)
-                        .padding(16.dp)
-                )
-            }
             Column(
                 modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
             ) {
@@ -128,6 +120,15 @@ fun PostScreen(
                     onOptionSelected = { selectedOption = it })
 
                 Spacer(Modifier.size(20.dp))
+
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.Center)
+                            .padding(16.dp)
+                    )
+                }
 
                 PullToRefreshBox(
                     isRefreshing = isRefreshing,
