@@ -128,7 +128,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     // For image carousel
     implementation("com.google.accompanist:accompanist-pager:0.31.3-beta")
-
+    // For deep links
+    implementation("com.google.firebase:firebase-dynamic-links-ktx:21.2.0")
     // Import AWS Android SDK
     implementation("com.amazonaws:aws-android-sdk-s3:2.66.0")
 }
