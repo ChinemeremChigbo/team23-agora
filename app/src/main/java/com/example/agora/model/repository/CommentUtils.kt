@@ -160,6 +160,10 @@ class CommentUtils {
                 .addOnSuccessListener { document ->
                     val commentIds = document.get("comments") as? List<String> ?: return@addOnSuccessListener callback(emptyList())
 
+                    if (commentIds.isEmpty()) {
+                        return@addOnSuccessListener
+                    }
+
                     db.collection("comments")
                         .whereIn(FieldPath.documentId(), commentIds)
                         .get()
