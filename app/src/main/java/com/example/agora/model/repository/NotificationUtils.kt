@@ -24,18 +24,14 @@ class NotificationUtils {
             val db = FirebaseFirestore.getInstance()
             val notificationRef = db.collection("notifications").document()
 
-
             db.collection("users").document(commenterId).get()
                 .addOnSuccessListener { userDocument ->
+
                     val name = userDocument.getString("username") ?: ""
-                    var message: String = ""
-
-                    if (type == NotificationType.POSTER) {
-                        message = "$name commented on your post!"
-                    } else if (type == NotificationType.MENTION) {
-                        message = "You were mentioned in a comment by $name"
+                    val message = when (type) {
+                        NotificationType.POSTER -> "$name commented on your post!"
+                        NotificationType.MENTION -> "You were mentioned in a comment by $name"
                     }
-
                     val notificationData = hashMapOf(
                         "notificationId" to notificationRef,
                         "userId" to userId,
@@ -45,12 +41,31 @@ class NotificationUtils {
                         "eventInfo" to "comment",
                         "createdAt" to Timestamp.now()
                     )
-
                     notificationRef.set(notificationData)
-                        .addOnSuccessListener { onSuccess() }
-                        .addOnFailureListener { onFailure(it) }
+                        .addOnSuccessListener {
+                            db.collection("users").document(userId)
+                                .update("notifications", FieldValue.arrayUnion(notificationRef.id))
+                                .addOnSuccessListener {
+                                    onSuccess()
+                                }
+                                .addOnFailureListener {
+                                    onFailure(it)
+                                }
+                        }
+                        .addOnFailureListener {
+                            onFailure(it)
+                        }
+                    notificationRef.set(notificationData)
+                        .addOnSuccessListener {
+                            onSuccess()
+                        }
+                        .addOnFailureListener {
+                            onFailure(it)
+                        }
                 }
-                .addOnFailureListener { onFailure(it) }
+                .addOnFailureListener {
+                    onFailure(it)
+                }
         }
 
         fun getUserNotifications(
