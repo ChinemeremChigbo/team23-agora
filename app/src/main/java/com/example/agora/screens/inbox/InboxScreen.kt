@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +40,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.agora.model.data.Notification
+import com.example.agora.R
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
@@ -124,6 +126,7 @@ fun NotificationItem(details: Notification, onClick: () -> Unit) {
             model = details.previewImg,
             contentDescription = "Preview image",
             contentScale = ContentScale.FillWidth,
+            placeholder = painterResource(R.drawable.ic_post),
             modifier = Modifier
                 .height(40.dp)
                 .width(40.dp)
