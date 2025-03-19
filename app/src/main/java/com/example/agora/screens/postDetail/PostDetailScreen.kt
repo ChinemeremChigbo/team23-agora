@@ -249,7 +249,9 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             shape = RoundedCornerShape(16.dp),
                             trailingIcon = {
                                 IconButton(onClick = {
-                                    if (currentUser != null) {
+                                    if(commentField.value.isBlank()){
+                                        Toast.makeText(context, "Comment can't be empty!", Toast.LENGTH_SHORT).show()
+                                    } else if (currentUser != null) {
                                         CommentUtils.createComment(
                                             postId = post.postId,
                                             userId = currentUser.uid,
