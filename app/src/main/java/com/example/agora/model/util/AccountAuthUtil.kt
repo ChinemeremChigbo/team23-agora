@@ -31,7 +31,6 @@ class AccountAuthUtil {
         }
 
         fun signOut(auth: FirebaseAuth) {
-            UserManager.currentUser = null
             auth.signOut()
         }
 
@@ -84,16 +83,16 @@ class AccountAuthUtil {
 }
 
 // Allow cross-app access details about current user
-object UserManager {
-    var currentUser: User? = null
-
-    fun fetchUser(uid: String, onComplete: (User?) -> Unit) {
-        if (currentUser != null) {
-            onComplete(currentUser)
-            return
-        }
-
-        // only calls database once!
-        ProfileSettingUtils.getUserById(uid, onComplete)
-    }
-}
+//object UserManager {
+//    var currentUser: User? = null
+//
+//    fun fetchUser(uid: String, onComplete: (User?) -> Unit) {
+//        if (currentUser != null) {
+//            onComplete(currentUser)
+//            return
+//        }
+//
+//        // only calls database once!
+//        ProfileSettingUtils.getUserById(uid, onComplete)
+//    }
+//}

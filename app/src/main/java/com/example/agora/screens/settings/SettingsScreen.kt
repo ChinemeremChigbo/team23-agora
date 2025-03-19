@@ -61,7 +61,6 @@ import com.example.agora.model.data.User
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Dp
-import com.example.agora.model.util.UserManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.offset
@@ -70,6 +69,7 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
+import com.example.agora.model.repository.ProfileSettingUtils
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -82,11 +82,7 @@ fun SettingsScreen(
     var currentUser by remember { mutableStateOf(User()) }
     // Refetch user object everytime it navigate to this page
     LaunchedEffect(key1 = Unit) {
-        UserManager.fetchUser(auth.uid!!) {
-            if (it != null) {
-                currentUser = it
-            }
-        }
+        currentUser = ProfileSettingUtils.getUserByIdSync(auth.currentUser?.uid!!)!!
     }
     val text by viewModel.text.observeAsState("Settings")
 
