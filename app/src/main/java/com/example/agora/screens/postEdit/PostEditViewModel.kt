@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Category
 import com.example.agora.model.repository.PostUtils
-import com.example.agora.model.util.UserManager
 import com.example.agora.util.uploadImageToS3
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.*
 
@@ -19,7 +19,8 @@ class PostEditViewModel(
     private val postId: String
 ): AndroidViewModel(application) {
     private val context get() = getApplication<Application>().applicationContext
-    val userId = UserManager.currentUser!!.userId
+    val auth = FirebaseAuth.getInstance()
+    val userId = auth.currentUser?.uid
 
     private var initialImageUris: List<Uri> = emptyList()
     var images = MutableStateFlow<List<Uri>>(emptyList())
@@ -113,7 +114,7 @@ class PostEditViewModel(
                         price = priceDouble,
                         category = categoryEnum,
                         images = uploadedUrls,
-                        userId = userId,
+                        userId = userId!!,
                         onSuccess = { onSuccess("Post created successfully!") },
                         onFailure = { e -> onError(e.localizedMessage ?: "Create Post failed") }
                     )

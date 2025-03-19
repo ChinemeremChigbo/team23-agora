@@ -25,16 +25,6 @@ class Post(
     var userId: String = "",
     var address: Address = Address(),
 ) {
-
-    fun addComment(text: String) {
-        val comment = Comment(text = text)
-        val mentions: List<String> = emptyList()
-        for (mention in mentions) {
-            // TODO: create a notification
-        }
-        comments.add(comment)
-    }
-
     companion object {
         fun convertDBEntryToPostPreview(entry: Map<String, Any>): Post {
             return Post(

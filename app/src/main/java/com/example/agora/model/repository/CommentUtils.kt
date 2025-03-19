@@ -1,13 +1,16 @@
 package com.example.agora.model.repository
 
+import android.util.Log
 import com.example.agora.model.data.Comment
 import com.example.agora.model.data.Post
+import com.example.agora.model.data.PostStatus
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 
 class CommentUtils {
@@ -31,30 +34,16 @@ class CommentUtils {
                 return
             }
 
-            val userIds = mutableSetOf<String>()
-            val tasks = mutableListOf<Task<QuerySnapshot>>()
-
-            for (username in mentionUsernames) {
-                val query = db.collection("users")
-                    .whereEqualTo("username", username)
-                    .get()
-
-                tasks.add(query)
-            }
-
-            Tasks.whenAllSuccess<QuerySnapshot>(tasks)
-                .addOnSuccessListener { results ->
-                    for (snapshot in results) {
-                        for (document in snapshot.documents) {
-                            val userId = document.getString("userId")
-                            if (userId != null) {
-                                userIds.add(userId)
-                            }
-                        }
-                    }
-                    onSuccess(userIds.toList())
+            db.collection("users")
+                .whereIn("username", mentionUsernames)
+                .get()
+                .addOnSuccessListener { users ->
+                    val userIds = users.documents.map { it.id }
+                    onSuccess(userIds)
                 }
-                .addOnFailureListener { onFailure(it) }
+                .addOnFailureListener { exception ->
+                    onFailure(exception)
+                }
         }
 
         fun createComment(
