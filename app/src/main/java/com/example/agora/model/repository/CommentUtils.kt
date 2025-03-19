@@ -34,8 +34,6 @@ class CommentUtils {
                 return
             }
 
-            Log.d("hello", mentionUsernames.toString())
-
             db.collection("users")
                 .whereIn("username", mentionUsernames)
                 .get()
