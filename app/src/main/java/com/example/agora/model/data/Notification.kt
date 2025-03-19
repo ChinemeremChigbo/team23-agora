@@ -4,6 +4,7 @@ import com.example.agora.model.repository.PostUtils
 import com.example.agora.model.util.DataUtil
 import java.util.*
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 
 
 class Notification(
@@ -26,7 +27,11 @@ class Notification(
                 }
 
                 val notification = Notification(
-                    notificationId = entry["notificationId"]?.toString() ?: "",
+                    notificationId = if (entry["notificationId"] is DocumentReference) {
+                        (entry["notificationId"] as DocumentReference).id
+                    } else {
+                        entry["notificationId"]?.toString() ?: ""
+                    },
                     postId = postId,
                     userId = entry["userId"]?.toString() ?: "",
                     message = entry["message"]?.toString() ?: "",
