@@ -54,9 +54,20 @@ class NotificationUtils {
                         .whereIn(FieldPath.documentId(), notificationIds)
                         .get()
                         .addOnSuccessListener { snapshot ->
-                            val notifications = snapshot.documents.mapNotNull { it.data?.let(Notification::convertDBEntryToNotification) }
-                                .sortedByDescending { it.createdAt }
-                            callback(notifications)
+                            val notifications = mutableListOf<Notification>()
+                            snapshot.documents.forEach { document ->
+                                val data = document.data
+                                if (data != null) {
+                                    Notification.convertDBEntryToNotification(data) { notification ->
+                                        notifications.add(notification)
+
+                                        if (notifications.size == snapshot.documents.size) {
+                                            notifications.sortByDescending { it.createdAt }
+                                            callback(notifications)
+                                        }
+                                    }
+                                }
+                            }
                         }
                         .addOnFailureListener(onFailure)
                 }

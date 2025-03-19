@@ -121,8 +121,7 @@ fun NotificationItem(details: Notification, onClick: () -> Unit) {
             .clickable(onClick = onClick)
     ) {
         AsyncImage(
-            // TODO: have BE include this img in notif response
-            model = "https://picsum.photos/200",
+            model = details.previewImg,
             contentDescription = "Preview image",
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
