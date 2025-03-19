@@ -1,5 +1,8 @@
 package com.example.agora.screens.postDetail
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -23,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -58,6 +62,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -68,6 +73,8 @@ import com.example.agora.model.repository.WishlistUtils
 import com.example.agora.ui.components.ImageCarousel
 import com.example.agora.ui.components.MapScreen
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.dynamiclinks.DynamicLink
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,6 +120,20 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                     Icon(
                         Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = {
+                    post?.let {
+                        Log.d("PostDetailScreen", "Sharing postId: ${it.postId}")
+                        sharePost(context, it.postId)
+                    }
+                }) {
+                    Icon(
+                        Icons.Default.Share,
+                        contentDescription = "Share Post",
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -466,4 +487,52 @@ fun CommentItem(
             }
         }
     }
+}
+
+
+fun sharePost(context: Context, postId: String) {
+    Log.d("PostDetailScreen", "Sharing postId: $postId")
+
+    val deepLink = Uri.Builder()
+        .scheme("https")
+        .authority("agoraapp.page.link")
+        .appendPath("post")
+        .appendQueryParameter("post_id", postId)
+        .build()
+
+    Log.d("DeepLink", "Constructed Deep Link: $deepLink")
+
+    val longDynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+        .setLink(deepLink)
+        .setDomainUriPrefix("https://agoraapp.page.link")
+        .setAndroidParameters(
+            DynamicLink.AndroidParameters.Builder("com.example.agora").build()
+        ).buildDynamicLink().uri
+
+    FirebaseDynamicLinks.getInstance().createDynamicLink()
+        .setLongLink(longDynamicLink)
+        .buildShortDynamicLink()
+        .addOnSuccessListener { result ->
+            val shortLink = result.shortLink.toString()
+            Log.d("DynamicLink", "Short Link Created: $shortLink")
+
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, shortLink)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, "Share Post")
+            context.startActivity(shareIntent)
+        }
+        .addOnFailureListener { e ->
+            Log.e("DynamicLink", "Error generating short link: ${e.message}")
+
+            val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, longDynamicLink.toString())
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, "Share Post")
+            context.startActivity(shareIntent)
+        }
 }
