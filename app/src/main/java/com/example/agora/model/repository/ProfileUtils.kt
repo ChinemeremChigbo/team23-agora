@@ -1,7 +1,6 @@
 package com.example.agora.model.repository
 
 import com.example.agora.model.data.User
-import com.example.agora.model.util.UserManager.currentUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.regex.Pattern
@@ -16,7 +15,7 @@ class ProfileSettingUtils {
             FirebaseFirestore.getInstance().collection("users").document(uid)
                 .get()
                 .addOnSuccessListener { document ->
-                    currentUser = document.data?.let { User.convertDBEntryToUser(it) }
+                    val currentUser = document.data?.let { User.convertDBEntryToUser(it) }
                     callback(currentUser)
                 }
                 .addOnFailureListener {
