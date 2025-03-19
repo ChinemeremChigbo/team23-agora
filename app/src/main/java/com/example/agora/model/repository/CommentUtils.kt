@@ -56,39 +56,36 @@ class CommentUtils {
             val db = FirebaseFirestore.getInstance()
             val commentId = db.collection("comments").document().id
 
-            var mentionIds: List<String> = emptyList()
 
             findMentionedUserIds(text,
                 onSuccess = { userIds ->
-                    mentionIds = userIds
+                    val newComment = hashMapOf(
+                        "commentId" to commentId,
+                        "userId" to userId,
+                        "text" to text,
+                        "createdAt" to Timestamp.now(),
+                        "mentions" to userIds,
+                    )
+
+                    db.collection("comments").document(commentId)
+                        .set(newComment)
+                        .addOnSuccessListener {
+                            val postRef = db.collection("posts").document(postId)
+
+                            postRef.update("comments", FieldValue.arrayUnion(commentId))
+                                .addOnSuccessListener {
+                                    onSuccess(commentId)
+                                }
+                                .addOnFailureListener { onFailure(it) }
+                        }
+                        .addOnFailureListener { onFailure(it) }
+
+                    // todo: send notification
                 },
                 onFailure = { exception ->
                     println("Error: ${exception.message}")
                 }
             )
-
-            val newComment = hashMapOf(
-                "commentId" to commentId,
-                "userId" to userId,
-                "text" to text,
-                "createdAt" to Timestamp.now(),
-                "mentions" to mentionIds,
-            )
-
-            db.collection("comments").document(commentId)
-                .set(newComment)
-                .addOnSuccessListener {
-                    val postRef = db.collection("posts").document(postId)
-
-                    postRef.update("comments", FieldValue.arrayUnion(commentId))
-                        .addOnSuccessListener {
-                            onSuccess(commentId)
-                        }
-                        .addOnFailureListener { onFailure(it) }
-                }
-                .addOnFailureListener { onFailure(it) }
-
-            // todo: send notification
         }
 
         fun deleteComment(
