@@ -249,10 +249,10 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             shape = RoundedCornerShape(16.dp),
                             trailingIcon = {
                                 IconButton(onClick = {
-                                    if (user != null) {
+                                    if (currentUser != null) {
                                         CommentUtils.createComment(
                                             postId = post.postId,
-                                            userId = user.userId,
+                                            userId = currentUser.uid,
                                             text = commentField.value,
                                             onSuccess = {
                                                 viewModel.updateComment("")
