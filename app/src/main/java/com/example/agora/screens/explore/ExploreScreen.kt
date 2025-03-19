@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
@@ -52,6 +53,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
     val isExpanded by viewModel.isExpanded.collectAsState()
     val postList by viewModel.postList.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
+    val isRefreshing by viewModel.isRefreshing.observeAsState(true)
 
     NavHost(
         navController = nestedNavController,
@@ -107,17 +109,24 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
                     )
                 }
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(40.dp),
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        viewModel.refreshFeed()
+                    },
                 ) {
-                    items(postList) { (title, posts) ->
-                        Column(verticalArrangement = Arrangement.spacedBy(21.dp)) {
-                            Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                items(posts) { post ->
-                                    PostPreview(post, onClick = {
-                                        nestedNavController.navigate("post_detail/${post.postId}")
-                                    })
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(40.dp),
+                    ) {
+                        items(postList) { (title, posts) ->
+                            Column(verticalArrangement = Arrangement.spacedBy(21.dp)) {
+                                Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+                                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    items(posts) { post ->
+                                        PostPreview(post, onClick = {
+                                            nestedNavController.navigate("post_detail/${post.postId}")
+                                        })
+                                    }
                                 }
                             }
                         }
