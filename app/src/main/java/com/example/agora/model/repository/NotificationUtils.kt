@@ -6,36 +6,50 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.agora.model.data.Notification
 
+enum class NotificationType {
+    POSTER, MENTION
+}
+
 class NotificationUtils {
     companion object {
         fun addNotification(
-            notificationId: String,
             userId: String,
             postId: String,
-            creatorId: String, // the id of the user who wrote the comment
             commentId: String,
+            commenterId: String,
+            type: NotificationType,
             onSuccess: () -> Unit,
             onFailure: (Exception) -> Unit
         ) {
             val db = FirebaseFirestore.getInstance()
             val notificationRef = db.collection("notifications").document()
 
-            // todo
-//            var message = "New comment on post $postName from user $creatorUsername"
-            var message = "New comment on post abc from user xyz"
 
-            val notificationData = hashMapOf(
-                "notificationId" to notificationId,
-                "userId" to userId,
-                "postId" to postId,
-                "message" to message,
-                "commentId" to commentId,
-                "eventInfo" to "comment",
-                "createdAt" to Timestamp.now()
-            )
+            db.collection("users").document(commenterId).get()
+                .addOnSuccessListener { userDocument ->
+                    val name = userDocument.getString("username") ?: ""
+                    var message: String = ""
 
-            notificationRef.set(notificationData)
-                .addOnSuccessListener { onSuccess() }
+                    if (type == NotificationType.POSTER) {
+                        message = "$name commented on your post!"
+                    } else if (type == NotificationType.MENTION) {
+                        message = "You were mentioned in a comment by $name"
+                    }
+
+                    val notificationData = hashMapOf(
+                        "notificationId" to notificationRef,
+                        "userId" to userId,
+                        "postId" to postId,
+                        "message" to message,
+                        "commentId" to commentId,
+                        "eventInfo" to "comment",
+                        "createdAt" to Timestamp.now()
+                    )
+
+                    notificationRef.set(notificationData)
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { onFailure(it) }
+                }
                 .addOnFailureListener { onFailure(it) }
         }
 
