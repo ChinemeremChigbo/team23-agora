@@ -51,7 +51,7 @@ class AuthActivity : ComponentActivity() {
         super.onStart()
         // Check if user is logged in, redirect to MainActivity if yes
         val currentUser = auth.currentUser
-        if (currentUser != null && currentUser.isEmailVerified) {
+        if (currentUser != null) {
             Toast.makeText(this, "Already logged in ${currentUser.email}, redirecting...", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, MainActivity::class.java))
             finish()

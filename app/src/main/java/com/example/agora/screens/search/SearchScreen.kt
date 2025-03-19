@@ -204,7 +204,7 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
                         .padding(16.dp)
                 )
             } else if (posts.isEmpty()) {
-                EmptyState("No results found")
+                EmptyState(title = null, msg = "No results found", icon = Icons.Default.Search)
             } else {
                 BasicPostGrid(posts, screenNavController)
             }

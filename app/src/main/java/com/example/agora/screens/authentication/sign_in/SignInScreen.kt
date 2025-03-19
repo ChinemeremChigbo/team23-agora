@@ -132,7 +132,7 @@ fun SignInScreen(navController: NavController, auth: FirebaseAuth, viewModel: Si
 
             Spacer(modifier = Modifier.height(20.dp))
             if (isLoading) {
-                CircularProgressIndicator() // ✅ Show Loading Indicator
+                CircularProgressIndicator()
             } else {
                 // Login button
                 Button(
