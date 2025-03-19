@@ -44,6 +44,7 @@ class User(
                     "lng" to address.getLatLng().longitude
                 ),
                 "wishlist" to wishList,
+                "notifications" to emptyList<String>(),
             ))
             .addOnSuccessListener {
                 println("User successfully added to Firestore!")

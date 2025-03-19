@@ -1,39 +1,43 @@
 package com.example.agora.model.data
 
+import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.util.DataUtil
 import java.util.*
 import com.google.firebase.Timestamp
 
-enum class NotificationStatus {
-    READ, UNREAD
-}
 
 class Notification(
-    private var targetUser: String = "",
-    private var status: NotificationStatus = NotificationStatus.UNREAD,
-    private var createdAt: Timestamp = Timestamp.now(),
-    private var eventInfo: String = ""
+    var notificationId: String = "",
+    var postId: String = "",
+    var userId: String = "",
+    var message: String = "",
+    var commentId: String = "",
+    var eventInfo: String = "",
+    var previewImg: String = "",
+    var createdAt: Timestamp?
 ) {
+    companion object {
+        fun convertDBEntryToNotification(entry: Map<String, Any>, callback: (Notification) -> Unit) {
+            val postId = entry["postId"]?.toString() ?: ""
+            var preview = ""
+            PostUtils.getPostById(postId) { post ->
+                if (post != null) {
+                    preview = post.images[0]
+                }
 
-    // Getters and Setters
-    fun getTargetUser(): String = targetUser
-    fun setTargetUser(value: String) { targetUser = value }
+                val notification = Notification(
+                    notificationId = entry["notificationId"]?.toString() ?: "",
+                    postId = postId,
+                    userId = entry["userId"]?.toString() ?: "",
+                    message = entry["message"]?.toString() ?: "",
+                    commentId = entry["commentId"]?.toString() ?: "",
+                    eventInfo = entry["eventInfo"]?.toString() ?: "",
+                    previewImg = preview,
+                    createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"]?.toString() ?: "")
+                )
 
-    fun getStatus(): NotificationStatus = status
-    fun setStatus(value: NotificationStatus) { status = value }
-
-    fun getCreatedAt(): Timestamp = createdAt
-    fun setCreatedAt(value: Timestamp) { createdAt = value }
-
-    fun getEventInfo(): String = eventInfo
-    fun setEventInfo(value: String) { eventInfo = value }
-
-    // Methods
-    fun getFormattedNotification(): String {
-        // TODO
-        return ""
-    }
-
-    fun changeStatus(newStatus: NotificationStatus) {
-        status = newStatus
+                callback(notification)
+            }
+        }
     }
 }
