@@ -1,9 +1,12 @@
 package com.example.agora.screens.postDetail
 
+import android.provider.ContactsContract.Profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.agora.model.data.Comment
 import com.example.agora.model.data.Post
 import com.example.agora.model.data.User
+import com.example.agora.model.repository.CommentUtils
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.model.repository.ProfileSettingUtils
 import com.example.agora.model.repository.WishlistUtils
@@ -25,6 +28,11 @@ class PostDetailViewModel (
     private val _inWishlist = MutableStateFlow(false)
     val inWishlist = _inWishlist.asStateFlow()
 
+    private val _comments = MutableStateFlow<List<Comment>>(emptyList())
+    val comments = _comments.asStateFlow()
+
+    var commentField = MutableStateFlow("")
+
     init {
         fetchPostDetails(postId)
         checkIfPostInWishlist(postId)
@@ -35,6 +43,7 @@ class PostDetailViewModel (
             _post.value = post
             ProfileSettingUtils.getUserById(post!!.userId, { user -> _user.value = user })
         })
+        fetchComments(postId)
     }
 
     fun checkIfPostInWishlist(postId: String) {
@@ -43,6 +52,22 @@ class PostDetailViewModel (
                 _inWishlist.value = inWishlist
             }
         }
+    }
+
+    fun updateComment(newVal: String) {
+        commentField.value = newVal
+    }
+
+    fun fetchUser(userId: String, callback: (User?) -> Unit) {
+        ProfileSettingUtils.getUserById(userId, { user -> callback(user) })
+    }
+
+    fun fetchComments(postId: String) {
+        CommentUtils.getPostComments(
+            postId,
+            { comments -> _comments.value = comments},
+            { _comments.value = emptyList() }
+        )
     }
 }
 
