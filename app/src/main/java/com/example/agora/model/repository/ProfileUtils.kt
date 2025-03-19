@@ -4,6 +4,7 @@ import com.example.agora.model.data.User
 import com.example.agora.model.util.UserManager.currentUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.regex.Pattern
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -35,6 +36,13 @@ class ProfileSettingUtils {
                         continuation.resume(null)
                     }
             }
+        }
+
+        fun isValidPhoneNumber(phone: String): Boolean {
+            val pattern = Pattern.compile(
+                """^\+?1?[-.\s]?\(?([2-9][0-9]{2})\)?[-.\s]?([2-9][0-9]{2})[-.\s]?([0-9]{4})$"""
+            )
+            return pattern.matcher(phone).matches()
         }
     }
 }
