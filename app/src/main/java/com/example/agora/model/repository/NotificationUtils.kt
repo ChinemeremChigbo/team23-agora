@@ -48,8 +48,11 @@ class NotificationUtils {
 
             db.collection("users").document(userId).get()
                 .addOnSuccessListener { document ->
-                    val notificationIds = document.get("notifications") as? List<String> ?: return@addOnSuccessListener callback(emptyList())
-
+                    val notificationIds =
+                        (document.get("notifications") as? List<String>) ?: emptyList()
+                    if (notificationIds.isEmpty()) {
+                        return@addOnSuccessListener callback(emptyList())
+                    }
                     db.collection("notifications")
                         .whereIn(FieldPath.documentId(), notificationIds)
                         .get()
