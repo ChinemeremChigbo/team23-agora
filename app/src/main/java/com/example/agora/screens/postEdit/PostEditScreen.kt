@@ -49,12 +49,14 @@ fun PostEditScreen(
 
     Column(
         modifier = Modifier
-            .padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp)
+            .padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
             .verticalScroll(scrollState),
     ) {
         // Title
         Row(
-            modifier = Modifier.fillMaxWidth().height(30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -62,7 +64,7 @@ fun PostEditScreen(
                 onClick = { navController.popBackStack() },
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
                 modifier = Modifier.width(60.dp),
-                ) {
+            ) {
                 Text(
                     text = "Cancel",
                     fontSize = 15.sp,
@@ -71,7 +73,7 @@ fun PostEditScreen(
             }
 
             Text(
-                text = "${ if(editing) "Edit" else "Create" } Post",
+                text = "${if (editing) "Edit" else "Create"} Post",
                 fontSize = 19.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -86,16 +88,15 @@ fun PostEditScreen(
 
         // Image Picker Launcher
         val imagePickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetMultipleContents(),
-            onResult = { uris ->
+            contract = ActivityResultContracts.GetMultipleContents(), onResult = { uris ->
                 if (uris.size <= 3) {
                     viewModel.updateImages(uris)
                 } else {
-                    Toast.makeText(context, "You can only upload up to 3 images", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(
+                        context, "You can only upload up to 3 images", Toast.LENGTH_SHORT
+                    ).show()
                 }
-            }
-        )
+            })
 
         Text(
             text = "Add Photos",
@@ -117,7 +118,7 @@ fun PostEditScreen(
         // Show selected images in a horizontal scroll
         LazyRow {
             items(imageUris.value) { uri ->
-                if(uri.toString() != PostUtils.DEFAULT_IMAGE) {
+                if (uri.toString() != PostUtils.DEFAULT_IMAGE) {
                     Image(
                         painter = rememberAsyncImagePainter(uri),
                         contentDescription = "Selected Image",
@@ -163,7 +164,9 @@ fun PostEditScreen(
             value = title.value,
             onValueChange = { viewModel.updateTitle(it) },
             label = { Text("Title") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = bottomPadding),
             singleLine = true,
             shape = RoundedCornerShape(16.dp),
         )
@@ -177,7 +180,9 @@ fun PostEditScreen(
                 }
             },
             label = { Text("Price") },
-            modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = bottomPadding),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             shape = RoundedCornerShape(16.dp),
@@ -185,9 +190,7 @@ fun PostEditScreen(
 
         var expanded by remember { mutableStateOf(false) }
         ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
+            expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
                 value = selectedCategory.value,
                 onValueChange = { viewModel.updateCategory(it) },
@@ -198,20 +201,14 @@ fun PostEditScreen(
                     .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                 shape = RoundedCornerShape(16.dp),
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
-            )
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) })
             ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
+                expanded = expanded, onDismissRequest = { expanded = false }) {
                 Category.entries.forEach { category ->
-                    DropdownMenuItem(
-                        text = { Text(category.value) },
-                        onClick = {
-                            viewModel.updateCategory(category.value)
-                            expanded = false
-                        }
-                    )
+                    DropdownMenuItem(text = { Text(category.value) }, onClick = {
+                        viewModel.updateCategory(category.value)
+                        expanded = false
+                    })
                 }
             }
         }
@@ -241,25 +238,23 @@ fun PostEditScreen(
             Button(
                 onClick = {
                     isLoading = true
-                    viewModel.upsertPost(
-                        onSuccess = {successMessage ->
-                            isLoading = false
-                            Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
-                            navController.popBackStack()
-                            // todo: refresh post/explore screen?
-                        },
-                        onError = { errorMessage ->
-                            isLoading = false
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                        }
-                    )
+                    viewModel.upsertPost(onSuccess = { successMessage ->
+                        isLoading = false
+                        Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                        // todo: refresh post/explore screen?
+                    }, onError = { errorMessage ->
+                        isLoading = false
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                    })
                 },
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text(if (editing) "Update" else "Post", fontSize = 16.sp)            }
+                Text(if (editing) "Update" else "Post", fontSize = 16.sp)
+            }
         }
     }
 }
