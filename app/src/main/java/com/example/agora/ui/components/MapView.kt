@@ -19,24 +19,16 @@ import com.google.maps.android.compose.rememberMarkerState
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun MapScreen(address: Address, viewModel: MapViewViewModel = viewModel()) {
+fun MapScreen(address: Address) {
     val context = LocalContext.current
 
     // Observe LiveData as Compose state
-    val locationData by viewModel.locationData.observeAsState()
-
-    // Fetch location data when the composable is first launched
-    LaunchedEffect(Unit) {
-        viewModel.fetchLocation(Address.getCountryCode(address.getCountry()) ?: "", address.getPostalCode().substringBefore(" "))
-    }
-
-    when(locationData) {
-        null -> CircularProgressIndicator()
+    when(val locationData = address.getLatLng()) {
         LatLng(-1.0, -1.0) -> Toast.makeText(context, "No location data found!", Toast.LENGTH_SHORT).show()
         else -> {
-            val markerState = rememberMarkerState(position = locationData!!)
+            val markerState = rememberMarkerState(position = locationData)
             val cameraPositionState = rememberCameraPositionState {
-                position = CameraPosition.fromLatLngZoom(locationData!!, 15f)
+                position = CameraPosition.fromLatLngZoom(locationData, 15f)
             }
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
@@ -50,7 +42,4 @@ fun MapScreen(address: Address, viewModel: MapViewViewModel = viewModel()) {
             }
         }
     }
-
-
-
 }

@@ -39,7 +39,9 @@ class User(
                     "city" to address.getCity(),
                     "state" to address.getState(),
                     "address" to address.getStreet(),
-                    "postalCode" to address.getPostalCode()
+                    "postalCode" to address.getPostalCode(),
+                    "lat" to address.getLatLng().latitude,
+                    "lng" to address.getLatLng().longitude
                 ),
                 "wishlist" to wishList,
             ))

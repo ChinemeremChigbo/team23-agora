@@ -235,7 +235,7 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
                     clipboardManager.setText(AnnotatedString(user.email))
                     android.widget.Toast.makeText(context, "Copied to clipboard!", android.widget.Toast.LENGTH_SHORT).show()
                 },
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Copy Email to Clipboard")
