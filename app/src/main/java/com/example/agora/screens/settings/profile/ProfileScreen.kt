@@ -31,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,34 +73,37 @@ fun ProfileScreen(
 
     Scaffold { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(scrollState)
-                .padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 TextButton(
                     onClick = { navController.popBackStack() },
+                    modifier = Modifier.width(60.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
-                    modifier = Modifier.width(50.dp),
-                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("Back", color = MaterialTheme.colorScheme.primary, fontSize = 14.sp)
+                    Text(
+                        text = "Back",
+                        fontSize = 15.sp,
+                    )
                 }
-
                 Text(
                     text = "Profile",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
                 )
-
-                Box(modifier = Modifier.width(50.dp))
+                Box(modifier = Modifier.width(60.dp))
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             ProfileTextField("Full Name", fullName, viewModel::updateFullName)
             ProfileTextField(
@@ -134,7 +138,10 @@ fun ProfileScreen(
                 value = bio,
                 onValueChange = { viewModel.updateBio(it) },
                 label = { Text("Bio") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = bottomPadding).height(120.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = bottomPadding)
+                    .height(120.dp),
                 shape = RoundedCornerShape(16.dp),
                 maxLines = 5,
                 singleLine = false,
@@ -158,7 +165,9 @@ fun ProfileScreen(
                         })
                     },
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp),
                 ) {
                     Text("Save Changes", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
@@ -178,9 +187,12 @@ fun ProfileTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
         shape = RoundedCornerShape(16.dp),
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        singleLine = true
     )
 }
 
@@ -200,7 +212,9 @@ fun DropdownField(
             value = value,
             onValueChange = {},
             label = { Text(label) },
-            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             shape = RoundedCornerShape(16.dp),
             trailingIcon = {

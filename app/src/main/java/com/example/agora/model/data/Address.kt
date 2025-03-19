@@ -1,5 +1,7 @@
 package com.example.agora.model.data
 
+import com.example.agora.model.repository.AddressUtils
+import com.google.android.gms.maps.model.LatLng
 import java.util.Locale
 import java.net.HttpURLConnection
 import java.net.URL
@@ -11,7 +13,8 @@ class Address constructor(
     private var city: String = "",
     private var state: String = "",
     private var postalCode: String = "",
-    private var country: String = ""
+    private var country: String = "",
+    private var latLng: LatLng = LatLng(-1.0, -1.0)
 ) {
 
     // Getters and Setters
@@ -30,11 +33,24 @@ class Address constructor(
     fun getCountry(): String = country
     fun setCountry(value: String) { country = value }
 
+    fun getLatLng(): LatLng = latLng
+
+
+    suspend fun validateAndParseAddress(): Boolean{
+        val result = AddressUtils.getGeocoding("$street, $city, $state")
+        val location = result?.geometry?.location ?: return false
+        // validate address and populate lat & lng info
+        latLng = LatLng(location.lat,  location.lng)
+        val parsedPostalCode = result.address_components.find { "postal_code" in it.types }?.long_name
+        // validate correct postal code
+        return postalCode == parsedPostalCode
+    }
+
 
 
     companion object {
         // returns either the successfully made address, or a string error
-        fun create(street: String, city: String, state: String, postalCode: String, country: String): Address? {
+        fun create(street: String, city: String, state: String, postalCode: String, country: String, latLng: LatLng): Address? {
             val countryCode: String? = getCountryCode(country)
 
             if (countryCode != "US" && countryCode != "CA") {
@@ -46,7 +62,16 @@ class Address constructor(
                println("invalid postal code $postalCode")
                 return null
             }
-            return Address(street, city, state, postalCode, country)
+            return Address(street, city, state, postalCode, country, latLng)
+        }
+
+        suspend fun createAndValidate(street: String, city: String, state: String, postalCode: String, country: String): Address? {
+            val currAddress = Address(street, city, state, postalCode, country)
+            val result = currAddress.validateAndParseAddress()
+            if(!result) {
+                return null
+            }
+            return currAddress
         }
 
         private fun isValidPostalCode(postalCode: String, countryCode: String): Boolean {
@@ -74,46 +99,25 @@ class Address constructor(
                 city = entry["city"].toString(),
                 state = entry["state"].toString(),
                 street = entry["address"].toString(),
-                postalCode = entry["postalCode"].toString())
+                postalCode = entry["postalCode"].toString(),
+                latLng = LatLng(entry["lat"]?.toString()?.toDouble() ?: -1.0, entry["lng"]?.toString()?.toDouble() ?: -1.0)
+            )
+
         }
     }
 
     // Methods
-    fun validateAddress(): Boolean? {
-        // TODO: some of this is done in the companion object upon declaration, but we can add other
-        // checks if desired
-        return null
-    }
-
     fun getFormattedAddress(): String? {
         return "$street, $city, $state, $country, $postalCode"
     }
 
     fun distanceTo(address: Address): Double {
-        val selfLoc = getLatLng(postalCode, country)
-        val otherLoc = getLatLng(address.getPostalCode(), address.getCountry())
+        val selfLoc = Pair(latLng.latitude, latLng.longitude)
+        val otherLoc = Pair(address.latLng.latitude, address.latLng.longitude)
 
-        if (selfLoc != null && otherLoc != null) {
-            return haversine(selfLoc.first, selfLoc.second, otherLoc.first, otherLoc.second)
-        }
+        return haversine(selfLoc.first, selfLoc.second, otherLoc.first, otherLoc.second)
 
         return -1.0
-    }
-
-    private fun getLatLng(postalCode: String, countryCode: String): Pair<Double, Double>? {
-        val url = "http://api.zippopotam.us/$countryCode/$postalCode"
-        val connection = URL(url).openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-
-        return if (connection.responseCode == 200) {
-            val response = connection.inputStream.bufferedReader().readText()
-            val json = JSONObject(response)
-            val place = json.getJSONArray("places").getJSONObject(0)
-
-            Pair(place.getDouble("latitude"), place.getDouble("longitude"))
-        } else {
-            null
-        }
     }
 
     private fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {

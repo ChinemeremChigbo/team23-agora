@@ -51,34 +51,37 @@ fun AppearanceScreen(
 
     Scaffold(topBar = {}) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
-                .padding(16.dp),
+            modifier = Modifier
+                .padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            val text by viewModel.text.observeAsState("Settings")
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 TextButton(
                     onClick = { navController.popBackStack() },
+                    modifier = Modifier.width(60.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
-                    modifier = Modifier.width(50.dp),
-                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Back", color = MaterialTheme.colorScheme.primary, fontSize = 14.sp)
+                    Text(
+                        text = "Back",
+                        fontSize = 15.sp,
+                    )
                 }
-
                 Text(
                     text = "Appearance",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
                 )
-
-                Box(modifier = Modifier.width(50.dp))
+                Box(modifier = Modifier.width(60.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             ThemeSelectionButton(
                 label = "System Default",
@@ -104,7 +107,9 @@ fun AppearanceScreen(
 fun ThemeSelectionButton(label: String, selected: Boolean, onClick: () -> Unit) {
     OutlinedButton(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().height(60.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent,
