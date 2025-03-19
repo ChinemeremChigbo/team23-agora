@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +23,9 @@ import com.example.agora.screens.inbox.InboxScreen
 import com.example.agora.screens.inbox.InboxViewModel
 import com.example.agora.screens.post.PostScreen
 import com.example.agora.screens.post.PostViewModel
+import com.example.agora.screens.postDetail.PostDetailScreen
+import com.example.agora.screens.postDetail.PostDetailViewModel
+import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.settings.appearance.AppearanceScreen
 import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
@@ -30,8 +34,7 @@ import com.example.agora.screens.wishlist.WishlistViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun MainScreen(auth: FirebaseAuth) {
-    val navController = rememberNavController()
+fun MainScreen(navController: NavHostController, auth: FirebaseAuth) {
 
     Scaffold(
         bottomBar = {
@@ -65,6 +68,13 @@ fun NavigationHost(
         composable(BottomNavItem.Post.route) {
             val postViewModel: PostViewModel = viewModel()
             PostScreen(navController, postViewModel)
+        }
+
+        composable("post_detail/{postId}") { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
+            val postDetailViewModel: PostDetailViewModel =
+                viewModel(factory = PostDetailViewModelFactory(postId))
+            PostDetailScreen(postDetailViewModel, navController)
         }
         composable(BottomNavItem.Wishlist.route) {
             val wishlistViewModel: WishlistViewModel = viewModel()
