@@ -33,7 +33,7 @@ class NotificationUtils {
                         NotificationType.MENTION -> "You were mentioned in a comment by $name"
                     }
                     val notificationData = hashMapOf(
-                        "notificationId" to notificationRef,
+                        "notificationId" to notificationRef.id,
                         "userId" to userId,
                         "postId" to postId,
                         "message" to message,
@@ -51,13 +51,6 @@ class NotificationUtils {
                                 .addOnFailureListener {
                                     onFailure(it)
                                 }
-                        }
-                        .addOnFailureListener {
-                            onFailure(it)
-                        }
-                    notificationRef.set(notificationData)
-                        .addOnSuccessListener {
-                            onSuccess()
                         }
                         .addOnFailureListener {
                             onFailure(it)
@@ -115,7 +108,6 @@ class NotificationUtils {
             val db = FirebaseFirestore.getInstance()
             val userRef = db.collection("users").document(userId)
             val notificationRef = db.collection("notifications").document(notificationId)
-
             notificationRef.delete()
                 .addOnSuccessListener {
                     userRef.update("notifications", FieldValue.arrayRemove(notificationId))
