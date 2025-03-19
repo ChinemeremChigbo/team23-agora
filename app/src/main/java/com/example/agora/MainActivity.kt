@@ -93,10 +93,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private fun navigateToLogin() {
-        Toast.makeText(this, "Login expired, redirecting...", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, AuthActivity::class.java))
-        finish()
-    }
 }
