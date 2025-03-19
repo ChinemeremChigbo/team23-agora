@@ -8,7 +8,6 @@ import com.example.agora.R
 import com.example.agora.model.data.User
 import com.example.agora.model.data.Address
 import com.example.agora.model.repository.ProfileSettingUtils
-import com.example.agora.model.util.UserManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow

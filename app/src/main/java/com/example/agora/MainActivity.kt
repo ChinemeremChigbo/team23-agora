@@ -10,7 +10,6 @@ import com.example.agora.model.util.FirebaseTestUtil
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.agora.model.util.UserManager
 import com.example.agora.screens.MainScreen
 import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
 import com.example.agora.ui.theme.AgoraTheme
@@ -54,7 +53,6 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, AuthActivity::class.java))
             finish()
         }
-        auth.uid?.let { UserManager.fetchUser(it){} }
     }
 
 
