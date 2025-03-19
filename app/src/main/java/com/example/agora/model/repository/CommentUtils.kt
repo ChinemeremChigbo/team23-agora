@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.agora.model.data.Comment
 import com.example.agora.model.data.Post
 import com.example.agora.model.data.PostStatus
+import com.example.agora.model.repository.NotificationUtils.Companion.addNotification
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Timestamp
@@ -80,7 +81,34 @@ class CommentUtils {
                         }
                         .addOnFailureListener { onFailure(it) }
 
-                    // todo: send notification
+                    db.collection("posts").document(postId).get()
+                        .addOnSuccessListener { document ->
+                            val posterId = document.getString("userId") ?: ""
+
+                            // notif for the poster
+                            addNotification(
+                                userId = posterId, // who the notif is going to
+                                postId = postId,
+                                commentId = commentId,
+                                commenterId = userId, // who wrote the comment
+                                type = NotificationType.POSTER,
+                                onSuccess = {},
+                                onFailure = {},
+                            )
+
+                            for (mention in userIds) {
+                                addNotification(
+                                    userId = mention,
+                                    postId = postId,
+                                    commentId = commentId,
+                                    commenterId = userId,
+                                    type = NotificationType.MENTION,
+                                    onSuccess = {},
+                                    onFailure = {},
+                                )
+                            }
+                        }
+                        .addOnFailureListener { onFailure(it) }
                 },
                 onFailure = { exception ->
                     println("Error: ${exception.message}")

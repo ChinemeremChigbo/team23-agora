@@ -6,37 +6,59 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.agora.model.data.Notification
 
+enum class NotificationType {
+    POSTER, MENTION
+}
+
 class NotificationUtils {
     companion object {
         fun addNotification(
-            notificationId: String,
             userId: String,
             postId: String,
-            creatorId: String, // the id of the user who wrote the comment
             commentId: String,
+            commenterId: String,
+            type: NotificationType,
             onSuccess: () -> Unit,
             onFailure: (Exception) -> Unit
         ) {
             val db = FirebaseFirestore.getInstance()
             val notificationRef = db.collection("notifications").document()
 
-            // todo
-//            var message = "New comment on post $postName from user $creatorUsername"
-            var message = "New comment on post abc from user xyz"
+            db.collection("users").document(commenterId).get()
+                .addOnSuccessListener { userDocument ->
 
-            val notificationData = hashMapOf(
-                "notificationId" to notificationId,
-                "userId" to userId,
-                "postId" to postId,
-                "message" to message,
-                "commentId" to commentId,
-                "eventInfo" to "comment",
-                "createdAt" to Timestamp.now()
-            )
-
-            notificationRef.set(notificationData)
-                .addOnSuccessListener { onSuccess() }
-                .addOnFailureListener { onFailure(it) }
+                    val name = userDocument.getString("username") ?: ""
+                    val message = when (type) {
+                        NotificationType.POSTER -> "$name commented on your post!"
+                        NotificationType.MENTION -> "You were mentioned in a comment by $name"
+                    }
+                    val notificationData = hashMapOf(
+                        "notificationId" to notificationRef.id,
+                        "userId" to userId,
+                        "postId" to postId,
+                        "message" to message,
+                        "commentId" to commentId,
+                        "eventInfo" to "comment",
+                        "createdAt" to Timestamp.now()
+                    )
+                    notificationRef.set(notificationData)
+                        .addOnSuccessListener {
+                            db.collection("users").document(userId)
+                                .update("notifications", FieldValue.arrayUnion(notificationRef.id))
+                                .addOnSuccessListener {
+                                    onSuccess()
+                                }
+                                .addOnFailureListener {
+                                    onFailure(it)
+                                }
+                        }
+                        .addOnFailureListener {
+                            onFailure(it)
+                        }
+                }
+                .addOnFailureListener {
+                    onFailure(it)
+                }
         }
 
         fun getUserNotifications(
@@ -86,7 +108,6 @@ class NotificationUtils {
             val db = FirebaseFirestore.getInstance()
             val userRef = db.collection("users").document(userId)
             val notificationRef = db.collection("notifications").document(notificationId)
-
             notificationRef.delete()
                 .addOnSuccessListener {
                     userRef.update("notifications", FieldValue.arrayRemove(notificationId))
