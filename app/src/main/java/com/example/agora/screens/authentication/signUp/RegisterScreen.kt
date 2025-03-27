@@ -125,7 +125,7 @@ fun RegisterScreen(
                 )
             }
 
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = { if (navController.previousBackStackEntry != null) { navController.popBackStack() }}) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close button",
@@ -368,7 +368,7 @@ fun RegisterScreen(
             }
             RegistrationSuccessDialog(showSuccessDialog) {
                 showSuccessDialog = false
-                navController.popBackStack()
+                if (navController.previousBackStackEntry != null) { navController.popBackStack() }
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
