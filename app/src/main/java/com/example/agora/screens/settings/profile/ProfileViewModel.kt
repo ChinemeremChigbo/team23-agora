@@ -108,13 +108,21 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         }
 
         viewModelScope.launch {
-            val userAddress = Address.createAndValidate(
-                street.value,
-                city.value,
-                state.value,
-                postalCode.value,
-                country.value
-            )
+            var userAddress : Address? = null
+            try {
+                userAddress = Address.createAndValidate(
+                    street.value,
+                    city.value,
+                    state.value,
+                    postalCode.value,
+                    country.value
+                )
+            } catch (e: Exception) {
+                e.localizedMessage?.let {
+                    onError("Unexpected error occurred!")
+                    return@launch
+                }
+            }
             if (userAddress == null) {
                 onError("Invalid address!")
                 return@launch
