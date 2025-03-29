@@ -1,6 +1,5 @@
 package com.example.agora.screens.inbox
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -60,6 +59,7 @@ class InboxViewModel : ViewModel() {
         navController.navigate("post_detail/${notif.postId}")
 
         // call backend api to delete the notification
-        NotificationUtils.removeNotification(notif.userId, notif.notificationId, onSuccess = { Log.d("hehe", "onsuccess")}, onFailure = {})
+        // comment out deleting notification for now
+        // NotificationUtils.removeNotification(notif.userId, notif.notificationId, onSuccess = { Log.d("hehe", "onsuccess")}, onFailure = {})
     }
 }
