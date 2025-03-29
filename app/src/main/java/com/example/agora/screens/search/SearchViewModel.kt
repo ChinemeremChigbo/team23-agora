@@ -118,7 +118,9 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
                         maxPrice = maxPrice
                     ) { posts ->
                         _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post) }
-                       continuation.resume(_posts.value)
+                        if (interval == _selectedPriceIntervals.value.last()) {
+                            continuation.resume(_posts.value)
+                        }
                     }
                 }
             }
