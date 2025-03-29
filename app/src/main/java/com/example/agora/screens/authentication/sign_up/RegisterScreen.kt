@@ -68,6 +68,7 @@ fun RegisterScreen(navController: NavController, auth: FirebaseAuth, viewModel: 
                     showSuccessDialog = false
                     showVerificationDialog = false
                     isLoading = false
+                    if (navController.previousBackStackEntry != null) { navController.popBackStack() }
                 }
             )
         }

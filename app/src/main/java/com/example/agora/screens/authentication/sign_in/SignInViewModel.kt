@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.User
 import com.example.agora.model.util.AccountAuthUtil
+import com.example.agora.model.util.EmailUtil
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -42,7 +43,7 @@ class SignInViewModel : ViewModel() {
                     onSuccess()
                 } else {
                     // prompt user to verify email
-                    AccountAuthUtil.sendVerificationEmail(currentUser.email)
+                    EmailUtil.sendVerificationEmail(currentUser.email)
                     onPending(currentUser)
                 }
 
