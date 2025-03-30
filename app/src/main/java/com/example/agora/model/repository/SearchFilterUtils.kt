@@ -1,12 +1,14 @@
 package com.example.agora.model.repository
 
+import com.example.agora.model.data.Address
+import com.example.agora.model.data.Address.Companion.convertDBEntryToAddress
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.PostStatus
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
 enum class SortOptions(val value: String) {
-    NEWEST("Newest"), LOWESTPRICE("Lowest price"), HIGHESTPRICE("Highest price")
+    NEWEST("Newest"), LOWESTPRICE("Lowest price"), HIGHESTPRICE("Highest price"), DISTANCE("Distance")
 }
 
 class SearchFilterUtils {
@@ -25,6 +27,8 @@ class SearchFilterUtils {
             category: Category? = null,
             sortByPrice: Boolean = false,
             priceLowToHi: Boolean = true,
+            sortByDistance: Boolean = false,
+            selfAddress: Address? = null,
             searchString: String? = null,
             limit: Int = -1,
             callback: (List<Map<String, Any>>) -> Unit
@@ -32,7 +36,6 @@ class SearchFilterUtils {
             val db = FirebaseFirestore.getInstance()
 
             var query: Query = db.collection("posts").whereIn("status", listOf(PostStatus.ACTIVE.name))
-
             minPrice?.let {
                 query = query.whereGreaterThanOrEqualTo("price", minPrice)
             }
@@ -63,8 +66,6 @@ class SearchFilterUtils {
             if (limit != -1) {
                 query = query.limit(limit.toLong())
             }
-
-
             query.get()
                 .addOnSuccessListener { documents ->
                     val resultList = mutableListOf<Map<String, Any>>()
@@ -78,7 +79,17 @@ class SearchFilterUtils {
                             resultList.add(data)
                         }
                     }
-                    callback(resultList)
+
+                    val sortedList = if (sortByDistance && selfAddress != null) {
+                        resultList.sortedBy { post ->
+                            val addressMap = post["address"] as? Map<*, *> ?: return@sortedBy Double.MAX_VALUE
+                            val postAddress = convertDBEntryToAddress(addressMap as Map<String, Any>)
+                            if (postAddress != null) selfAddress.distanceTo(postAddress) else Double.MAX_VALUE
+                        }
+                    } else resultList
+
+
+                    callback(sortedList)
                 }
                 .addOnFailureListener { exception ->
                     println("Error getting posts: $exception")
