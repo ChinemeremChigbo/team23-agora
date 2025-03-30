@@ -1,12 +1,17 @@
 package com.example.agora.model.repository
 
 import android.util.Log
+import com.example.agora.model.data.Address
+import com.example.agora.model.data.Address.Companion.convertDBEntryToAddress
 import com.example.agora.model.util.GeocodingClient
 import com.example.agora.model.util.GeocodingService
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Serializable
 data class ZippopotamResponse(
@@ -18,7 +23,6 @@ data class Place(
     @SerialName("latitude") val latitude: String,
     @SerialName("longitude") val longitude: String
 )
-
 
 class AddressUtils {
     companion object {
@@ -33,7 +37,10 @@ class AddressUtils {
             }
         }
 
-        suspend fun getLatLongForPostalCode(countryCode: String, postalCode: String): Pair<Double, Double>? {
+        suspend fun getLatLongForPostalCode(
+            countryCode: String,
+            postalCode: String
+        ): Pair<Double, Double>? {
             val client = OkHttpClient()
             val url = "http://api.zippopotam.us/$countryCode/$postalCode"
             val request = Request.Builder().url(url).build()
@@ -50,6 +57,28 @@ class AddressUtils {
                 val place = json.places.firstOrNull() ?: return null
                 return place.latitude.toDouble() to place.longitude.toDouble()
             }
+        }
+
+        suspend fun getUserAddress(userId: String): Address? = suspendCoroutine { continuation ->
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    val data = document.data
+
+                    val addressMap = data?.get("address") as? Map<String, Any>
+                    if (addressMap != null && addressMap.containsKey("lat") && addressMap.containsKey(
+                            "lng"
+                        )
+                    ) {
+                        val address = convertDBEntryToAddress(addressMap)
+                        continuation.resume(address)
+                    } else {
+                        continuation.resume(null)
+                    }
+                }
+                .addOnFailureListener {
+                    continuation.resume(null)
+                }
         }
     }
 }
