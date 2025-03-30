@@ -7,9 +7,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.agora.model.data.Address
+import com.example.agora.model.data.Address.Companion.convertDBEntryToAddress
 import com.example.agora.model.data.Category
+import com.example.agora.model.repository.AddressUtils.Companion.getLatLongForPostalCode
+import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.util.uploadImageToS3
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.*
@@ -17,7 +22,7 @@ import kotlinx.coroutines.*
 class PostEditViewModel(
     application: Application,
     private val postId: String
-): AndroidViewModel(application) {
+) : AndroidViewModel(application) {
     private val context get() = getApplication<Application>().applicationContext
     val auth = FirebaseAuth.getInstance()
     val userId = auth.currentUser?.uid
@@ -28,11 +33,21 @@ class PostEditViewModel(
     var price = MutableStateFlow("")
     var category = MutableStateFlow("")
     var description = MutableStateFlow("")
+    var streetAddress = MutableStateFlow("")
+    var city = MutableStateFlow("")
+    var state = MutableStateFlow("")
+    var postalCode = MutableStateFlow("")
+    var country = MutableStateFlow("")
 
     // Prepopulate if editing
     val editing = postId.isNotEmpty()
+
     init {
-        if (editing) fetchPostDetails(postId)
+        if (editing) {
+            fetchPostDetails(postId)
+        } else {
+            preloadUserAddress()
+        }
     }
 
     fun updateImages(newImages: List<Uri>) {
@@ -55,6 +70,41 @@ class PostEditViewModel(
         description.value = newDescription
     }
 
+    fun updateStreetAddress(newStreet: String) {
+        streetAddress.value = newStreet
+    }
+
+    fun updateCity(newCity: String) {
+        city.value = newCity
+    }
+
+    fun updateState(newState: String) {
+        state.value = newState
+    }
+
+    fun updatePostalCode(newPostalCode: String) {
+        postalCode.value = newPostalCode
+    }
+
+    fun updateCountry(newCountry: String) {
+        country.value = newCountry
+    }
+
+    private fun preloadUserAddress() {
+        if (userId == null) return
+
+        viewModelScope.launch {
+            val address = getUserAddress(userId)
+            address?.let {
+                updateStreetAddress(it.getStreet())
+                updateCity(it.getCity())
+                updateState(it.getState())
+                updatePostalCode(it.getPostalCode())
+                updateCountry(it.getCountry())
+            }
+        }
+    }
+
     private fun fetchPostDetails(postId: String) {
         PostUtils.getPostById(postId, { post ->
             if (post != null) {
@@ -65,6 +115,14 @@ class PostEditViewModel(
                 updatePrice(post.price.toString())
                 updateCategory(post.category.value)
                 updateDescription(post.description)
+                val address = post.address
+                address.let {
+                    updateStreetAddress(it.getStreet())
+                    updateCity(it.getCity())
+                    updateState(it.getState())
+                    updatePostalCode(it.getPostalCode())
+                    updateCountry(it.getCountry())
+                }
             }
         })
     }
@@ -90,6 +148,25 @@ class PostEditViewModel(
                 onError("No such category found"); return@launch
             }
 
+
+            val latLng = try {
+                getLatLongForPostalCode(country.value, postalCode.value)
+                    ?.let { LatLng(it.first, it.second) }
+                    ?: LatLng(-1.0, -1.0) // fallback
+            } catch (e: Exception) {
+                Log.e("PostEditViewModel", "Geocoding failed: ${e.message}")
+                LatLng(-1.0, -1.0) // fallback on error
+            }
+
+            val newAddress = Address.create(
+                country = country.value,
+                city = city.value,
+                state = state.value,
+                street = streetAddress.value,
+                postalCode = postalCode.value,
+                latLng = latLng
+            )
+
             try {
                 // Upload images and wait for completion
                 val uploadedUrls = uploadImages()
@@ -102,6 +179,7 @@ class PostEditViewModel(
                         price = priceDouble,
                         category = categoryEnum,
                         images = uploadedUrls,
+                        address = newAddress!!,
                         onSuccess = {
                             onSuccess("Post edited successfully!")
                         },
@@ -115,6 +193,7 @@ class PostEditViewModel(
                         category = categoryEnum,
                         images = uploadedUrls,
                         userId = userId!!,
+                        address = newAddress!!,
                         onSuccess = { onSuccess("Post created successfully!") },
                         onFailure = { e -> onError(e.localizedMessage ?: "Create Post failed") }
                     )

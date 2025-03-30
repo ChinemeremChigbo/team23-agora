@@ -46,6 +46,11 @@ fun PostEditScreen(
     var description = viewModel.description.collectAsState()
     var price = viewModel.price.collectAsState()
     var selectedCategory = viewModel.category.collectAsState()
+    val streetAddress = viewModel.streetAddress.collectAsState()
+    val city = viewModel.city.collectAsState()
+    val state = viewModel.state.collectAsState()
+    val postalCode = viewModel.postalCode.collectAsState()
+    val country = viewModel.country.collectAsState()
 
     Column(
         modifier = Modifier
@@ -227,6 +232,69 @@ fun PostEditScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Address",
+            fontWeight = FontWeight.Black,
+            fontSize = 19.sp,
+            modifier = Modifier.padding(bottom = 8.dp),
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+
+        OutlinedTextField(
+            value = streetAddress.value,
+            onValueChange = { viewModel.updateStreetAddress(it) },
+            label = { Text("Street Address") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = city.value,
+            onValueChange = { viewModel.updateCity(it) },
+            label = { Text("City") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = state.value,
+            onValueChange = { viewModel.updateState(it) },
+            label = { Text("Province/State") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = postalCode.value,
+            onValueChange = { viewModel.updatePostalCode(it) },
+            label = { Text("Postal Code") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
+
+        OutlinedTextField(
+            value = country.value,
+            onValueChange = { viewModel.updateCountry(it) },
+            label = { Text("Country") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(16.dp),
+        )
 
         if (isLoading) {
             CircularProgressIndicator(
