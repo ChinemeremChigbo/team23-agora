@@ -9,13 +9,13 @@ import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.example.agora.model.repository.SearchFilterUtils
 import com.example.agora.model.repository.SortOptions
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
-class SearchViewModel(initialSearchText: String = ""): ViewModel() {
+class SearchViewModel(initialSearchText: String = "") : ViewModel() {
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()
 
@@ -100,7 +100,7 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
                     category = _selectedCategory.value,
                     searchString = _searchText.value,
                     sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
-                    priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false,
+                    priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false
                 ) { posts ->
                     _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post) }
                     continuation.resume(_posts.value)
@@ -112,8 +112,8 @@ class SearchViewModel(initialSearchText: String = ""): ViewModel() {
                     SearchFilterUtils.getPosts(
                         category = _selectedCategory.value,
                         searchString = _searchText.value,
-                        sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
-                        priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false,
+                        sortByPrice = _sortBy.value != SortOptions.NEWEST,
+                        priceLowToHi = _sortBy.value == SortOptions.LOWESTPRICE,
                         minPrice = minPrice,
                         maxPrice = maxPrice
                     ) { posts ->

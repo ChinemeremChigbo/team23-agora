@@ -1,8 +1,8 @@
 package com.example.agora.model.repository
 
 import com.example.agora.model.data.PostStatus
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
 
 class WishlistUtils {
     companion object {
@@ -10,9 +10,7 @@ class WishlistUtils {
             val db = FirebaseFirestore.getInstance()
             val wishlistsRef = db.collection("wishlists")
 
-            wishlistsRef.whereEqualTo("userId", userId)
-                .limit(1)
-                .get()
+            wishlistsRef.whereEqualTo("userId", userId).limit(1).get()
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
                         val documentSnapshot = documents.documents[0]
@@ -24,12 +22,10 @@ class WishlistUtils {
                                 ?: mutableListOf()
 
                         if (posts.none { it["postId"] == postId }) {
-                            val newPost =
-                                mapOf("postId" to postId, "timestamp" to Timestamp.now())
+                            val newPost = mapOf("postId" to postId, "timestamp" to Timestamp.now())
                             posts.add(newPost)
 
-                            wishlistsRef.document(wishlistId)
-                                .update("posts", posts)
+                            wishlistsRef.document(wishlistId).update("posts", posts)
                                 .addOnSuccessListener { callback(true) }
                         } else {
                             callback(false) // do nothing if post present
@@ -57,9 +53,7 @@ class WishlistUtils {
             val db = FirebaseFirestore.getInstance()
             val wishlistsRef = db.collection("wishlists")
 
-            wishlistsRef.whereEqualTo("userId", userId)
-                .limit(1)
-                .get()
+            wishlistsRef.whereEqualTo("userId", userId).limit(1).get()
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
                         val documentSnapshot = documents.documents[0]
@@ -73,8 +67,7 @@ class WishlistUtils {
                         val updatedPosts = posts.filter { it["postId"] != postId } // remove
 
                         if (updatedPosts.size != posts.size) {
-                            wishlistsRef.document(wishlistId)
-                                .update("posts", updatedPosts)
+                            wishlistsRef.document(wishlistId).update("posts", updatedPosts)
                                 .addOnSuccessListener { callback(true) }
                         } else {
                             callback(false)
@@ -109,8 +102,7 @@ class WishlistUtils {
                             callback(resultList.filterNotNull())
                         }
                     } else {
-                        db.collection("posts").document(postId)
-                            .get()
+                        db.collection("posts").document(postId).get()
                             .addOnSuccessListener { document ->
                                 resultList[index] = if (document != null && document.exists()) {
                                     val data = document.data
@@ -127,8 +119,7 @@ class WishlistUtils {
                                 if (remaining == 0) {
                                     callback(resultList.filterNotNull())
                                 }
-                            }
-                            .addOnFailureListener { exception ->
+                            }.addOnFailureListener { exception ->
                                 resultList[index] = emptyMap()
                                 remaining--
                                 if (remaining == 0) {
@@ -140,14 +131,14 @@ class WishlistUtils {
             }
         }
 
-
-        private fun fetchWishListFromDB(userId: String, callback: (List<Map<String, Any>>) -> Unit) {
+        private fun fetchWishListFromDB(
+            userId: String,
+            callback: (List<Map<String, Any>>) -> Unit
+        ) {
             val db = FirebaseFirestore.getInstance()
             val wishlistsRef = db.collection("wishlists")
 
-            wishlistsRef.whereEqualTo("userId", userId)
-                .limit(1)
-                .get()
+            wishlistsRef.whereEqualTo("userId", userId).limit(1).get()
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
                         val document = documents.documents[0]
@@ -165,6 +156,5 @@ class WishlistUtils {
                 callback(posts.any { it["postId"] == postId })
             }
         }
-
     }
 }
