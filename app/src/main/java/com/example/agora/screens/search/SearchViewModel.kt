@@ -16,6 +16,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(initialSearchText: String = "") : ViewModel() {
+    private val _hasError = MutableStateFlow(false)
+    val hasError = _hasError.asStateFlow()
+
+
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
     val posts = _posts.asStateFlow()
 
@@ -81,10 +85,10 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
+                _hasError.value = false
                 fetchResults()
             } catch (e: Exception) {
-                // Handle any exceptions that occur
-                // TODO: add error screen component and display the component "oops something went wrong"
+                _hasError.value = true
             } finally {
                 _isLoading.value = false
             }

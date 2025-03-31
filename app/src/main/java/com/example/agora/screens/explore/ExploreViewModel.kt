@@ -33,6 +33,9 @@ class ExploreViewModel : ViewModel() {
     private val _isRefreshing = MutableLiveData<Boolean>(false)
     val isRefreshing: LiveData<Boolean> get() = _isRefreshing
 
+    private val _hasError = MutableStateFlow(false)
+    val hasError: StateFlow<Boolean> get() = _hasError
+
     fun onSearchTextChange(text: String) {
         _searchText.value = text
     }
@@ -44,13 +47,14 @@ class ExploreViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
+                _hasError.value = false
                 val feed = getFeed() // Call the suspend function
                 _postList.value =
                     feed.filter { it.second.isNotEmpty() } // Update LiveData with the result
                 _isLoading.value = false
             } catch (e: Exception) {
-                // Handle any exceptions that occur
-                // TODO: add error screen component and display the component "oops something went wrong"
+                _hasError.value = true
+                _isLoading.value = false
             }
         }
     }
