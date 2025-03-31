@@ -31,7 +31,10 @@ class SearchFilterUtils {
         ) {
             val db = FirebaseFirestore.getInstance()
 
-            var query: Query = db.collection("posts").whereIn("status", listOf(PostStatus.ACTIVE.name))
+            var query: Query = db.collection("posts").whereIn(
+                "status",
+                listOf(PostStatus.ACTIVE.name)
+            )
 
             minPrice?.let {
                 query = query.whereGreaterThanOrEqualTo("price", minPrice)
@@ -58,32 +61,34 @@ class SearchFilterUtils {
             // query = query.whereNotEqualTo(
             //    "status",
             //    PostStatus.DELETED.name
-            //)
+            // )
 
             if (limit != -1) {
                 query = query.limit(limit.toLong())
             }
 
+            query.get().addOnSuccessListener { documents ->
+                val resultList = mutableListOf<Map<String, Any>>()
+                val formattedSearchString = searchString?.trim()?.lowercase()
 
-            query.get()
-                .addOnSuccessListener { documents ->
-                    val resultList = mutableListOf<Map<String, Any>>()
-                    val formattedSearchString = searchString?.trim()?.lowercase()
+                for (document in documents) {
+                    val data = document.data
+                    val title = (data["title"] as? String)?.trim()?.lowercase()
 
-                    for (document in documents) {
-                        val data = document.data
-                        val title = (data["title"] as? String)?.trim()?.lowercase()
-
-                        if (formattedSearchString.isNullOrEmpty() || (title != null && title.contains(formattedSearchString))) {
-                            resultList.add(data)
-                        }
+                    if (formattedSearchString.isNullOrEmpty() || (
+                        title != null && title.contains(
+                                formattedSearchString
+                            )
+                        )
+                    ) {
+                        resultList.add(data)
                     }
-                    callback(resultList)
                 }
-                .addOnFailureListener { exception ->
-                    println("Error getting posts: $exception")
-                    callback(emptyList())
-                }
+                callback(resultList)
+            }.addOnFailureListener { exception ->
+                println("Error getting posts: $exception")
+                callback(emptyList())
+            }
         }
     }
 }

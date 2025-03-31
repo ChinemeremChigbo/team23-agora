@@ -1,6 +1,5 @@
 package com.example.agora.screens.explore
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,16 +14,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,19 +60,23 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
     ) {
         // Post explore Screen
         composable("exploreList") {
-            Column (
-                modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp),
-                verticalArrangement = Arrangement.spacedBy(40.dp),
+            Column(
+                modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
+                verticalArrangement = Arrangement.spacedBy(40.dp)
             ) {
                 SearchBar(
-                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)),
-                    colors = SearchBarDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp)),
+                    colors = SearchBarDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
                     inputField = {
                         SearchBarDefaults.InputField(
                             query = searchText,
                             onQueryChange = viewModel::onSearchTextChange,
                             onSearch = {
-                                nestedNavController.navigate("search/${searchText}")
+                                nestedNavController.navigate("search/$searchText")
                             },
                             expanded = isExpanded,
                             onExpandedChange = { viewModel.onExpandedChange(it) },
@@ -89,8 +92,9 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
                                     Icon(
                                         Icons.Default.Close,
                                         contentDescription = "Close search",
-                                        modifier = Modifier
-                                            .clickable(onClick = { viewModel.onExpandedChange((false)) })
+                                        modifier = Modifier.clickable(
+                                            onClick = { viewModel.onExpandedChange((false)) }
+                                        )
                                     )
                                 }
                             }
@@ -113,10 +117,10 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
                     isRefreshing = isRefreshing,
                     onRefresh = {
                         viewModel.refreshFeed()
-                    },
+                    }
                 ) {
                     LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(40.dp),
+                        verticalArrangement = Arrangement.spacedBy(40.dp)
                     ) {
                         items(postList) { (title, posts) ->
                             Column(verticalArrangement = Arrangement.spacedBy(21.dp)) {
@@ -124,7 +128,9 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
                                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                     items(posts) { post ->
                                         PostPreview(post, onClick = {
-                                            nestedNavController.navigate("post_detail/${post.postId}")
+                                            nestedNavController.navigate(
+                                                "post_detail/${post.postId}"
+                                            )
                                         })
                                     }
                                 }
@@ -137,20 +143,23 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
 
         // Post Detail Screen
         composable(
-            route = "post_detail/{postId}",
+            route = "post_detail/{postId}"
         ) { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
-            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
+            val postDetailViewModel: PostDetailViewModel = viewModel(
+                factory = PostDetailViewModelFactory(postId)
+            )
             PostDetailScreen(postDetailViewModel, nestedNavController)
         }
 
         composable(
-            route = "search/{searchText}",
+            route = "search/{searchText}"
         ) { backStackEntry ->
             val search = backStackEntry.arguments?.getString("searchText") ?: ""
-            val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModelFactory(search))
+            val searchViewModel: SearchViewModel = viewModel(
+                factory = SearchViewModelFactory(search)
+            )
             SearchScreen(searchViewModel, parentNavController, nestedNavController)
         }
     }
 }
-
