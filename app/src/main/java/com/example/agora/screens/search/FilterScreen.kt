@@ -30,11 +30,13 @@ fun FilterScreen(viewModel: SearchViewModel = viewModel(), onCancel: () -> Unit)
     val selectedPriceIntervals by viewModel.selectedPriceIntervals.collectAsState()
 
     Column(
-        modifier = Modifier.padding(21.dp).fillMaxSize(),
+        modifier = Modifier
+            .padding(21.dp)
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column() {
+        Column {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -56,7 +58,11 @@ fun FilterScreen(viewModel: SearchViewModel = viewModel(), onCancel: () -> Unit)
 
             Spacer(Modifier.size(40.dp))
 
-            Column(modifier = Modifier.fillMaxWidth().padding(21.dp, 0.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(21.dp, 0.dp)
+            ) {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(text = "Price range", fontSize = 19.sp)
                 }

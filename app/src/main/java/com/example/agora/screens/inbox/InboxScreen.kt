@@ -41,8 +41,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.example.agora.model.data.Notification
 import com.example.agora.R
+import com.example.agora.model.data.Notification
 import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
@@ -64,9 +64,10 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
             }
 
             Column(
-                modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
+                modifier = Modifier
+                    .padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
                     .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
                     modifier = Modifier.height(30.dp),
@@ -99,7 +100,8 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
                         items(notifications) { notification ->
                             NotificationItem(
                                 notification,
-                                { viewModel.viewNotification(notification, nestedNavController) })
+                                { viewModel.viewNotification(notification, nestedNavController) }
+                            )
                         }
                     }
                 }
@@ -107,10 +109,12 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
         }
 
         composable(
-            route = "post_detail/{postId}",
+            route = "post_detail/{postId}"
         ) { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
-            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
+            val postDetailViewModel: PostDetailViewModel = viewModel(
+                factory = PostDetailViewModelFactory(postId)
+            )
             PostDetailScreen(postDetailViewModel, nestedNavController)
         }
     }
@@ -118,7 +122,8 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
 
 @Composable
 fun NotificationItem(details: Notification, onClick: () -> Unit) {
-    Row(horizontalArrangement = Arrangement.spacedBy(21.dp),
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(21.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
@@ -146,4 +151,3 @@ fun NotificationItem(details: Notification, onClick: () -> Unit) {
         )
     }
 }
-
