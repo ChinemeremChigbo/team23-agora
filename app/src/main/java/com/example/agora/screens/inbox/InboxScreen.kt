@@ -1,5 +1,6 @@
 package com.example.agora.screens.inbox
 
+import ErrorScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +54,13 @@ fun InboxScreen(viewModel: InboxViewModel = viewModel(), parentNavController: Na
     val nestedNavController = rememberNavController()
     val notifications by viewModel.notifications.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
+    val hasError by viewModel.hasError.collectAsState()
+
+
+    if (hasError) {
+        ErrorScreen()
+        return
+    }
 
     NavHost(
         navController = nestedNavController,

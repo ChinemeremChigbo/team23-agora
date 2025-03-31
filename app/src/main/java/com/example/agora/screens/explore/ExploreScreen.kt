@@ -1,5 +1,6 @@
 package com.example.agora.screens.explore
 
+import ErrorScreen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,14 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
     val postList by viewModel.postList.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
     val isRefreshing by viewModel.isRefreshing.observeAsState(true)
+    val hasError by viewModel.hasError.collectAsState()
+
+
+    if (hasError) {
+        ErrorScreen()
+        return
+    }
+
 
     NavHost(
         navController = nestedNavController,

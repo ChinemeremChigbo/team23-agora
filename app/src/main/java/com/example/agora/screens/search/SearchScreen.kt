@@ -1,5 +1,6 @@
 package com.example.agora.screens.search
 
+import ErrorScreen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,6 +66,7 @@ fun SearchScreen(
     val isExpanded by viewModel.isExpanded.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val sortBy by viewModel.sortBy.collectAsState()
+    val hasError by viewModel.hasError.collectAsState()
 
     val tabs = listOf("All") + Category.entries.map { it.value }
     val initialIndex = tabs.indexOf(selectedCategory?.value)
@@ -79,6 +81,8 @@ fun SearchScreen(
 
     if (editingFilters) {
         FilterScreen(viewModel, { editingFilters = false })
+    } else if (hasError) {
+        ErrorScreen()
     } else {
         Column(
             modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)

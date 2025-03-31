@@ -25,6 +25,9 @@ class InboxViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>(true)
     val isLoading: LiveData<Boolean> get() = _isLoading
 
+    private val _hasError = MutableStateFlow(false)
+    val hasError: StateFlow<Boolean> get() = _hasError
+
     init {
         getSuspendedResults()
     }
@@ -33,10 +36,10 @@ class InboxViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
+                _hasError.value = false
                 getNotifications()
             } catch (e: Exception) {
-                // Handle any exceptions that occur
-                // TODO: add error screen component and display the component "oops something went wrong"
+                _hasError.value = true
             } finally {
                 _isLoading.value = false
             }
