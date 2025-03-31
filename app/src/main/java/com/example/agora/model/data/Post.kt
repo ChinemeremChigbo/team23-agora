@@ -2,7 +2,6 @@ package com.example.agora.model.data
 
 import com.example.agora.model.util.DataUtil
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
 
 enum class PostStatus(val value: String) {
     ACTIVE("Active"), RESOLVED("Resolved"), DELETED("Deleted")
@@ -23,7 +22,7 @@ class Post(
     var images: MutableList<String> = mutableListOf("https://picsum.photos/200"),
     var comments: MutableList<Comment> = mutableListOf(),
     var userId: String = "",
-    var address: Address = Address(),
+    var address: Address = Address()
 ) {
     companion object {
         fun convertDBEntryToPostPreview(entry: Map<String, Any>): Post {
@@ -33,7 +32,7 @@ class Post(
                 price = entry["price"].toString().toDoubleOrNull() ?: 0.0,
                 createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"].toString()),
                 images = (entry["images"] as? List<*>)?.map { it.toString() }?.toMutableList()
-                    ?: mutableListOf("https://picsum.photos/200"), // Handle empty images
+                    ?: mutableListOf("https://picsum.photos/200") // Handle empty images
             )
         }
 
@@ -52,7 +51,7 @@ class Post(
                     Address.convertDBEntryToAddress(it)
                 } ?: Address(),
                 images = (entry["images"] as? List<*>)?.map { it.toString() }?.toMutableList()
-                    ?: mutableListOf("https://picsum.photos/200"), // Handle empty images
+                    ?: mutableListOf("https://picsum.photos/200") // Handle empty images
             )
         }
     }

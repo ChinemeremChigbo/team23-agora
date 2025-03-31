@@ -8,12 +8,12 @@ import androidx.navigation.NavController
 import com.example.agora.model.data.Notification
 import com.example.agora.model.repository.NotificationUtils
 import com.google.firebase.auth.FirebaseAuth
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class InboxViewModel : ViewModel() {
     val auth = FirebaseAuth.getInstance()

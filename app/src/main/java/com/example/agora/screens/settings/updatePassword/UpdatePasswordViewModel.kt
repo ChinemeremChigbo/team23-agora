@@ -25,7 +25,8 @@ class UpdatePasswordViewModel : ViewModel() {
                         passwordUpdated.value = true
                     }.addOnFailureListener { e ->
                         Log.e(
-                            "UpdatePasswordViewModel", "Error updating password: ${e.message}"
+                            "UpdatePasswordViewModel",
+                            "Error updating password: ${e.message}"
                         )
                         errorMessage.value = e.message
                     }
