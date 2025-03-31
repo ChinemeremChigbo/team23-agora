@@ -1,5 +1,8 @@
 package com.example.agora.screens.settings
 
+import AppearanceViewModel
+import UpdatePasswordScreen
+import UpdatePasswordViewModel
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -62,11 +65,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.User
 import com.example.agora.model.repository.ProfileSettingUtils
+import com.example.agora.screens.settings.appearance.AppearanceScreen
+import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
+import com.example.agora.screens.settings.profile.ProfileScreen
+import com.example.agora.screens.settings.profile.ProfileViewModel
 import com.example.agora.model.util.AccountAuthUtil
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
@@ -86,6 +96,7 @@ fun SettingsScreen(
         currentUser = ProfileSettingUtils.getUserByIdSync(auth.currentUser?.uid!!)!!
     }
     val text by viewModel.text.observeAsState("Settings")
+    val nestedNavController = rememberNavController()
 
     Scaffold { _ ->
         Column(
@@ -177,7 +188,24 @@ fun SettingsScreen(
                         }
                     }
                 }
+
             }
+        }
+
+        composable(
+            route = "settings/profile",
+        ) { _ ->
+            val profileViewModel: ProfileViewModel = viewModel()
+            ProfileScreen(auth, nestedNavController, profileViewModel)
+        }
+        composable("settings/appearance") {
+            val appearanceViewModel: AppearanceViewModel =
+                viewModel(factory = AppearanceViewModelFactory(nestedNavController.context))
+            AppearanceScreen(nestedNavController, appearanceViewModel)
+        }
+        composable("settings/update_password") {
+            val updatePasswordViewModel: UpdatePasswordViewModel = viewModel()
+            UpdatePasswordScreen(nestedNavController, updatePasswordViewModel)
         }
     }
 }
@@ -190,6 +218,7 @@ fun updateProfileImageInFirestore(userId: String, imageUrl: String) {
         Log.e("ProfileUpdate", "Error updating profile image: ${e.message}")
     }
 }
+
 
 @Composable
 fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
@@ -320,6 +349,7 @@ private fun checkAndRequestPermission(
         imagePickerLauncher.launch("image/*")
     }
 }
+
 
 @Composable
 fun SettingsOption(title: String, icon: ImageVector, onClick: () -> Unit) {
