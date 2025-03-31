@@ -110,10 +110,12 @@ fun UpdatePasswordScreen(
 
             Button(
                 onClick = {
-                    if (newPassword == confirmPassword && newPassword.isNotEmpty()) {
-                        viewModel.updatePassword(currentPassword, newPassword)
-                    } else {
+                    if (newPassword.isEmpty() && confirmPassword.isEmpty()) {
+                        viewModel.errorMessage.value = "Password fields cannot be empty!"
+                    } else if (newPassword != confirmPassword) {
                         viewModel.errorMessage.value = "Passwords do not match!"
+                    } else {
+                        viewModel.updatePassword(currentPassword, newPassword)
                     }
                 },
                 modifier = Modifier

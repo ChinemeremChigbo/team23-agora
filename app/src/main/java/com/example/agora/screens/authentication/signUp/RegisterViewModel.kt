@@ -113,7 +113,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                         fullName = fullName.value,
                         email = email.value,
                         phoneNumber = phoneNumber.value,
-                        address = userAddress!!,
+                        address = userAddress,
                         isEmailVerified = false
                     )
                     newUser.register()
