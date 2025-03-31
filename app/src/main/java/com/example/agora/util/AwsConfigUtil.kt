@@ -2,7 +2,7 @@ package com.example.agora.util
 
 import android.content.Context
 import android.util.Log
-import java.util.Properties
+import java.util.*
 
 fun loadAwsCredentials(context: Context): Map<String, String> {
     val properties = Properties()
@@ -19,3 +19,4 @@ fun loadAwsCredentials(context: Context): Map<String, String> {
         emptyMap() // prevents crash by returning an empty map
     }
 }
+

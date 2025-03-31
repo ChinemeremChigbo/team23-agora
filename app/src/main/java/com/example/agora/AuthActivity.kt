@@ -14,7 +14,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.agora.screens.authentication.signIn.SignInScreen
+import com.example.agora.model.util.FirebaseTestUtil
+import com.example.agora.screens.authentication.sign_in.SignInScreen
 import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
 import com.example.agora.ui.theme.AgoraTheme
 import com.google.firebase.Firebase
@@ -51,11 +52,7 @@ class AuthActivity : ComponentActivity() {
         // Check if user is logged in, redirect to MainActivity if yes
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            Toast.makeText(
-                this,
-                "Already logged in ${currentUser.email}, redirecting...",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Already logged in ${currentUser.email}, redirecting...", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

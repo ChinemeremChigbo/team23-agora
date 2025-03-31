@@ -54,9 +54,7 @@ fun ImageCarousel(images: List<String>) {
 
             Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             ) {
                 repeat(images.size) { index ->
                     Box(
@@ -64,9 +62,7 @@ fun ImageCarousel(images: List<String>) {
                             .size(14.dp)
                             .padding(4.dp)
                             .clip(CircleShape)
-                            .background(
-                                if (pagerState.currentPage == index) Color.Black else Color.Gray
-                            )
+                            .background(if (pagerState.currentPage == index) Color.Black else Color.Gray)
                     )
                 }
             }

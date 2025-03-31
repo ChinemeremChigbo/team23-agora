@@ -1,5 +1,6 @@
 package com.example.agora.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,11 +13,7 @@ import androidx.navigation.NavController
 import com.example.agora.model.data.Post
 
 @Composable
-fun BasicPostGrid(
-    posts: List<Post>,
-    navController: NavController,
-    additionalContent: @Composable ((Modifier, Post) -> Unit)? = null
-) {
+fun BasicPostGrid(posts: List<Post>, navController: NavController, additionalContent: @Composable ((Modifier, Post) -> Unit)? = null) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // 2 columns
         modifier = Modifier.fillMaxSize(),

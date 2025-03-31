@@ -4,20 +4,13 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
+import com.amazonaws.mobileconnectors.s3.transferutility.*
 import com.amazonaws.services.s3.AmazonS3Client
 import java.io.File
 import java.io.FileOutputStream
-import java.util.UUID
+import java.util.*
 
-fun uploadImageToS3(
-    context: Context,
-    imageUri: Uri,
-    onSuccess: (String) -> Unit,
-    onFailure: (String) -> Unit
-) {
+fun uploadImageToS3(context: Context, imageUri: Uri, onSuccess: (String) -> Unit, onFailure: (String) -> Unit) {
     val credentials = loadAwsCredentials(context)
 
     val accessKey = credentials["AWS_ACCESS_KEY"]
@@ -27,7 +20,7 @@ fun uploadImageToS3(
     if (accessKey.isNullOrBlank() || secretKey.isNullOrBlank() || bucketName.isNullOrBlank()) {
         Log.w("S3Uploader", "AWS credentials are missing! Skipping upload.")
         onFailure("S3 upload failed.")
-        return // return without calling any callback
+        return// return without calling any callback
     }
 
     @Suppress("DEPRECATION") // AmazonS3Client is still preferred for Android
@@ -40,7 +33,10 @@ fun uploadImageToS3(
 
     val key = "post_images/${UUID.randomUUID()}.jpg"
 
-    val transferUtility = TransferUtility.builder().context(context).s3Client(s3Client).build()
+    val transferUtility = TransferUtility.builder()
+        .context(context)
+        .s3Client(s3Client)
+        .build()
 
     val uploadObserver = transferUtility.upload(bucketName, key, file)
 

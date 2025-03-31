@@ -1,4 +1,4 @@
-package com.example.agora.screens.authentication.signIn
+package com.example.agora.screens.authentication.sign_in
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,20 +33,20 @@ class SignInViewModel : ViewModel() {
             try {
                 if (emailValue.isEmpty() || passwordValue.isEmpty()) {
                     passwordValue = "123456"
-                    emailValue =
-                        "j35zhan@uwaterloo.ca" // TODO: Remove Temporary bypass logic, enable onError
+                    emailValue = "j35zhan@uwaterloo.ca"// TODO: Remove Temporary bypass logic, enable onError
 //                    onError("Please enter email and password")
                 }
                 // if login failed, auto throw error can will be caught!
                 val currentUser = AccountAuthUtil.accountSignIn(auth, emailValue, passwordValue)
-                if (currentUser.isEmailVerified) {
+                if(currentUser.isEmailVerified){
                     onSuccess()
                 } else {
                     // prompt user to verify email
                     AccountAuthUtil.sendVerificationEmail(currentUser.email)
                     onPending(currentUser)
                 }
-            } catch (e: Exception) {
+
+            }  catch (e: Exception) {
                 onError(e.localizedMessage ?: "Login failed")
             }
         }

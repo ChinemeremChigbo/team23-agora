@@ -19,12 +19,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun EmptyState(title: String?, msg: String, icon: ImageVector, cta: @Composable () -> Unit = {}) {
-    Column(
+    Column (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Column(
+        Column (
             verticalArrangement = Arrangement.spacedBy(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -36,9 +36,9 @@ fun EmptyState(title: String?, msg: String, icon: ImageVector, cta: @Composable 
                 modifier = Modifier.size(80.dp)
             )
 
-            Column(
+            Column (
                 verticalArrangement = Arrangement.spacedBy(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 if (title != null) {
                     Text(

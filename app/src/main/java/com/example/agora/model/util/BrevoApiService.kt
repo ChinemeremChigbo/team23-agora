@@ -8,8 +8,11 @@ import retrofit2.http.POST
 interface BrevoApiService {
     @Headers("Accept: application/json", "Content-Type: application/json")
     @POST("https://api.brevo.com/v3/smtp/email")
-    fun sendEmail(@Body request: EmailRequest): Call<EmailResponse>
+    fun sendEmail(
+        @Body request: EmailRequest
+    ): Call<EmailResponse>
 }
+
 
 data class EmailRequest(
     val sender: Sender,
@@ -27,7 +30,6 @@ object EmailTemplate {
         val randomCode = (100000..999999).random().toString() // 6-digit code
         return randomCode
     }
-
     var verificationCode = "123456"
     fun generateHtmlContent(): String {
         verificationCode = generateVerificationCode()
@@ -81,7 +83,7 @@ object EmailTemplate {
         </div>
     </body>
     </html>
-        """.trimIndent()
+""".trimIndent()
         return htmlContent
     }
 }
