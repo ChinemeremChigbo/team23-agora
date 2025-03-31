@@ -20,7 +20,7 @@ class DataUtil {
                     null
                 }
             } catch (e: Exception) {
-                null
+               null
             }
             return timestamp
         }

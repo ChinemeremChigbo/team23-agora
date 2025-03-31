@@ -1,6 +1,8 @@
 package com.example.agora.screens
 
 import AppearanceViewModel
+import com.example.agora.screens.settings.profile.ProfileScreen
+import com.example.agora.screens.settings.profile.ProfileViewModel
 import UpdatePasswordScreen
 import UpdatePasswordViewModel
 import androidx.compose.foundation.layout.Box
@@ -10,9 +12,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.explore.ExploreScreen
 import com.example.agora.screens.explore.ExploreViewModel
 import com.example.agora.screens.inbox.InboxScreen
@@ -25,19 +29,19 @@ import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 import com.example.agora.screens.settings.SettingsScreen
 import com.example.agora.screens.settings.appearance.AppearanceScreen
 import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
-import com.example.agora.screens.settings.profile.ProfileScreen
-import com.example.agora.screens.settings.profile.ProfileViewModel
 import com.example.agora.screens.wishlist.WishlistScreen
 import com.example.agora.screens.wishlist.WishlistViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MainScreen(navController: NavHostController, auth: FirebaseAuth) {
+
     Scaffold(
         bottomBar = {
             BottomNavigation(navController)
-        }
-    ) { innerPadding ->
+        },
+    ) {
+            innerPadding ->
         Box(Modifier.fillMaxSize()) {
             NavigationHost(navController, auth, Modifier.padding(innerPadding))
         }

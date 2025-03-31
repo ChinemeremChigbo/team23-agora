@@ -52,24 +52,32 @@ class PostViewModel : ViewModel() {
 
     fun deletePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            PostUtils.deletePost(postId = postId, onSuccess = {
+            PostUtils.deletePost(
+                postId = postId,
+                onSuccess = {
 //                    val updatedPosts = _activePosts.value.filter { it.postId != postId }
 //                    _activePosts.value = updatedPosts
-                onSuccess()
-            }, onFailure = { e ->
+                    onSuccess()
+                },
+                onFailure = { e ->
                     Log.e("PostViewModel", "Failed to delete post: ${e.localizedMessage}")
                     onError(e.localizedMessage ?: "Failed to delete post")
-                })
+                }
+            )
         }
     }
 
     fun resolvePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            PostUtils.resolvePost(postId = postId, onSuccess = {
-                onSuccess()
-            }, onFailure = { e ->
+            PostUtils.resolvePost(
+                postId = postId,
+                onSuccess = {
+                    onSuccess()
+                },
+                onFailure = { e ->
                     onError(e.localizedMessage ?: "Failed to resolve post")
-                })
+                }
+            )
         }
     }
 

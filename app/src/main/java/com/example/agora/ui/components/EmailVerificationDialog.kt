@@ -1,5 +1,6 @@
 package com.example.agora.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,18 +37,15 @@ fun EmailVerificationDialog(onSuccess: () -> Unit, onDismiss: (() -> Unit)? = nu
             if (onDismiss != null) {
                 onDismiss()
             }
-        },
+                           },
         title = { Text("Enter Verification Code") },
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    "Please enter the 6-digit verification code sent to your email.",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                Text("Please enter the 6-digit verification code sent to your email.", color = MaterialTheme.colorScheme.onPrimaryContainer)
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     value = verificationCode,
@@ -74,10 +72,7 @@ fun EmailVerificationDialog(onSuccess: () -> Unit, onDismiss: (() -> Unit)? = nu
         confirmButton = {
             Button(
                 onClick = {
-                    if (verificationCode.text.length == 6 && verificationCode.text.equals(
-                            EmailTemplate.verificationCode
-                        )
-                    ) {
+                    if (verificationCode.text.length == 6 && verificationCode.text.equals(EmailTemplate.verificationCode)) {
                         // Handle successful verification here
                         onSuccess()
                     } else {
@@ -101,6 +96,7 @@ fun EmailVerificationDialog(onSuccess: () -> Unit, onDismiss: (() -> Unit)? = nu
         }
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable

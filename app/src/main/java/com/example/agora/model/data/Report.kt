@@ -1,7 +1,7 @@
 package com.example.agora.model.data
 
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
 
 class Report(
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
@@ -19,12 +19,15 @@ class Report(
             "createdAt" to createdAt
         )
 
-        db.collection("reports").add(reportData).addOnSuccessListener {
-            println("Report successfully submitted!")
-            onSuccess()
-        }.addOnFailureListener { e ->
-            println("Error submitting report: ${e.message}")
-            onFailure(e.localizedMessage ?: "Unknown error")
-        }
+        db.collection("reports")
+            .add(reportData)
+            .addOnSuccessListener {
+                println("Report successfully submitted!")
+                onSuccess()
+            }
+            .addOnFailureListener { e ->
+                println("Error submitting report: ${e.message}")
+                onFailure(e.localizedMessage ?: "Unknown error")
+            }
     }
 }

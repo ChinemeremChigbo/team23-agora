@@ -1,5 +1,6 @@
 package com.example.agora.screens.postDetail
 
+import android.provider.ContactsContract.Profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Comment
@@ -13,9 +14,9 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class PostDetailViewModel(
-    postId: String
-) : ViewModel() {
+class PostDetailViewModel (
+   postId: String
+): ViewModel() {
     val currentUser = FirebaseAuth.getInstance().currentUser
 
     private val _post = MutableStateFlow<Post?>(null)
@@ -64,7 +65,7 @@ class PostDetailViewModel(
     fun fetchComments(postId: String) {
         CommentUtils.getPostComments(
             postId,
-            { comments -> _comments.value = comments },
+            { comments -> _comments.value = comments},
             { _comments.value = emptyList() }
         )
     }

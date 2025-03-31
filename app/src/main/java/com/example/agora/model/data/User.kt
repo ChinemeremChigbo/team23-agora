@@ -1,5 +1,4 @@
 package com.example.agora.model.data
-
 import com.google.firebase.firestore.FirebaseFirestore
 import java.sql.Timestamp
 
@@ -19,16 +18,16 @@ class User(
     var phoneNumber: String = "",
     var address: Address = Address(),
     var wishList: MutableMap<String, Timestamp> = mutableMapOf(),
-    var isEmailVerified: Boolean = false
+    var isEmailVerified: Boolean = false,
 ) {
     // Methods
     // NOTE: we don't need login method as Firebase handle password management
     fun register() {
         // Use the userId as the document ID
-        db.collection("users").document(userId).set(
-            mapOf(
+        db.collection("users").document(userId)
+            .set(mapOf(
                 "userId" to userId,
-                "status" to status.name, // Convert Enum to String
+                "status" to status.name,  // Convert Enum to String
                 "username" to username,
                 "fullName" to fullName,
                 "bio" to bio,
@@ -45,13 +44,14 @@ class User(
                     "lng" to address.getLatLng().longitude
                 ),
                 "wishlist" to wishList,
-                "notifications" to emptyList<String>()
-            )
-        ).addOnSuccessListener {
-            println("User successfully added to Firestore!")
-        }.addOnFailureListener { e ->
-            println("Error adding user: ${e.message}")
-        }
+                "notifications" to emptyList<String>(),
+            ))
+            .addOnSuccessListener {
+                println("User successfully added to Firestore!")
+            }
+            .addOnFailureListener { e ->
+                println("Error adding user: ${e.message}")
+            }
     }
 
     /**
@@ -62,11 +62,14 @@ class User(
      * )
      */
     fun updateInfo(newInfo: Map<String, Any>) {
-        db.collection("users").document(userId).update(newInfo).addOnSuccessListener {
-            println("User information updated successfully!")
-        }.addOnFailureListener { e ->
-            println("Error updating user: ${e.message}")
-        }
+        db.collection("users").document(userId)
+            .update(newInfo)
+            .addOnSuccessListener {
+                println("User information updated successfully!")
+            }
+            .addOnFailureListener { e ->
+                println("Error updating user: ${e.message}")
+            }
     }
 
     fun setUserEmailAsVerified() {
@@ -82,20 +85,17 @@ class User(
         fun convertDBEntryToUser(entry: Map<String, Any>): User {
             return User(
                 userId = entry["userId"].toString(),
-                status = UserStatus.entries.find { it.name == entry["status"] }
-                    ?: UserStatus.DEACTIVATED,
+                status = UserStatus.entries.find { it.name == entry["status"] } ?: UserStatus.DEACTIVATED,
                 username = entry["username"].toString(),
                 fullName = entry["fullName"].toString(),
                 bio = entry["bio"].toString(),
-                profileImage = entry["profileImage"]?.toString()
-                    ?: "https://picsum.photos/200", // Handle empty images
+                profileImage = entry["profileImage"]?.toString() ?: "https://picsum.photos/200", // Handle empty images
                 email = entry["email"].toString(),
                 phoneNumber = entry["phoneNumber"].toString(),
                 address = (entry["address"] as? Map<String, Any>)?.let {
                     Address.convertDBEntryToAddress(it)
                 } ?: Address(),
-                isEmailVerified = entry["isEmailVerified"]?.toString()?.toBooleanStrictOrNull()
-                    ?: false
+                isEmailVerified = entry["isEmailVerified"]?.toString()?.toBooleanStrictOrNull() ?: false
             )
         }
     }

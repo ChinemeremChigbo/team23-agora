@@ -65,7 +65,10 @@ import com.example.agora.ui.components.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = viewModel()) {
+fun PostScreen(
+    parentNavController: NavController,
+    viewModel: PostViewModel = viewModel(),
+) {
     val activePosts by viewModel.activePosts.collectAsState()
     val resolvedPosts by viewModel.resolvedPosts.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
@@ -73,20 +76,19 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
     val nestedNavController = rememberNavController()
 
     NavHost(
-        navController = nestedNavController,
-        startDestination = "postList"
+        navController = nestedNavController, startDestination = "postList"
     ) {
         // Post List Screen
         composable("postList") {
             Column(
-                modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
+                modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(30.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Box(modifier = Modifier.width(100.dp))
 
@@ -94,17 +96,17 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                         text = "My Posts",
                         fontSize = 19.sp,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
 
                     TextButton(
                         onClick = { nestedNavController.navigate("post_edit/") },
                         modifier = Modifier.width(100.dp),
-                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
+                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
                     ) {
                         Text(
                             text = "Create Post",
-                            fontSize = 15.sp
+                            fontSize = 15.sp,
                         )
                     }
                 }
@@ -115,8 +117,7 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                 SegmentedControl(
                     options = listOf(PostStatus.ACTIVE, PostStatus.RESOLVED),
                     selectedOption = selectedOption,
-                    onOptionSelected = { selectedOption = it }
-                )
+                    onOptionSelected = { selectedOption = it })
 
                 Spacer(Modifier.size(20.dp))
 
@@ -133,7 +134,7 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                     isRefreshing = isRefreshing,
                     onRefresh = {
                         viewModel.refreshPosts()
-                    }
+                    },
                 ) {
                     // Post Grid
                     if (selectedOption == PostStatus.ACTIVE) {
@@ -144,24 +145,17 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                                 icon = Icons.Default.Image
                             ) {
                                 Button(
-                                    onClick = { nestedNavController.navigate("post_edit/") }
-                                ) {
+                                    onClick = { nestedNavController.navigate("post_edit/") }) {
                                     Text(text = "Create post")
                                 }
                             }
                         } else {
                             BasicPostGrid(
-                                activePosts,
-                                nestedNavController,
-                                { modifier, post ->
+                                activePosts, nestedNavController, { modifier, post ->
                                     PostMenu(
-                                        modifier,
-                                        post,
-                                        nestedNavController,
-                                        viewModel
+                                        modifier, post, nestedNavController, viewModel
                                     )
-                                }
-                            )
+                                })
                         }
                     } else {
                         if (resolvedPosts.isEmpty()) {
@@ -171,15 +165,14 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                                 icon = Icons.Default.Image
                             ) {
                                 Button(
-                                    onClick = { selectedOption = PostStatus.ACTIVE }
-                                ) {
+                                    onClick = { selectedOption = PostStatus.ACTIVE }) {
                                     Text(text = "See active posts")
                                 }
                             }
                         } else {
                             BasicPostGrid(
                                 resolvedPosts,
-                                nestedNavController
+                                nestedNavController,
                             )
                         }
                     }
@@ -188,7 +181,7 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
         }
         // Post Detail Screen
         composable(
-            route = "post_detail/{postId}"
+            route = "post_detail/{postId}",
         ) { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
             val postDetailViewModel: PostDetailViewModel =
@@ -213,7 +206,7 @@ fun PostMenu(
     modifier: Modifier,
     post: Post,
     navController: NavController,
-    postViewModel: PostViewModel
+    postViewModel: PostViewModel,
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -221,8 +214,7 @@ fun PostMenu(
         modifier = modifier
     ) {
         IconButton(
-            onClick = { expanded = !expanded },
-            modifier = Modifier.size(48.dp)
+            onClick = { expanded = !expanded }, modifier = Modifier.size(48.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -251,25 +243,21 @@ fun PostMenu(
                 expanded = false
                 postViewModel.resolvePost(postId = post.postId, onSuccess = {
                     Toast.makeText(
-                        context,
-                        "Post resolved successfully!",
-                        Toast.LENGTH_SHORT
+                        context, "Post resolved successfully!", Toast.LENGTH_SHORT
                     ).show()
                 }, onError = { errorMessage ->
-                        Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
-                    })
+                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                })
             })
             DropdownMenuItem(text = { Text("Delete") }, onClick = {
                 expanded = false
                 postViewModel.deletePost(postId = post.postId, onSuccess = {
                     Toast.makeText(
-                        context,
-                        "Post deleted successfully!",
-                        Toast.LENGTH_SHORT
+                        context, "Post deleted successfully!", Toast.LENGTH_SHORT
                     ).show()
                 }, onError = { errorMessage ->
-                        Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
-                    })
+                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                })
             })
         }
     }
@@ -277,16 +265,13 @@ fun PostMenu(
 
 @Composable
 fun SegmentedControl(
-    options: List<PostStatus>,
-    selectedOption: PostStatus,
-    onOptionSelected: (PostStatus) -> Unit
+    options: List<PostStatus>, selectedOption: PostStatus, onOptionSelected: (PostStatus) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
-            .padding(4.dp),
-        horizontalArrangement = Arrangement.Center
+            .padding(4.dp), horizontalArrangement = Arrangement.Center
     ) {
         options.forEach { option ->
             val isSelected = option == selectedOption
@@ -299,17 +284,12 @@ fun SegmentedControl(
                     )
                     .clickable { onOptionSelected(option) }
                     .padding(vertical = 7.dp),
-                contentAlignment = Alignment.Center
-            ) {
+                contentAlignment = Alignment.Center) {
                 Text(
                     text = option.value,
                     fontSize = 15.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                    color = if (isSelected) {
-                        MaterialTheme.colorScheme.onSurface
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
+                    color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }

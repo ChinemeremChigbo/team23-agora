@@ -1,5 +1,4 @@
 package com.example.agora.ui.theme
-
 import androidx.compose.ui.graphics.Color
 
 // Light theme colors

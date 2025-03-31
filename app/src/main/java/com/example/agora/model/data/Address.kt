@@ -3,11 +3,10 @@ package com.example.agora.model.data
 import com.example.agora.model.repository.AddressUtils
 import com.google.android.gms.maps.model.LatLng
 import java.util.Locale
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.sqrt
+import java.net.HttpURLConnection
+import java.net.URL
+import kotlin.math.*
+import org.json.JSONObject
 
 class Address constructor(
     private var street: String = "",
@@ -20,53 +19,38 @@ class Address constructor(
 
     // Getters and Setters
     fun getStreet(): String = street
-    fun setStreet(value: String) {
-        street = value
-    }
+    fun setStreet(value: String) { street = value }
 
     fun getCity(): String = city
-    fun setCity(value: String) {
-        city = value
-    }
+    fun setCity(value: String) { city = value }
 
     fun getState(): String = state
-    fun setState(value: String) {
-        state = value
-    }
+    fun setState(value: String) { state = value }
 
     fun getPostalCode(): String = postalCode
-    fun setPostalCode(value: String) {
-        postalCode = value
-    }
+    fun setPostalCode(value: String) { postalCode = value }
 
     fun getCountry(): String = country
-    fun setCountry(value: String) {
-        country = value
-    }
+    fun setCountry(value: String) { country = value }
 
     fun getLatLng(): LatLng = latLng
 
-    suspend fun validateAndParseAddress(): Boolean {
+
+    suspend fun validateAndParseAddress(): Boolean{
         val result = AddressUtils.getGeocoding("$street, $city, $state")
         val location = result?.geometry?.location ?: return false
         // validate address and populate lat & lng info
-        latLng = LatLng(location.lat, location.lng)
-        val parsedPostalCode =
-            result.address_components.find { "postal_code" in it.types }?.long_name
+        latLng = LatLng(location.lat,  location.lng)
+        val parsedPostalCode = result.address_components.find { "postal_code" in it.types }?.long_name
         // validate correct postal code
         return postalCode == parsedPostalCode
     }
 
+
+
     companion object {
         // returns either the successfully made address, or a string error
-        fun create(
-            street: String,
-            city: String,
-            state: String,
-            postalCode: String,
-            country: String,
-            latLng: LatLng
-        ): Address? {
+        fun create(street: String, city: String, state: String, postalCode: String, country: String, latLng: LatLng): Address? {
             val countryCode: String? = getCountryCode(country)
 
             if (countryCode != "US" && countryCode != "CA") {
@@ -75,22 +59,16 @@ class Address constructor(
             }
 
             if (!isValidPostalCode(postalCode, countryCode)) {
-                println("invalid postal code $postalCode")
+               println("invalid postal code $postalCode")
                 return null
             }
             return Address(street, city, state, postalCode, country, latLng)
         }
 
-        suspend fun createAndValidate(
-            street: String,
-            city: String,
-            state: String,
-            postalCode: String,
-            country: String
-        ): Address? {
+        suspend fun createAndValidate(street: String, city: String, state: String, postalCode: String, country: String): Address? {
             val currAddress = Address(street, city, state, postalCode, country)
             val result = currAddress.validateAndParseAddress()
-            if (!result) {
+            if(!result) {
                 return null
             }
             return currAddress
@@ -102,8 +80,8 @@ class Address constructor(
         }
 
         private val postalCodePatterns = mapOf(
-            "US" to "\\d{5}(-\\d{4})?", // USA: 12345 or 12345-6789
-            "CA" to "[A-Z]\\d[A-Z] \\d[A-Z]\\d" // Canada: A1A 1A1
+            "US" to "\\d{5}(-\\d{4})?",  // USA: 12345 or 12345-6789
+            "CA" to "[A-Z]\\d[A-Z] \\d[A-Z]\\d", // Canada: A1A 1A1
         )
 
         fun getCountryCode(countryName: String): String? {
@@ -116,18 +94,15 @@ class Address constructor(
             return null // no country name found
         }
 
-        fun convertDBEntryToAddress(entry: Map<String, Any>): Address? {
-            return create(
-                country = entry["country"].toString(),
+        fun convertDBEntryToAddress(entry: Map<String, Any>): Address?{
+            return create(country = entry["country"].toString(),
                 city = entry["city"].toString(),
                 state = entry["state"].toString(),
                 street = entry["address"].toString(),
                 postalCode = entry["postalCode"].toString(),
-                latLng = LatLng(
-                    entry["lat"]?.toString()?.toDouble() ?: -1.0,
-                    entry["lng"]?.toString()?.toDouble() ?: -1.0
-                )
+                latLng = LatLng(entry["lat"]?.toString()?.toDouble() ?: -1.0, entry["lng"]?.toString()?.toDouble() ?: -1.0)
             )
+
         }
     }
 
@@ -150,9 +125,7 @@ class Address constructor(
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
 
-        val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(
-            dLon / 2
-        ).pow(2)
+        val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLon / 2).pow(2)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         return R * c // Distance in km

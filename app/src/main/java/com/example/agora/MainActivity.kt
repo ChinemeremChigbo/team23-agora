@@ -8,10 +8,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.agora.model.util.FirebaseTestUtil
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.agora.screens.MainScreen
@@ -20,6 +22,8 @@ import com.example.agora.ui.theme.AgoraTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.rpc.context.AttributeContext.Auth
 
 class MainActivity : ComponentActivity() {
 
@@ -79,6 +83,7 @@ class MainActivity : ComponentActivity() {
         if (data != null) {
             val deepLink = data.toString()
             val postId = data.getQueryParameter("post_id")
+
 
             if (!postId.isNullOrEmpty() && !processedDeepLinks.contains(deepLink)) {
                 processedDeepLinks.add(deepLink)
