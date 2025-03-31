@@ -11,21 +11,21 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun FilterPill(text: String, onClick: () -> Unit, selected: Boolean) {
-    val buttonColors =
-        if (selected)
-            ButtonColors(
-                MaterialTheme.colorScheme.primary,
-                MaterialTheme.colorScheme.background,
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.background
-            )
-        else
-            ButtonColors(
-                MaterialTheme.colorScheme.tertiaryContainer,
-                MaterialTheme.colorScheme.primary,
-                MaterialTheme.colorScheme.surfaceVariant,
-                MaterialTheme.colorScheme.background
-            )
+    val buttonColors = if (selected) {
+        ButtonColors(
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.background,
+            MaterialTheme.colorScheme.surfaceVariant,
+            MaterialTheme.colorScheme.background
+        )
+    } else {
+        ButtonColors(
+            MaterialTheme.colorScheme.tertiaryContainer,
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.surfaceVariant,
+            MaterialTheme.colorScheme.background
+        )
+    }
 
     Button(
         onClick = onClick,

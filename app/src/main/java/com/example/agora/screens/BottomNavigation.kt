@@ -19,9 +19,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.agora.R
 
 @Composable
-fun BottomNavigation(
-    navController: NavController
-) {
+fun BottomNavigation(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val items = listOf(
@@ -33,28 +31,28 @@ fun BottomNavigation(
     )
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
         items.forEach { item ->
             AddItem(
                 screen = item,
                 currentRoute = currentRoute ?: "/explore",
-                navController = navController,
+                navController = navController
             )
         }
     }
 }
 
 @Composable
-fun RowScope.AddItem(
-    screen: BottomNavItem,
-    currentRoute: String,
-    navController: NavController
-) {
+fun RowScope.AddItem(screen: BottomNavItem, currentRoute: String, navController: NavController) {
     val settingsSubRoutes = listOf("update_password", "appearance", "profile")
 
-    val isSettingsSelected = screen is BottomNavItem.Settings &&
-            (currentRoute == screen.route || settingsSubRoutes.contains(currentRoute))
+    val isSettingsSelected =
+        screen is BottomNavItem.Settings && (
+            currentRoute == screen.route || settingsSubRoutes.contains(
+                currentRoute
+            )
+            )
 
     NavigationBarItem(
         // Text that shows below the icon
@@ -73,7 +71,11 @@ fun RowScope.AddItem(
 
         // Display if the icon it is select or not
 
-        selected = if (screen is BottomNavItem.Settings) isSettingsSelected else currentRoute == screen.route,
+        selected = if (screen is BottomNavItem.Settings) {
+            isSettingsSelected
+        } else {
+            currentRoute == screen.route
+        },
         // Always show the label below the icon or not
         alwaysShowLabel = false,
 
@@ -100,38 +102,33 @@ sealed class BottomNavItem(
     var icon: Int,
     var route: String
 ) {
-    data object Explore :
-        BottomNavItem(
-            "Explore",
-            R.drawable.ic_explore,
-            "/explore"
-        )
+    data object Explore : BottomNavItem(
+        "Explore",
+        R.drawable.ic_explore,
+        "/explore"
+    )
 
-    data object Post :
-        BottomNavItem(
-            "Post",
-            R.drawable.ic_post,
-            "/post"
-        )
+    data object Post : BottomNavItem(
+        "Post",
+        R.drawable.ic_post,
+        "/post"
+    )
 
-    data object Wishlist :
-        BottomNavItem(
-            "Wishlist",
-            R.drawable.ic_wishlist,
-            "/wishlist"
-        )
+    data object Wishlist : BottomNavItem(
+        "Wishlist",
+        R.drawable.ic_wishlist,
+        "/wishlist"
+    )
 
-    data object Inbox :
-        BottomNavItem(
-            "Inbox",
-            R.drawable.ic_comments,
-            "/inbox"
-        )
+    data object Inbox : BottomNavItem(
+        "Inbox",
+        R.drawable.ic_comments,
+        "/inbox"
+    )
 
-    data object Settings :
-        BottomNavItem(
-            "Settings",
-            R.drawable.ic_settings,
-            "/settings"
-        )
+    data object Settings : BottomNavItem(
+        "Settings",
+        R.drawable.ic_settings,
+        "/settings"
+    )
 }

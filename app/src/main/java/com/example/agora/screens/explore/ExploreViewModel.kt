@@ -7,14 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.example.agora.model.repository.SearchFilterUtils
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class ExploreViewModel : ViewModel() {
 
@@ -44,8 +44,9 @@ class ExploreViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                val feed = getFeed()  // Call the suspend function
-                _postList.value = feed.filter { it.second.isNotEmpty() }  // Update LiveData with the result
+                val feed = getFeed() // Call the suspend function
+                _postList.value =
+                    feed.filter { it.second.isNotEmpty() } // Update LiveData with the result
                 _isLoading.value = false
             } catch (e: Exception) {
                 // Handle any exceptions that occur
@@ -55,7 +56,7 @@ class ExploreViewModel : ViewModel() {
     }
 
     private suspend fun getFeed(): MutableList<Pair<String, List<Post>>> {
-        val feed: MutableList<Pair<String, List<Post>>> =  mutableListOf()
+        val feed: MutableList<Pair<String, List<Post>>> = mutableListOf()
 
         return suspendCoroutine { continuation ->
             val remainingCalls = AtomicInteger(Category.entries.size)
