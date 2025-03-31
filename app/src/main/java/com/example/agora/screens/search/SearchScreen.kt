@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,10 +32,14 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +54,11 @@ import com.example.agora.ui.components.EmptyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: NavController, screenNavController: NavController) {
+fun SearchScreen(
+    viewModel: SearchViewModel = viewModel(),
+    parentNavController: NavController,
+    screenNavController: NavController
+) {
     val searchText by viewModel.searchText.collectAsState()
     val posts by viewModel.posts.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
@@ -64,19 +71,25 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
 
     var sortDropdownExpanded by remember { mutableStateOf(false) }
     var editingFilters by remember { mutableStateOf(false) }
-    var tabIndex by remember { mutableStateOf(
-        if (initialIndex >= 0) initialIndex else 0
-    ) }
+    var tabIndex by remember {
+        mutableStateOf(
+            if (initialIndex >= 0) initialIndex else 0
+        )
+    }
 
     if (editingFilters) {
         FilterScreen(viewModel, { editingFilters = false })
     } else {
         Column(
-            modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp),
+            modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
         ) {
             SearchBar(
-                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)),
-                colors = SearchBarDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp)),
+                colors = SearchBarDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
                 inputField = {
                     SearchBarDefaults.InputField(
                         query = searchText,
@@ -90,20 +103,26 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
                             Icon(
                                 Icons.Default.Close,
                                 contentDescription = "Close search",
-                                modifier = Modifier
-                                    .clickable(onClick = {
+                                modifier = Modifier.clickable(
+                                    onClick = {
                                         if (isExpanded) {
                                             viewModel.onExpandedChange((false))
                                         } else {
                                             // clear navigation path so that swiping back do not return to search result
-                                            screenNavController.popBackStack(screenNavController.graph.startDestinationId, inclusive = true)
-                                            parentNavController.navigate(BottomNavItem.Explore.route) {
-                                                popUpTo(parentNavController.graph.startDestinationId) { inclusive = false }
+                                            screenNavController.popBackStack(
+                                                screenNavController.graph.startDestinationId,
+                                                inclusive = true
+                                            )
+                                            parentNavController.navigate(
+                                                BottomNavItem.Explore.route
+                                            ) {
+                                                popUpTo(
+                                                    parentNavController.graph.startDestinationId
+                                                ) { inclusive = false }
                                             }
-
                                         }
                                     }
-                                    )
+                                )
                             )
                         }
                     )
@@ -127,14 +146,10 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
                 modifier = Modifier.height(80.dp)
             ) {
                 tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = tabIndex == index,
-                        onClick = {
-                            tabIndex = index
-                            viewModel.changeCategory(Category.entries.find { it.value == title })
-                        },
-                        text = { Text(title, Modifier.padding(horizontal = 4.dp)) }
-                    )
+                    Tab(selected = tabIndex == index, onClick = {
+                        tabIndex = index
+                        viewModel.changeCategory(Category.entries.find { it.value == title })
+                    }, text = { Text(title, Modifier.padding(horizontal = 4.dp)) })
                 }
             }
 
@@ -155,7 +170,10 @@ fun SearchScreen(viewModel: SearchViewModel = viewModel(), parentNavController: 
                                 contentDescription = "Sort arrow"
                             )
                             Text(text = "Sort: ", color = MaterialTheme.colorScheme.onBackground)
-                            Text(text = sortBy.value, color = MaterialTheme.colorScheme.onBackground)
+                            Text(
+                                text = sortBy.value,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
                         }
                     }
                     DropdownMenu(

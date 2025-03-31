@@ -20,7 +20,7 @@ class WishlistViewModel : ViewModel() {
     fun fetchWishlist() {
         currentUser?.uid?.let {
             WishlistUtils.getWishList(currentUser.uid) { posts ->
-                _posts.value = posts.map { post -> Post.convertDBEntryToPostDetail(post)}
+                _posts.value = posts.map { post -> Post.convertDBEntryToPostDetail(post) }
             }
         }
     }

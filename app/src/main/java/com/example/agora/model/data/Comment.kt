@@ -1,6 +1,5 @@
 package com.example.agora.model.data
 
-import java.util.*
 import com.google.firebase.Timestamp
 
 class Comment(
@@ -9,7 +8,7 @@ class Comment(
     val postId: String = "",
     var text: String = "",
     var createdAt: Timestamp? = Timestamp.now(),
-    var mentions: List<String> = listOf(),
+    var mentions: List<String> = listOf()
 ) {
     companion object {
         fun convertDBEntryToComment(entry: Map<String, Any>): Comment {
