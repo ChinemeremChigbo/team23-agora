@@ -1,6 +1,7 @@
 package com.example.agora.screens.post
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -47,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -71,6 +74,7 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
     val isLoading by viewModel.isLoading.observeAsState(true)
     val isRefreshing by viewModel.isRefreshing.observeAsState(true)
     val nestedNavController = rememberNavController()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     NavHost(
         navController = nestedNavController,
@@ -78,6 +82,18 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
     ) {
         // Post List Screen
         composable("postList") {
+            // Refresh on pop back stack
+            LaunchedEffect(nestedNavController.currentBackStackEntry) {
+                nestedNavController.currentBackStackEntry?.savedStateHandle
+                    ?.getLiveData<Boolean>("refresh")?.observe(lifecycleOwner) { shouldRefresh ->
+                        Log.i("cindy", "shouldRefresh $shouldRefresh")
+                        if (shouldRefresh == true) {
+                            viewModel.refreshPosts()
+                            nestedNavController.currentBackStackEntry?.savedStateHandle?.remove<Boolean>("refresh") // Clear after refresh
+                        }
+                    }
+            }
+
             Column(
                 modifier = Modifier.padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
             ) {
