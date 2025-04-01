@@ -87,7 +87,10 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
             TextButton(
                 onClick = {
                     if (navController.previousBackStackEntry != null) {
-                        navController.previousBackStackEntry?.savedStateHandle?.set("refresh", true)    // todo: delete
+                        navController
+                            .previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("refresh", true) // todo: delete
                         navController.popBackStack()
                     }
                 },
@@ -285,7 +288,10 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
                         ).show()
                         if (navController.previousBackStackEntry != null) {
                             navController.popBackStack()
-                            navController.previousBackStackEntry?.savedStateHandle?.set("refresh", true)
+                            navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "refresh",
+                                true
+                            )
                         }
                         // todo: refresh post/explore screen?
                     }, onError = { errorMessage ->

@@ -89,7 +89,12 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                         Log.i("cindy", "shouldRefresh $shouldRefresh")
                         if (shouldRefresh == true) {
                             viewModel.refreshPosts()
-                            nestedNavController.currentBackStackEntry?.savedStateHandle?.remove<Boolean>("refresh") // Clear after refresh
+                            nestedNavController
+                                .currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.remove<Boolean>(
+                                    "refresh"
+                                ) // Clear after refresh
                         }
                     }
             }
@@ -266,6 +271,7 @@ fun PostMenu(
             DropdownMenuItem(text = { Text("Mark Resolved") }, onClick = {
                 expanded = false
                 postViewModel.resolvePost(postId = post.postId, onSuccess = {
+                    postViewModel.refreshPosts()
                     Toast.makeText(
                         context,
                         "Post resolved successfully!",
@@ -278,6 +284,7 @@ fun PostMenu(
             DropdownMenuItem(text = { Text("Delete") }, onClick = {
                 expanded = false
                 postViewModel.deletePost(postId = post.postId, onSuccess = {
+                    postViewModel.refreshPosts()
                     Toast.makeText(
                         context,
                         "Post deleted successfully!",
