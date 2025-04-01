@@ -1,7 +1,6 @@
 package com.example.agora.model.data
 
 import com.example.agora.model.repository.PostUtils
-import com.example.agora.model.util.DataUtil
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 
@@ -39,7 +38,7 @@ class Notification(
                     commentId = entry["commentId"]?.toString() ?: "",
                     eventInfo = entry["eventInfo"]?.toString() ?: "",
                     previewImg = preview,
-                    createdAt = entry["createdAt"] as? Timestamp,
+                    createdAt = entry["createdAt"] as? Timestamp
                 )
 
                 callback(notification)

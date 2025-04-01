@@ -1,14 +1,11 @@
 package com.example.agora.model.repository
 
-import android.util.Log
 import com.example.agora.model.data.Comment
-import com.example.agora.model.data.Notification
 import com.example.agora.model.repository.NotificationUtils.Companion.addNotification
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 
 class CommentUtils {
     companion object {
