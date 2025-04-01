@@ -39,9 +39,7 @@ class Notification(
                     commentId = entry["commentId"]?.toString() ?: "",
                     eventInfo = entry["eventInfo"]?.toString() ?: "",
                     previewImg = preview,
-                    createdAt = DataUtil.convertStringToTimestamp(
-                        entry["createdAt"]?.toString() ?: ""
-                    )
+                    createdAt = entry["createdAt"] as? Timestamp,
                 )
 
                 callback(notification)
