@@ -12,10 +12,10 @@ enum class SortOptions(val value: String) {
 class SearchFilterUtils {
     companion object {
         val priceFilterOptions = mapOf(
-            "UNDER $25" to Pair(null, 25),
-            "$25 TO $50" to Pair(25, 50),
-            "$50 TO $100" to Pair(50, 100),
-            "$100 TO $200" to Pair(100, 200),
+            "UNDER $25" to Pair(null, 24.99),
+            "$25 TO $50" to Pair(25, 49.99),
+            "$50 TO $100" to Pair(50, 99.99),
+            "$100 TO $200" to Pair(100, 199.99),
             "$200 AND ABOVE" to Pair(200, null)
         )
 
