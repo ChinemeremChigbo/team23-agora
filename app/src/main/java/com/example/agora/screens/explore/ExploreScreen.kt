@@ -1,5 +1,6 @@
 package com.example.agora.screens.explore
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,6 +55,7 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
     val postList by viewModel.postList.collectAsState()
     val isLoading by viewModel.isLoading.observeAsState(true)
     val isRefreshing by viewModel.isRefreshing.observeAsState(true)
+    val context = LocalContext.current
 
     NavHost(
         navController = nestedNavController,
@@ -76,7 +79,15 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
                             query = searchText,
                             onQueryChange = viewModel::onSearchTextChange,
                             onSearch = {
-                                nestedNavController.navigate("search/$searchText")
+                                if (searchText.trim().isEmpty()) {
+                                    Toast.makeText(
+                                        context,
+                                        "Search text can't be empty!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    nestedNavController.navigate("search/$searchText")
+                                }
                             },
                             expanded = isExpanded,
                             onExpandedChange = { viewModel.onExpandedChange(it) },
