@@ -93,13 +93,21 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                 onError("Invalid phone number!")
                 return@launch
             }
-            val userAddress = Address.createAndValidate(
-                country = country.value,
-                city = city.value,
-                state = state.value,
-                postalCode = postalCode.value,
-                street = address.value
-            )
+            var userAddress: Address? = null
+            try {
+                userAddress = Address.createAndValidate(
+                    country = country.value,
+                    city = city.value,
+                    state = state.value,
+                    postalCode = postalCode.value,
+                    street = address.value
+                )
+            } catch (e: Exception) {
+                e.localizedMessage?.let {
+                    onError("Unexpected error occurred!")
+                    return@launch
+                }
+            }
             if (userAddress == null) {
                 onError("Invalid address!")
             } else {
