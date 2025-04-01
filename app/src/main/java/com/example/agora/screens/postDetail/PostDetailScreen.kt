@@ -415,7 +415,7 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
                         color = MaterialTheme.colorScheme.surfaceVariant
                     )
                     Text(
-                        text = user.bio,
+                        text = user.bio.ifEmpty { "Still thinking of something cool to say..." },
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.surfaceVariant
                     )
