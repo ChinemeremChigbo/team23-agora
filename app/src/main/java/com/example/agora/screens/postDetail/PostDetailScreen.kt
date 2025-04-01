@@ -51,6 +51,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -75,6 +76,7 @@ import com.example.agora.model.repository.CommentUtils
 import com.example.agora.model.repository.WishlistUtils
 import com.example.agora.ui.components.ImageCarousel
 import com.example.agora.ui.components.MapScreen
+import com.example.agora.ui.components.highlightMentionsText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -125,7 +127,13 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        }
+                    }
+                ) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",
@@ -552,6 +560,16 @@ fun CommentItem(viewModel: PostDetailViewModel, comment: Comment, replyOnClick: 
         })
     }
 
+    val highlightColor = MaterialTheme.colorScheme.primary
+
+    val highlightedText by produceState(
+        initialValue = AnnotatedString(comment.text),
+        comment.text,
+        comment.mentions
+    ) {
+        value = highlightMentionsText(comment.text, comment.mentions, highlightColor)
+    }
+
     user?.let { user ->
         Box(
             modifier = Modifier
@@ -578,7 +596,8 @@ fun CommentItem(viewModel: PostDetailViewModel, comment: Comment, replyOnClick: 
                         fontWeight = FontWeight.ExtraBold
                     )
                     Text(
-                        text = comment.text
+                        text = highlightedText,
+                        fontSize = 16.sp
                     )
 
                     Text(

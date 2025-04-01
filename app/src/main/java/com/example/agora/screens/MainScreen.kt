@@ -1,8 +1,5 @@
 package com.example.agora.screens
 
-import AppearanceViewModel
-import UpdatePasswordScreen
-import UpdatePasswordViewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,10 +20,6 @@ import com.example.agora.screens.postDetail.PostDetailScreen
 import com.example.agora.screens.postDetail.PostDetailViewModel
 import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 import com.example.agora.screens.settings.SettingsScreen
-import com.example.agora.screens.settings.appearance.AppearanceScreen
-import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
-import com.example.agora.screens.settings.profile.ProfileScreen
-import com.example.agora.screens.settings.profile.ProfileViewModel
 import com.example.agora.screens.wishlist.WishlistScreen
 import com.example.agora.screens.wishlist.WishlistViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -37,7 +30,8 @@ fun MainScreen(navController: NavHostController, auth: FirebaseAuth) {
         bottomBar = {
             BottomNavigation(navController)
         }
-    ) { innerPadding ->
+    ) {
+            innerPadding ->
         Box(Modifier.fillMaxSize()) {
             NavigationHost(navController, auth, Modifier.padding(innerPadding))
         }
@@ -81,19 +75,5 @@ fun NavigationHost(
             InboxScreen(inboxViewModel, navController)
         }
         composable(BottomNavItem.Settings.route) { SettingsScreen(auth, navController) }
-
-        composable("profile") {
-            val profileViewModel: ProfileViewModel = viewModel()
-            ProfileScreen(auth, navController, profileViewModel)
-        }
-        composable("appearance") {
-            val appearanceViewModel: AppearanceViewModel =
-                viewModel(factory = AppearanceViewModelFactory(navController.context))
-            AppearanceScreen(navController, appearanceViewModel)
-        }
-        composable("update_password") {
-            val updatePasswordViewModel: UpdatePasswordViewModel = viewModel()
-            UpdatePasswordScreen(navController, updatePasswordViewModel)
-        }
     }
 }
