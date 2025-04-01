@@ -41,7 +41,7 @@ class PostViewModel : ViewModel() {
         }
     }
 
-    fun getPostsByUser() {
+    private fun getPostsByUser() {
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
         PostUtils.getPostsByUser(userId) { posts ->
