@@ -56,7 +56,7 @@ fun UpdatePasswordScreen(
 
     if (passwordUpdated) {
         LaunchedEffect(Unit) {
-            navController.popBackStack()
+            if (navController.previousBackStackEntry != null) { navController.popBackStack() }
         }
     }
 
@@ -74,7 +74,11 @@ fun UpdatePasswordScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 TextButton(
-                    onClick = { navController.popBackStack() },
+                    onClick = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        }
+                    },
                     modifier = Modifier.width(60.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
                 ) {
