@@ -85,7 +85,11 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             TextButton(
-                onClick = { if (navController.previousBackStackEntry != null) { navController.popBackStack() }},
+                onClick = {
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    }
+                },
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
                 modifier = Modifier.width(60.dp)
             ) {
@@ -273,8 +277,14 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
                     isLoading = true
                     viewModel.upsertPost(onSuccess = { successMessage ->
                         isLoading = false
-                        Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
-                        if (navController.previousBackStackEntry != null) { navController.popBackStack() }
+                        Toast.makeText(
+                            context,
+                            successMessage,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        }
                         // todo: refresh post/explore screen?
                     }, onError = { errorMessage ->
                             isLoading = false

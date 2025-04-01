@@ -65,19 +65,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.User
 import com.example.agora.model.repository.ProfileSettingUtils
+import com.example.agora.model.util.AccountAuthUtil
 import com.example.agora.screens.settings.appearance.AppearanceScreen
 import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
 import com.example.agora.screens.settings.profile.ProfileScreen
 import com.example.agora.screens.settings.profile.ProfileViewModel
-import com.example.agora.model.util.AccountAuthUtil
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -98,102 +98,108 @@ fun SettingsScreen(
     val text by viewModel.text.observeAsState("Settings")
     val nestedNavController = rememberNavController()
 
-    Scaffold { _ ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(21.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Box(
+    NavHost(
+        navController = nestedNavController,
+        startDestination = "settings"
+    ) {
+        composable("settings") {
+            Scaffold { _ ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(30.dp),
-                    contentAlignment = Alignment.Center
+                        .fillMaxSize()
+                        .padding(21.dp),
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = text,
-                        fontSize = 19.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-                ProfileSection(currentUser) { newImageUrl ->
-                    currentUser.profileImage = newImageUrl
-                    currentUser.updateInfo(mapOf("profileImage" to newImageUrl))
-                }
-
-                // Settings Options
-                SettingsOption(
-                    title = "Profile",
-                    icon = Icons.Default.Person
-                ) {
-                    navController.navigate("profile")
-                }
-                HorizontalDivider()
-                SettingsOption(
-                    title = "Appearance",
-                    icon = Icons.Default.Image
-                ) {
-                    navController.navigate("appearance")
-                }
-                HorizontalDivider()
-                SettingsOption(
-                    title = "Update Password",
-                    icon = Icons.Default.VisibilityOff
-                ) {
-                    navController.navigate("update_password")
-                }
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(40.dp))
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            AccountAuthUtil.signOut(auth)
-                            val activity = context as? Activity
-                            activity?.let {
-                                it.finish()
-                                it.startActivity(it.intent)
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp),
-                        border = BorderStroke(1.dp, Color(0xFFED3241)),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color(0xFFED3241)
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                    Column {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(30.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Logout,
-                                contentDescription = "Logout Icon",
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Logout",
-                                fontSize = 16.sp,
+                                text = text,
+                                fontSize = 19.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
+                        Spacer(modifier = Modifier.height(24.dp))
+                        ProfileSection(currentUser) { newImageUrl ->
+                            currentUser.profileImage = newImageUrl
+                            currentUser.updateInfo(mapOf("profileImage" to newImageUrl))
+                        }
+
+                        // Settings Options
+                        SettingsOption(
+                            title = "Profile",
+                            icon = Icons.Default.Person
+                        ) {
+                            nestedNavController.navigate("settings/profile")
+                        }
+                        HorizontalDivider()
+                        SettingsOption(
+                            title = "Appearance",
+                            icon = Icons.Default.Image
+                        ) {
+                            nestedNavController.navigate("settings/appearance")
+                        }
+                        HorizontalDivider()
+                        SettingsOption(
+                            title = "Update Password",
+                            icon = Icons.Default.VisibilityOff
+                        ) {
+                            nestedNavController.navigate("settings/update_password")
+                        }
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(40.dp))
+
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    AccountAuthUtil.signOut(auth)
+                                    val activity = context as? Activity
+                                    activity?.let {
+                                        it.finish()
+                                        it.startActivity(it.intent)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp),
+                                border = BorderStroke(1.dp, Color(0xFFED3241)),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = Color(0xFFED3241)
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Logout,
+                                        contentDescription = "Logout Icon",
+                                        modifier = Modifier.size(26.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Logout",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
-
             }
         }
 
         composable(
-            route = "settings/profile",
+            route = "settings/profile"
         ) { _ ->
             val profileViewModel: ProfileViewModel = viewModel()
             ProfileScreen(auth, nestedNavController, profileViewModel)
@@ -218,7 +224,6 @@ fun updateProfileImageInFirestore(userId: String, imageUrl: String) {
         Log.e("ProfileUpdate", "Error updating profile image: ${e.message}")
     }
 }
-
 
 @Composable
 fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
@@ -349,7 +354,6 @@ private fun checkAndRequestPermission(
         imagePickerLauncher.launch("image/*")
     }
 }
-
 
 @Composable
 fun SettingsOption(title: String, icon: ImageVector, onClick: () -> Unit) {

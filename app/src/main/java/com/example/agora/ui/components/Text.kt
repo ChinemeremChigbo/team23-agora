@@ -6,11 +6,14 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.example.agora.model.repository.ProfileSettingUtils
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
-
-suspend fun highlightMentionsText(comment: String, userIds: List<String>, highlightColor: Color): AnnotatedString {
+suspend fun highlightMentionsText(
+    comment: String,
+    userIds: List<String>,
+    highlightColor: Color
+): AnnotatedString {
     val usernames = formatUsernames(userIds)
     val annotatedString = buildAnnotatedString {
         var lastIndex = 0
@@ -44,4 +47,3 @@ private suspend fun getUsernameById(userId: String): String? {
         }
     }
 }
-

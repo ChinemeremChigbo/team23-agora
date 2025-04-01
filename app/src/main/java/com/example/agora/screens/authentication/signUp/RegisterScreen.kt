@@ -125,7 +125,13 @@ fun RegisterScreen(
                 )
             }
 
-            IconButton(onClick = { if (navController.previousBackStackEntry != null) { navController.popBackStack() }}) {
+            IconButton(
+                onClick = {
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    }
+                }
+            ) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close button",
