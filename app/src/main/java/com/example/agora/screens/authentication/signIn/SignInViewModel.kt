@@ -50,8 +50,9 @@ class SignInViewModel : ViewModel() {
                     onPending(currentUser)
                 }
             } catch (e: Exception) {
-                val errorMessage =  when (e) {
-                    is FirebaseNetworkException -> "Network error. Please check your connection and try again."
+                val errorMessage = when (e) {
+                    is FirebaseNetworkException ->
+                        "Network error. Please check your connection and try again."
                     is FirebaseAuthException -> getAuthErrorMessage(e)
                     else -> "Unexpected error occurred!"
                 }

@@ -108,7 +108,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         }
 
         viewModelScope.launch {
-            var userAddress : Address? = null
+            var userAddress: Address? = null
             try {
                 userAddress = Address.createAndValidate(
                     street.value,
