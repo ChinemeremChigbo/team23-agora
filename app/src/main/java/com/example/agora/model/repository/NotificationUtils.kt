@@ -80,7 +80,7 @@ class NotificationUtils {
                                     notifications.add(notification)
 
                                     if (notifications.size == snapshot.documents.size) {
-                                        notifications.sortByDescending { it.createdAt }
+                                        notifications.sortBy { it.createdAt }
                                         callback(notifications)
                                     }
                                 }
