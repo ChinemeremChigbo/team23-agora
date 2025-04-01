@@ -250,6 +250,7 @@ fun PostMenu(
             DropdownMenuItem(text = { Text("Mark Resolved") }, onClick = {
                 expanded = false
                 postViewModel.resolvePost(postId = post.postId, onSuccess = {
+                    postViewModel.getPostsByUser()
                     Toast.makeText(
                         context,
                         "Post resolved successfully!",
@@ -262,6 +263,7 @@ fun PostMenu(
             DropdownMenuItem(text = { Text("Delete") }, onClick = {
                 expanded = false
                 postViewModel.deletePost(postId = post.postId, onSuccess = {
+                    postViewModel.getPostsByUser()
                     Toast.makeText(
                         context,
                         "Post deleted successfully!",

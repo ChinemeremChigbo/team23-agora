@@ -33,6 +33,7 @@ class PostViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 getPostsByUser()
+                _isLoading.value = false
             } catch (e: Exception) {
                 Log.e("PostViewModel", "Error fetching user posts", e)
                 _isLoading.value = false
@@ -40,13 +41,12 @@ class PostViewModel : ViewModel() {
         }
     }
 
-    private fun getPostsByUser() {
+    fun getPostsByUser() {
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
         PostUtils.getPostsByUser(userId) { posts ->
             _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
             _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
-            _isLoading.value = false
         }
     }
 
@@ -81,12 +81,7 @@ class PostViewModel : ViewModel() {
         viewModelScope.launch {
             setRefreshing(true)
             delay(1000)
-            val auth = FirebaseAuth.getInstance()
-            val userId = auth.currentUser?.uid ?: return@launch
-            PostUtils.getPostsByUser(userId) { posts ->
-                _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
-                _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
-            }
+            getPostsByUser()
             setRefreshing(false)
         }
     }
