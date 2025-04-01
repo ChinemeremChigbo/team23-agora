@@ -1,6 +1,5 @@
 package com.example.agora.screens.postDetail
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Comment

@@ -1,6 +1,5 @@
 package com.example.agora.model.repository
 
-import android.util.Log
 import com.example.agora.model.data.Notification
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldPath
@@ -81,7 +80,9 @@ class NotificationUtils {
                                     notifications.add(notification)
 
                                     if (notifications.size == snapshot.documents.size) {
-                                        val sortedNotifications = notifications.sortedByDescending { it.createdAt }
+                                        val sortedNotifications =
+                                            notifications
+                                                .sortedByDescending { it.createdAt }
                                         callback(sortedNotifications)
                                     }
                                 }
