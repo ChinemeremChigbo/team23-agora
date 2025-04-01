@@ -38,6 +38,7 @@ class CommentUtils {
         fun createComment(
             postId: String,
             userId: String,
+            sellerId: String,
             text: String,
             onSuccess: (String) -> Unit,
             onFailure: (Exception) -> Unit
@@ -67,15 +68,17 @@ class CommentUtils {
                     val posterId = document.getString("userId") ?: ""
 
                     // notif for the poster
-                    addNotification(
-                        userId = posterId, // who the notif is going to
-                        postId = postId,
-                        commentId = commentId,
-                        commenterId = userId, // who wrote the comment
-                        type = NotificationType.POSTER,
-                        onSuccess = {},
-                        onFailure = {}
-                    )
+                    if (sellerId != userId) {
+                        addNotification(
+                            userId = posterId, // who the notif is going to
+                            postId = postId,
+                            commentId = commentId,
+                            commenterId = userId, // who wrote the comment
+                            type = NotificationType.POSTER,
+                            onSuccess = {},
+                            onFailure = {}
+                        )
+                    }
 
                     for (mention in userIds) {
                         addNotification(

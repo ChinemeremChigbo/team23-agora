@@ -311,6 +311,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                         CommentUtils.createComment(
                                             postId = post.postId,
                                             userId = currentUser.uid,
+                                            sellerId = post.userId,
                                             text = commentField.value,
                                             onSuccess = {
                                                 viewModel.updateComment("")
