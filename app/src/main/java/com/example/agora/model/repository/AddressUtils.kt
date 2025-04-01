@@ -1,6 +1,5 @@
 package com.example.agora.model.repository
 
-import android.util.Log
 import com.example.agora.model.util.GeocodingClient
 import com.example.agora.model.util.GeocodingService
 
