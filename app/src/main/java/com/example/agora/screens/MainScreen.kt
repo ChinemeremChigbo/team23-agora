@@ -26,11 +26,10 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MainScreen(navController: NavHostController, auth: FirebaseAuth) {
-
     Scaffold(
         bottomBar = {
             BottomNavigation(navController)
-        },
+        }
     ) {
             innerPadding ->
         Box(Modifier.fillMaxSize()) {
@@ -76,6 +75,5 @@ fun NavigationHost(
             InboxScreen(inboxViewModel, navController)
         }
         composable(BottomNavItem.Settings.route) { SettingsScreen(auth, navController) }
-
     }
 }

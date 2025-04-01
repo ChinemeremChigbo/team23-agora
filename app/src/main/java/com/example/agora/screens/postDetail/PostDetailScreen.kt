@@ -127,7 +127,13 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { if (navController.previousBackStackEntry != null) { navController.popBackStack() } }) {
+                IconButton(
+                    onClick = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        }
+                    }
+                ) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",
@@ -556,7 +562,11 @@ fun CommentItem(viewModel: PostDetailViewModel, comment: Comment, replyOnClick: 
 
     val highlightColor = MaterialTheme.colorScheme.primary
 
-    val highlightedText by produceState(initialValue = AnnotatedString(comment.text), comment.text, comment.mentions) {
+    val highlightedText by produceState(
+        initialValue = AnnotatedString(comment.text),
+        comment.text,
+        comment.mentions
+    ) {
         value = highlightMentionsText(comment.text, comment.mentions, highlightColor)
     }
 
@@ -587,7 +597,7 @@ fun CommentItem(viewModel: PostDetailViewModel, comment: Comment, replyOnClick: 
                     )
                     Text(
                         text = highlightedText,
-                        fontSize = 16.sp,
+                        fontSize = 16.sp
                     )
 
                     Text(
