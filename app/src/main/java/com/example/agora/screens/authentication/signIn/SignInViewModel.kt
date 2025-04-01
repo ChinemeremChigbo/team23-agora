@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.User
 import com.example.agora.model.util.AccountAuthUtil
+import com.example.agora.model.util.getAuthErrorMessage
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -47,7 +50,12 @@ class SignInViewModel : ViewModel() {
                     onPending(currentUser)
                 }
             } catch (e: Exception) {
-                onError(e.localizedMessage ?: "Login failed")
+                val errorMessage =  when (e) {
+                    is FirebaseNetworkException -> "Network error. Please check your connection and try again."
+                    is FirebaseAuthException -> getAuthErrorMessage(e)
+                    else -> "Unexpected error occurred!"
+                }
+                onError(errorMessage)
             }
         }
     }
