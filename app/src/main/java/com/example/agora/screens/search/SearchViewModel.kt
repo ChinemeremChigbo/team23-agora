@@ -5,10 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.agora.model.data.Address
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
+import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
 import com.example.agora.model.repository.SearchFilterUtils
 import com.example.agora.model.repository.SortOptions
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +39,8 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
 
     private val _selectedPriceIntervals = MutableStateFlow<List<String>>(emptyList())
     val selectedPriceIntervals = _selectedPriceIntervals.asStateFlow()
+
+    private var selfAddress: Address? = null
 
     fun changeCategory(category: Category?) {
         _selectedCategory.value = category
@@ -74,7 +79,13 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
     }
 
     init {
-        getSuspendedResults()
+        viewModelScope.launch {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            if (userId != null) {
+                selfAddress = getUserAddress(userId)
+            }
+            getSuspendedResults()
+        }
     }
 
     fun getSuspendedResults() {
@@ -93,14 +104,15 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
 
     suspend fun fetchResults(): List<Post> {
         _posts.value = emptyList()
-
         return suspendCoroutine { continuation ->
             if (_selectedPriceIntervals.value.isEmpty()) {
                 SearchFilterUtils.getPosts(
                     category = _selectedCategory.value,
                     searchString = _searchText.value,
                     sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
-                    priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false
+                    priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false,
+                    sortByDistance = if (_sortBy.value == SortOptions.DISTANCE) true else false,
+                    selfAddress = selfAddress
                 ) { posts ->
                     _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post) }
                     continuation.resume(_posts.value)
@@ -112,8 +124,14 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
                     SearchFilterUtils.getPosts(
                         category = _selectedCategory.value,
                         searchString = _searchText.value,
-                        sortByPrice = _sortBy.value != SortOptions.NEWEST,
-                        priceLowToHi = _sortBy.value == SortOptions.LOWESTPRICE,
+                        sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
+                        priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) {
+                            true
+                        } else {
+                            false
+                        },
+                        sortByDistance = if (_sortBy.value == SortOptions.DISTANCE) true else false,
+                        selfAddress = selfAddress,
                         minPrice = minPrice,
                         maxPrice = maxPrice
                     ) { posts ->

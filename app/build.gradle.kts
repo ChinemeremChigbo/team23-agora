@@ -152,4 +152,7 @@ dependencies {
     implementation("com.google.firebase:firebase-dynamic-links-ktx:21.2.0")
     // Import AWS Android SDK
     implementation("com.amazonaws:aws-android-sdk-s3:2.66.0")
+
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
