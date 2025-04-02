@@ -23,7 +23,7 @@ class SearchFilterUtils {
 
         fun getPosts(
             minPrice: Int? = null,
-            maxPrice: Int? = null,
+            maxPrice: Double? = null,
             category: Category? = null,
             sortByPrice: Boolean = false,
             priceLowToHi: Boolean = true,
@@ -80,34 +80,26 @@ class SearchFilterUtils {
                     val title = (data["title"] as? String)?.trim()?.lowercase()
 
                     if (formattedSearchString.isNullOrEmpty() || (
-                        title != null && title.contains(
-                                formattedSearchString
-                            )
-                        )
+                                title != null && title.contains(formattedSearchString))
                     ) {
                         resultList.add(data)
                     }
-
-                    val sortedList = if (sortByDistance && selfAddress != null) {
-                        resultList.sortedBy { post ->
-                            val addressMap = post["address"] as? Map<*, *> ?: return@sortedBy Double.MAX_VALUE
-                            val postAddress = convertDBEntryToAddress(addressMap as Map<String, Any>)
-                            if (postAddress != null) selfAddress.distanceTo(postAddress) else Double.MAX_VALUE
-                        }
-                    } else resultList
-
-
-                    callback(sortedList)
                 }
-                .addOnFailureListener { exception ->
-                    println("Error getting posts: $exception")
-                    callback(emptyList())
-                }
-                callback(resultList)
+
+                val sortedList = if (sortByDistance && selfAddress != null) {
+                    resultList.sortedBy { post ->
+                        val addressMap =
+                            post["address"] as? Map<*, *> ?: return@sortedBy Double.MAX_VALUE
+                        val postAddress = convertDBEntryToAddress(addressMap as Map<String, Any>)
+                        if (postAddress != null) selfAddress.distanceTo(postAddress) else Double.MAX_VALUE
+                    }
+                } else resultList
+
+                callback(sortedList)
             }.addOnFailureListener { exception ->
                 println("Error getting posts: $exception")
                 callback(emptyList())
             }
         }
     }
-}
+    }
