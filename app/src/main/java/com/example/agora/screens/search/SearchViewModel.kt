@@ -119,8 +119,8 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
                 }
             } else {
                 for (interval in _selectedPriceIntervals.value) {
-                    val minPrice = SearchFilterUtils.priceFilterOptions.get(interval)?.first
-                    val maxPrice = SearchFilterUtils.priceFilterOptions.get(interval)?.second
+                    val minPrice = SearchFilterUtils.priceFilterOptions[interval]?.first
+                    val maxPrice = SearchFilterUtils.priceFilterOptions[interval]?.second
                     SearchFilterUtils.getPosts(
                         category = _selectedCategory.value,
                         searchString = _searchText.value,

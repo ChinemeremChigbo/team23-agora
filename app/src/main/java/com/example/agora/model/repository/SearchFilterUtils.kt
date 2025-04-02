@@ -15,14 +15,14 @@ class SearchFilterUtils {
     companion object {
         val priceFilterOptions = mapOf(
             "UNDER $25" to Pair(null, 24.99),
-            "$25 TO $50" to Pair(25, 49.99),
-            "$50 TO $100" to Pair(50, 99.99),
-            "$100 TO $200" to Pair(100, 199.99),
-            "$200 AND ABOVE" to Pair(200, null)
+            "$25 TO $50" to Pair(25.0, 49.99),
+            "$50 TO $100" to Pair(50.0, 99.99),
+            "$100 TO $200" to Pair(100.0, 199.99),
+            "$200 AND ABOVE" to Pair(200.0, null)
         )
 
         fun getPosts(
-            minPrice: Int? = null,
+            minPrice: Double? = null,
             maxPrice: Double? = null,
             category: Category? = null,
             sortByPrice: Boolean = false,
