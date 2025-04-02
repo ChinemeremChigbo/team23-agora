@@ -15,7 +15,7 @@ import com.example.agora.model.data.Post
 fun BasicPostGrid(
     posts: List<Post>,
     navController: NavController,
-    additionalContent: @Composable ((Modifier, Post) -> Unit)? = null
+    menuContent: @Composable ((Modifier, Post) -> Unit)? = null
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2), // 2 columns
@@ -24,13 +24,18 @@ fun BasicPostGrid(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(posts) { post ->
-            PostPreview(
+            var postPreviewItem: PostPreview = DefaultPostPreview(
                 post,
                 onClick = {
                     navController.navigate("post_detail/${post.postId}")
-                },
-                additionalContent
+                }
             )
+
+            if (menuContent != null) {
+                postPreviewItem = AddMenu(postPreviewItem, menuContent)
+            }
+
+            postPreviewItem.DisplayPreview()
         }
     }
 }
