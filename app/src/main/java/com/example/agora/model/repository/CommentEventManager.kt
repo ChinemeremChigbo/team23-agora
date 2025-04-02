@@ -49,7 +49,8 @@ class PostAuthorNotifier : CommentObserver {
                 commentId = commentId,
                 commenterId = commenterId,
                 type = NotificationType.POSTER,
-                onSuccess = {}, onFailure = {}
+                onSuccess = {},
+                onFailure = {}
             )
         }
     }
@@ -71,7 +72,8 @@ class MentionNotifier : CommentObserver {
                 commentId = commentId,
                 commenterId = commenterId,
                 type = NotificationType.MENTION,
-                onSuccess = {}, onFailure = {}
+                onSuccess = {},
+                onFailure = {}
             )
         }
     }
