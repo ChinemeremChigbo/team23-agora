@@ -44,7 +44,7 @@ import com.example.agora.screens.postDetail.PostDetailViewModelFactory
 import com.example.agora.screens.search.SearchScreen
 import com.example.agora.screens.search.SearchViewModel
 import com.example.agora.screens.search.SearchViewModelFactory
-import com.example.agora.ui.components.PostPreview
+import com.example.agora.ui.components.DefaultPostPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,11 +138,11 @@ fun ExploreScreen(viewModel: ExploreViewModel = viewModel(), parentNavController
                                 Text(title, fontSize = 19.sp, fontWeight = FontWeight.Bold)
                                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                     items(posts) { post ->
-                                        PostPreview(post, onClick = {
+                                        DefaultPostPreview(post, onClick = {
                                             nestedNavController.navigate(
                                                 "post_detail/${post.postId}"
                                             )
-                                        })
+                                        }).DisplayPreview()
                                     }
                                 }
                             }
