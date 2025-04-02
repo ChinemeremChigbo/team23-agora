@@ -120,7 +120,7 @@ class AddSoldBanner(
                 text = "SOLD",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.error,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .background(MaterialTheme.colorScheme.surface)
