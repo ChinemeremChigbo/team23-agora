@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.agora.model.data.Post
+import com.example.agora.model.data.PostStatus
 
 @Composable
 fun BasicPostGrid(
@@ -33,6 +34,10 @@ fun BasicPostGrid(
 
             if (menuContent != null) {
                 postPreviewItem = AddMenu(postPreviewItem, menuContent)
+            }
+
+            if (post.status == PostStatus.RESOLVED) {
+                postPreviewItem = AddSoldBanner(postPreviewItem)
             }
 
             postPreviewItem.DisplayPreview()

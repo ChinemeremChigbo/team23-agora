@@ -102,8 +102,29 @@ class AddMenu(
             menu(
                 Modifier
                     .align(Alignment.TopEnd)
-                    .offset(x = 10.dp, y = -5.dp),
+                    .offset(x = (10).dp, y = (-5).dp),
                 component.post
+            )
+        }
+    }
+}
+
+class AddSoldBanner(
+    component: PostPreview
+) : PostPreviewDecorator(component) {
+    @Composable
+    override fun DisplayPreview() {
+        Box {
+            super.DisplayPreview()
+            Text(
+                text = "SOLD",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
     }
