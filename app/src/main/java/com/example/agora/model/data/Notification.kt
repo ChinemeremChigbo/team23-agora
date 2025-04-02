@@ -1,11 +1,8 @@
 package com.example.agora.model.data
 
 import com.example.agora.model.repository.PostUtils
-import com.example.agora.model.util.DataUtil
-import java.util.*
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
-
 
 class Notification(
     var notificationId: String = "",
@@ -18,7 +15,10 @@ class Notification(
     var createdAt: Timestamp?
 ) {
     companion object {
-        fun convertDBEntryToNotification(entry: Map<String, Any>, callback: (Notification) -> Unit) {
+        fun convertDBEntryToNotification(
+            entry: Map<String, Any>,
+            callback: (Notification) -> Unit
+        ) {
             val postId = entry["postId"]?.toString() ?: ""
             var preview = ""
             PostUtils.getPostById(postId) { post ->
@@ -38,7 +38,7 @@ class Notification(
                     commentId = entry["commentId"]?.toString() ?: "",
                     eventInfo = entry["eventInfo"]?.toString() ?: "",
                     previewImg = preview,
-                    createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"]?.toString() ?: "")
+                    createdAt = entry["createdAt"] as? Timestamp
                 )
 
                 callback(notification)

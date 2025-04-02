@@ -1,15 +1,11 @@
-package com.example.agora.screens.authentication.sign_up
+package com.example.agora.screens.authentication.signUp
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.R
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.User
-import com.example.agora.model.data.UserStatus
-import com.example.agora.model.repository.AddressUtils
 import com.example.agora.model.repository.ProfileSettingUtils
 import com.example.agora.model.util.AccountAuthUtil
 import com.google.firebase.auth.FirebaseAuth
@@ -34,7 +30,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     var phoneNumber = MutableStateFlow("")
     var userId = ""
 
-    fun updatePhoneNumber(newPhoneNumber: String){
+    fun updatePhoneNumber(newPhoneNumber: String) {
         phoneNumber.value = newPhoneNumber
     }
 
@@ -74,38 +70,45 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         postalCode.value = newVal
     }
 
-    fun register(
-        auth: FirebaseAuth,
-        onSuccess: (User) -> Unit,
-        onError: (String) -> Unit
-    ) {
+    fun register(auth: FirebaseAuth, onSuccess: (User) -> Unit, onError: (String) -> Unit) {
         // Step 0-1: check all required fields are non empty
-        if (!checkRequiredFields{ errorMessage -> onError(errorMessage) }) return
+        if (!checkRequiredFields { errorMessage -> onError(errorMessage) }) return
 
         // Step 0-2: confirm password fields are the same
-        if (password.value != confirmPassword.value) { onError("Passwords do not match"); return }
+        if (password.value != confirmPassword.value) {
+            onError("Passwords do not match"); return
+        }
 
         val emailValue = email.value
         val passwordValue = password.value
 
         // Step 0-3: confirm email is uwaterloo school email
-        if(!isValidEmail(emailValue)) { onError("Only uwaterloo email allowed!"); return }
-
+        if (!isValidEmail(emailValue)) {
+            onError("Only uwaterloo email allowed!"); return
+        }
 
         viewModelScope.launch {
             // Step 0-4: confirm address + phone number are valid
-            if(!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)){
+            if (!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)) {
                 onError("Invalid phone number!")
                 return@launch
             }
-            val userAddress = Address.createAndValidate(
-                country = country.value,
-                city = city.value,
-                state = state.value,
-                postalCode = postalCode.value,
-                street = address.value
-            )
-            if(userAddress==null) {
+            var userAddress: Address? = null
+            try {
+                userAddress = Address.createAndValidate(
+                    country = country.value,
+                    city = city.value,
+                    state = state.value,
+                    postalCode = postalCode.value,
+                    street = address.value
+                )
+            } catch (e: Exception) {
+                e.localizedMessage?.let {
+                    onError("Unexpected error occurred!")
+                    return@launch
+                }
+            }
+            if (userAddress == null) {
                 onError("Invalid address!")
             } else {
                 try {
@@ -118,8 +121,8 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                         fullName = fullName.value,
                         email = email.value,
                         phoneNumber = phoneNumber.value,
-                        address = userAddress!!,
-                        isEmailVerified = false,
+                        address = userAddress,
+                        isEmailVerified = false
                     )
                     newUser.register()
                     onSuccess(newUser)

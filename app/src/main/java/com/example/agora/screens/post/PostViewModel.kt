@@ -33,6 +33,7 @@ class PostViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 getPostsByUser()
+                _isLoading.value = false
             } catch (e: Exception) {
                 Log.e("PostViewModel", "Error fetching user posts", e)
                 _isLoading.value = false
@@ -40,44 +41,35 @@ class PostViewModel : ViewModel() {
         }
     }
 
-    private fun getPostsByUser() {
+    fun getPostsByUser() {
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
         PostUtils.getPostsByUser(userId) { posts ->
             _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
             _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
-            _isLoading.value = false
         }
     }
 
     fun deletePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            PostUtils.deletePost(
-                postId = postId,
-                onSuccess = {
+            PostUtils.deletePost(postId = postId, onSuccess = {
 //                    val updatedPosts = _activePosts.value.filter { it.postId != postId }
 //                    _activePosts.value = updatedPosts
-                    onSuccess()
-                },
-                onFailure = { e ->
+                onSuccess()
+            }, onFailure = { e ->
                     Log.e("PostViewModel", "Failed to delete post: ${e.localizedMessage}")
                     onError(e.localizedMessage ?: "Failed to delete post")
-                }
-            )
+                })
         }
     }
 
     fun resolvePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            PostUtils.resolvePost(
-                postId = postId,
-                onSuccess = {
-                    onSuccess()
-                },
-                onFailure = { e ->
+            PostUtils.resolvePost(postId = postId, onSuccess = {
+                onSuccess()
+            }, onFailure = { e ->
                     onError(e.localizedMessage ?: "Failed to resolve post")
-                }
-            )
+                })
         }
     }
 
@@ -89,12 +81,7 @@ class PostViewModel : ViewModel() {
         viewModelScope.launch {
             setRefreshing(true)
             delay(1000)
-            val auth = FirebaseAuth.getInstance()
-            val userId = auth.currentUser?.uid ?: return@launch
-            PostUtils.getPostsByUser(userId) { posts ->
-                _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
-                _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
-            }
+            getPostsByUser()
             setRefreshing(false)
         }
     }

@@ -1,6 +1,5 @@
 package com.example.agora.screens.inbox
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,12 +8,12 @@ import androidx.navigation.NavController
 import com.example.agora.model.data.Notification
 import com.example.agora.model.repository.NotificationUtils
 import com.google.firebase.auth.FirebaseAuth
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class InboxViewModel : ViewModel() {
     val auth = FirebaseAuth.getInstance()
@@ -60,6 +59,7 @@ class InboxViewModel : ViewModel() {
         navController.navigate("post_detail/${notif.postId}")
 
         // call backend api to delete the notification
-        NotificationUtils.removeNotification(notif.userId, notif.notificationId, onSuccess = { Log.d("hehe", "onsuccess")}, onFailure = {})
+        // comment out deleting notification for now
+        // NotificationUtils.removeNotification(notif.userId, notif.notificationId, onSuccess = { Log.d("hehe", "onsuccess")}, onFailure = {})
     }
 }

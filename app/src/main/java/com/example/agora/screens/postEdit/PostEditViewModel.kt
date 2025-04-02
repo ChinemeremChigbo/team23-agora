@@ -13,8 +13,13 @@ import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PostEditViewModel(
     application: Application,
@@ -124,10 +129,7 @@ class PostEditViewModel(
         })
     }
 
-    fun upsertPost(
-        onSuccess: (String) -> Unit,
-        onError: (String) -> Unit
-    ) {
+    fun upsertPost(onSuccess: (String) -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             // Check fields are non empty
             if (!checkRequiredFields { errorMessage -> onError(errorMessage) }) return@launch
@@ -163,7 +165,7 @@ class PostEditViewModel(
                 // Upload images and wait for completion
                 val uploadedUrls = uploadImages()
 
-                if (editing) {  // Edit post
+                if (editing) { // Edit post
                     PostUtils.editPost(
                         postId = postId,
                         title = title.value,
@@ -177,7 +179,7 @@ class PostEditViewModel(
                         },
                         onFailure = { e -> onError(e.localizedMessage ?: "Edit Post failed") }
                     )
-                } else {        // Create post
+                } else { // Create post
                     PostUtils.createPost(
                         title = title.value,
                         description = description.value,
@@ -201,7 +203,7 @@ class PostEditViewModel(
             "Title" to title.value,
             "Price" to price.value,
             "Category" to category.value,
-            "Description" to description.value,
+            "Description" to description.value
         )
 
         for ((key, value) in fields) {
@@ -226,7 +228,11 @@ class PostEditViewModel(
                     context,
                     uri,
                     onSuccess = { uploadedUrl -> deferred.complete(uploadedUrl) },
-                    onFailure = { errorMessage -> deferred.completeExceptionally(Exception("Image upload failed: $errorMessage")) }
+                    onFailure = { errorMessage ->
+                        deferred.completeExceptionally(
+                            Exception("Image upload failed: $errorMessage")
+                        )
+                    }
                 )
                 deferred.await()
             }

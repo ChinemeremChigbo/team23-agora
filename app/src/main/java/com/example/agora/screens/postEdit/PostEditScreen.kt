@@ -4,17 +4,44 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Upload
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,10 +58,7 @@ import com.example.agora.model.repository.PostUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostEditScreen(
-    navController: NavController,
-    viewModel: PostEditViewModel = viewModel(),
-) {
+fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = viewModel()) {
     val context = LocalContext.current
     val editing = viewModel.editing
     var isLoading by remember { mutableStateOf(false) }
@@ -55,7 +79,7 @@ fun PostEditScreen(
     Column(
         modifier = Modifier
             .padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
-            .verticalScroll(scrollState),
+            .verticalScroll(scrollState)
     ) {
         // Title
         Row(
@@ -63,17 +87,21 @@ fun PostEditScreen(
                 .fillMaxWidth()
                 .height(30.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             TextButton(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    }
+                },
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp),
-                modifier = Modifier.width(60.dp),
+                modifier = Modifier.width(60.dp)
             ) {
                 Text(
                     text = "Cancel",
                     fontSize = 15.sp,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
             }
 
@@ -93,15 +121,19 @@ fun PostEditScreen(
 
         // Image Picker Launcher
         val imagePickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetMultipleContents(), onResult = { uris ->
+            contract = ActivityResultContracts.GetMultipleContents(),
+            onResult = { uris ->
                 if (uris.size <= 3) {
                     viewModel.updateImages(uris)
                 } else {
                     Toast.makeText(
-                        context, "You can only upload up to 3 images", Toast.LENGTH_SHORT
+                        context,
+                        "You can only upload up to 3 images",
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
-            })
+            }
+        )
 
         Text(
             text = "Add Photos",
@@ -109,7 +141,7 @@ fun PostEditScreen(
             fontSize = 19.sp,
             textAlign = TextAlign.Start,
             modifier = Modifier.padding(bottom = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Text(
@@ -117,7 +149,7 @@ fun PostEditScreen(
             fontSize = 16.sp,
             textAlign = TextAlign.Start,
             modifier = Modifier.padding(bottom = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         // Show selected images in a horizontal scroll
@@ -152,7 +184,7 @@ fun PostEditScreen(
             fontSize = 19.sp,
             textAlign = TextAlign.Start,
             modifier = Modifier.padding(bottom = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Text(
@@ -160,7 +192,7 @@ fun PostEditScreen(
             fontSize = 16.sp,
             textAlign = TextAlign.Start,
             modifier = Modifier.padding(bottom = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         val bottomPadding = 8.dp
@@ -173,7 +205,7 @@ fun PostEditScreen(
                 .fillMaxWidth()
                 .padding(bottom = bottomPadding),
             singleLine = true,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         OutlinedTextField(
@@ -190,12 +222,14 @@ fun PostEditScreen(
                 .padding(bottom = bottomPadding),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         var expanded by remember { mutableStateOf(false) }
         ExposedDropdownMenuBox(
-            expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
             OutlinedTextField(
                 value = selectedCategory.value,
                 onValueChange = { viewModel.updateCategory(it) },
@@ -206,9 +240,12 @@ fun PostEditScreen(
                     .menuAnchor(MenuAnchorType.PrimaryNotEditable),
                 shape = RoundedCornerShape(16.dp),
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) })
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+            )
             ExposedDropdownMenu(
-                expanded = expanded, onDismissRequest = { expanded = false }) {
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
                 Category.entries.forEach { category ->
                     DropdownMenuItem(text = { Text(category.value) }, onClick = {
                         viewModel.updateCategory(category.value)
@@ -228,7 +265,7 @@ fun PostEditScreen(
             singleLine = false,
             minLines = 6,
             maxLines = 6,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -308,13 +345,19 @@ fun PostEditScreen(
                     isLoading = true
                     viewModel.upsertPost(onSuccess = { successMessage ->
                         isLoading = false
-                        Toast.makeText(context, successMessage, Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
+                        Toast.makeText(
+                            context,
+                            successMessage,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        }
                         // todo: refresh post/explore screen?
                     }, onError = { errorMessage ->
-                        isLoading = false
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                    })
+                            isLoading = false
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        })
                 },
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
