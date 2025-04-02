@@ -60,41 +60,19 @@ class CommentUtils {
 
                     postRef.update("comments", FieldValue.arrayUnion(commentId))
                         .addOnSuccessListener {
+                            CommentEventManager.notifyCommentAdded(
+                                commentId,
+                                postId,
+                                commenterId = userId,
+                                posterId = sellerId,
+                                mentionedUserIds = userIds
+                            )
                             onSuccess(commentId)
                         }.addOnFailureListener { onFailure(it) }
                 }.addOnFailureListener { onFailure(it) }
-
-                db.collection("posts").document(postId).get().addOnSuccessListener { document ->
-                    val posterId = document.getString("userId") ?: ""
-
-                    // notif for the poster
-                    if (sellerId != userId) {
-                        addNotification(
-                            userId = posterId, // who the notif is going to
-                            postId = postId,
-                            commentId = commentId,
-                            commenterId = userId, // who wrote the comment
-                            type = NotificationType.POSTER,
-                            onSuccess = {},
-                            onFailure = {}
-                        )
-                    }
-
-                    for (mention in userIds) {
-                        addNotification(
-                            userId = mention,
-                            postId = postId,
-                            commentId = commentId,
-                            commenterId = userId,
-                            type = NotificationType.MENTION,
-                            onSuccess = {},
-                            onFailure = {}
-                        )
-                    }
-                }.addOnFailureListener { onFailure(it) }
             }, onFailure = { exception ->
-                    println("Error: ${exception.message}")
-                })
+                println("Error: ${exception.message}")
+            })
         }
 
         fun deleteComment(
