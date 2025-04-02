@@ -82,7 +82,9 @@ class SearchFilterUtils {
                     val title = (data["title"] as? String)?.trim()?.lowercase()
 
                     if (formattedSearchString.isNullOrEmpty() || (
-                        title != null && title.contains(formattedSearchString)
+                        title != null && title.contains(
+                                formattedSearchString
+                            )
                         )
                     ) {
                         resultList.add(data)
@@ -94,7 +96,11 @@ class SearchFilterUtils {
                         val addressMap =
                             post["address"] as? Map<*, *> ?: return@sortedBy Double.MAX_VALUE
                         val postAddress = convertDBEntryToAddress(addressMap as Map<String, Any>)
-                        if (postAddress != null) selfAddress.distanceTo(postAddress) else Double.MAX_VALUE
+                        if (postAddress != null) {
+                            selfAddress.distanceTo(postAddress)
+                        } else {
+                            Double.MAX_VALUE
+                        }
                     }
                 } else {
                     resultList

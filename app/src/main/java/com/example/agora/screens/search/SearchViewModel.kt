@@ -125,7 +125,11 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
                         category = _selectedCategory.value,
                         searchString = _searchText.value,
                         sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
-                        priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false,
+                        priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) {
+                            true
+                        } else {
+                            false
+                        },
                         sortByDistance = if (_sortBy.value == SortOptions.DISTANCE) true else false,
                         selfAddress = selfAddress,
                         minPrice = minPrice,

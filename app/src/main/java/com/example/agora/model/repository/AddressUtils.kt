@@ -17,24 +17,22 @@ class AddressUtils {
 
         suspend fun getUserAddress(userId: String): Address? = suspendCoroutine { continuation ->
             val db = FirebaseFirestore.getInstance()
-            db.collection("users").document(userId).get()
-                .addOnSuccessListener { document ->
-                    val data = document.data
+            db.collection("users").document(userId).get().addOnSuccessListener { document ->
+                val data = document.data
 
-                    val addressMap = data?.get("address") as? Map<String, Any>
-                    if (addressMap != null && addressMap.containsKey("lat") && addressMap.containsKey(
-                            "lng"
-                        )
-                    ) {
-                        val address = convertDBEntryToAddress(addressMap)
-                        continuation.resume(address)
-                    } else {
-                        continuation.resume(null)
-                    }
-                }
-                .addOnFailureListener {
+                val addressMap = data?.get("address") as? Map<String, Any>
+                if (addressMap != null && addressMap.containsKey("lat") && addressMap.containsKey(
+                        "lng"
+                    )
+                ) {
+                    val address = convertDBEntryToAddress(addressMap)
+                    continuation.resume(address)
+                } else {
                     continuation.resume(null)
                 }
+            }.addOnFailureListener {
+                continuation.resume(null)
+            }
         }
     }
 }
