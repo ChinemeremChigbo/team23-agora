@@ -1,17 +1,16 @@
 package com.example.agora.model.repository
 
-import android.util.Log
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.Address.Companion.convertDBEntryToAddress
 import com.example.agora.model.util.GeocodingClient
 import com.example.agora.model.util.GeocodingService
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @Serializable
 data class ZippopotamResponse(

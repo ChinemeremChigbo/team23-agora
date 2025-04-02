@@ -148,7 +148,6 @@ class PostEditViewModel(
             }
 
             val newAddress = try {
-
                 Address.createAndValidate(
                     country = country.value,
                     city = city.value,
@@ -159,7 +158,6 @@ class PostEditViewModel(
             } catch (e: NoSuchElementException) {
                 onError("Invalid address found"); return@launch
             }
-
 
             try {
                 // Upload images and wait for completion

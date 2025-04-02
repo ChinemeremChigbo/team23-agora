@@ -8,7 +8,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
 enum class SortOptions(val value: String) {
-    NEWEST("Newest"), LOWESTPRICE("Lowest price"), HIGHESTPRICE("Highest price"), DISTANCE("Distance")
+    NEWEST("Newest"), LOWESTPRICE("Lowest price"), HIGHESTPRICE("Highest price"), DISTANCE(
+        "Distance"
+    )
 }
 
 class SearchFilterUtils {
@@ -80,7 +82,8 @@ class SearchFilterUtils {
                     val title = (data["title"] as? String)?.trim()?.lowercase()
 
                     if (formattedSearchString.isNullOrEmpty() || (
-                                title != null && title.contains(formattedSearchString))
+                        title != null && title.contains(formattedSearchString)
+                        )
                     ) {
                         resultList.add(data)
                     }
@@ -93,7 +96,9 @@ class SearchFilterUtils {
                         val postAddress = convertDBEntryToAddress(addressMap as Map<String, Any>)
                         if (postAddress != null) selfAddress.distanceTo(postAddress) else Double.MAX_VALUE
                     }
-                } else resultList
+                } else {
+                    resultList
+                }
 
                 callback(sortedList)
             }.addOnFailureListener { exception ->
@@ -102,4 +107,4 @@ class SearchFilterUtils {
             }
         }
     }
-    }
+}
