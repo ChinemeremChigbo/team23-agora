@@ -8,13 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Address
-import com.example.agora.model.data.Address.Companion.convertDBEntryToAddress
 import com.example.agora.model.data.Category
-import com.example.agora.model.repository.AddressUtils.Companion.getLatLongForPostalCode
 import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.util.uploadImageToS3
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.*
@@ -148,24 +145,19 @@ class PostEditViewModel(
                 onError("No such category found"); return@launch
             }
 
+            val newAddress = try {
 
-            val latLng = try {
-                getLatLongForPostalCode(country.value, postalCode.value)
-                    ?.let { LatLng(it.first, it.second) }
-                    ?: LatLng(-1.0, -1.0) // fallback
-            } catch (e: Exception) {
-                Log.e("PostEditViewModel", "Geocoding failed: ${e.message}")
-                LatLng(-1.0, -1.0) // fallback on error
+                Address.createAndValidate(
+                    country = country.value,
+                    city = city.value,
+                    state = state.value,
+                    street = streetAddress.value,
+                    postalCode = postalCode.value
+                )
+            } catch (e: NoSuchElementException) {
+                onError("Invalid address found"); return@launch
             }
 
-            val newAddress = Address.create(
-                country = country.value,
-                city = city.value,
-                state = state.value,
-                street = streetAddress.value,
-                postalCode = postalCode.value,
-                latLng = latLng
-            )
 
             try {
                 // Upload images and wait for completion
