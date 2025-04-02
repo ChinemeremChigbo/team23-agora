@@ -7,7 +7,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.agora.model.data.Address
 import com.example.agora.model.data.Category
+import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
 import com.example.agora.model.repository.PostUtils
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
@@ -33,12 +35,21 @@ class PostEditViewModel(
     var price = MutableStateFlow("")
     var category = MutableStateFlow("")
     var description = MutableStateFlow("")
+    var streetAddress = MutableStateFlow("")
+    var city = MutableStateFlow("")
+    var state = MutableStateFlow("")
+    var postalCode = MutableStateFlow("")
+    var country = MutableStateFlow("")
 
     // Prepopulate if editing
     val editing = postId.isNotEmpty()
 
     init {
-        if (editing) fetchPostDetails(postId)
+        if (editing) {
+            fetchPostDetails(postId)
+        } else {
+            preloadUserAddress()
+        }
     }
 
     fun updateImages(newImages: List<Uri>) {
@@ -61,6 +72,41 @@ class PostEditViewModel(
         description.value = newDescription
     }
 
+    fun updateStreetAddress(newStreet: String) {
+        streetAddress.value = newStreet
+    }
+
+    fun updateCity(newCity: String) {
+        city.value = newCity
+    }
+
+    fun updateState(newState: String) {
+        state.value = newState
+    }
+
+    fun updatePostalCode(newPostalCode: String) {
+        postalCode.value = newPostalCode
+    }
+
+    fun updateCountry(newCountry: String) {
+        country.value = newCountry
+    }
+
+    private fun preloadUserAddress() {
+        if (userId == null) return
+
+        viewModelScope.launch {
+            val address = getUserAddress(userId)
+            address?.let {
+                updateStreetAddress(it.getStreet())
+                updateCity(it.getCity())
+                updateState(it.getState())
+                updatePostalCode(it.getPostalCode())
+                updateCountry(it.getCountry())
+            }
+        }
+    }
+
     private fun fetchPostDetails(postId: String) {
         PostUtils.getPostById(postId, { post ->
             if (post != null) {
@@ -71,6 +117,14 @@ class PostEditViewModel(
                 updatePrice(post.price.toString())
                 updateCategory(post.category.value)
                 updateDescription(post.description)
+                val address = post.address
+                address.let {
+                    updateStreetAddress(it.getStreet())
+                    updateCity(it.getCity())
+                    updateState(it.getState())
+                    updatePostalCode(it.getPostalCode())
+                    updateCountry(it.getCountry())
+                }
             }
         })
     }
@@ -93,6 +147,26 @@ class PostEditViewModel(
                 onError("No such category found"); return@launch
             }
 
+            var newAddress: Address? = null
+            try {
+                newAddress = Address.createAndValidate(
+                    country = country.value,
+                    city = city.value,
+                    state = state.value,
+                    street = streetAddress.value,
+                    postalCode = postalCode.value
+                )
+            } catch (e: Exception) {
+                e.localizedMessage?.let {
+                    onError("Unexpected error occurred!")
+                    return@launch
+                }
+            }
+            if (newAddress == null) {
+                onError("Invalid address!")
+                return@launch
+            }
+
             try {
                 // Upload images and wait for completion
                 val uploadedUrls = uploadImages()
@@ -105,6 +179,7 @@ class PostEditViewModel(
                         price = priceDouble,
                         category = categoryEnum,
                         images = uploadedUrls,
+                        address = newAddress!!,
                         onSuccess = {
                             onSuccess("Post edited successfully!")
                         },
@@ -118,6 +193,7 @@ class PostEditViewModel(
                         category = categoryEnum,
                         images = uploadedUrls,
                         userId = userId!!,
+                        address = newAddress!!,
                         onSuccess = { onSuccess("Post created successfully!") },
                         onFailure = { e -> onError(e.localizedMessage ?: "Create Post failed") }
                     )
