@@ -1,7 +1,6 @@
 package com.example.agora.model.repository
 
 import com.example.agora.model.data.Comment
-import com.example.agora.model.repository.NotificationUtils.Companion.addNotification
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
