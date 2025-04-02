@@ -275,7 +275,7 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
             fontWeight = FontWeight.Black,
             fontSize = 19.sp,
             modifier = Modifier.padding(bottom = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         OutlinedTextField(
@@ -286,7 +286,7 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             singleLine = true,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         OutlinedTextField(
@@ -297,7 +297,7 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             singleLine = true,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         OutlinedTextField(
@@ -308,7 +308,7 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             singleLine = true,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         OutlinedTextField(
@@ -319,7 +319,7 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             singleLine = true,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         OutlinedTextField(
@@ -330,7 +330,7 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
             singleLine = true,
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(16.dp)
         )
 
         if (isLoading) {

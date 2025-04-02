@@ -112,7 +112,7 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
                     sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
                     priceLowToHi = if (_sortBy.value == SortOptions.LOWESTPRICE) true else false,
                     sortByDistance = if (_sortBy.value == SortOptions.DISTANCE) true else false,
-                    selfAddress = selfAddress,
+                    selfAddress = selfAddress
                 ) { posts ->
                     _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post) }
                     continuation.resume(_posts.value)
