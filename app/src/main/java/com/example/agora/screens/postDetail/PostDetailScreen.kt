@@ -9,13 +9,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,13 +34,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -50,9 +50,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,7 +66,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -76,6 +76,7 @@ import com.example.agora.model.repository.CommentUtils
 import com.example.agora.model.repository.WishlistUtils
 import com.example.agora.ui.components.ImageCarousel
 import com.example.agora.ui.components.MapScreen
+import com.example.agora.ui.components.highlightMentionsText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -115,16 +116,24 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(
-            title = { Text(
-                post?.title ?: "",
-                fontSize = 21.sp,
-                fontWeight = FontWeight.ExtraBold
-            ) },
+            title = {
+                Text(
+                    post?.title ?: "",
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            },
             navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        }
+                    }
+                ) {
                     Icon(
                         Icons.Default.ArrowBackIosNew,
                         contentDescription = "Back",
@@ -146,9 +155,14 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background
+            )
         )
-        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.verticalScroll(scrollState)) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.verticalScroll(scrollState)
+        ) {
             if (post != null) {
                 ImageCarousel(post.images)
                 Column(
@@ -157,7 +171,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                         .padding(32.dp)
                         .fillMaxWidth()
                 ) {
-                    Column (verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
@@ -187,10 +201,18 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 }
                             }) {
                                 Icon(
-                                    imageVector = if (inWishlist) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                                    imageVector = if (inWishlist) {
+                                        Icons.Default.Favorite
+                                    } else {
+                                        Icons.Outlined.FavoriteBorder
+                                    },
                                     contentDescription = "Add to wishlist",
-                                    tint = if (inWishlist) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.size(32.dp),
+                                    tint = if (inWishlist) {
+                                        MaterialTheme.colorScheme.error
+                                    } else {
+                                        MaterialTheme.colorScheme.onBackground
+                                    },
+                                    modifier = Modifier.size(32.dp)
                                 )
                             }
                         }
@@ -241,17 +263,18 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                     text = "Report Post",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
                     }
-                    OutlinedButton (
+                    OutlinedButton(
                         onClick = { showContactModal = true },
                         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(16.dp),
                         contentPadding = PaddingValues(10.dp, 14.dp),
-                        modifier = Modifier.fillMaxWidth()) {
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
                             text = "Contact seller",
                             fontSize = 16.sp
@@ -273,23 +296,34 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                                 unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent
                             ),
                             shape = RoundedCornerShape(16.dp),
                             trailingIcon = {
                                 IconButton(onClick = {
-                                    if(commentField.value.isBlank()){
-                                        Toast.makeText(context, "Comment can't be empty!", Toast.LENGTH_SHORT).show()
+                                    if (commentField.value.isBlank()) {
+                                        Toast.makeText(
+                                            context,
+                                            "Comment can't be empty!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     } else if (currentUser != null) {
                                         CommentUtils.createComment(
                                             postId = post.postId,
                                             userId = currentUser.uid,
+                                            sellerId = post.userId,
                                             text = commentField.value,
                                             onSuccess = {
                                                 viewModel.updateComment("")
                                                 viewModel.fetchComments(post.postId)
                                             },
-                                            onFailure = { Toast.makeText(context, "Failed to create comment", Toast.LENGTH_SHORT).show() },
+                                            onFailure = {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Failed to create comment",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
                                         )
                                     }
                                 }) {
@@ -298,14 +332,14 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                         contentDescription = "Create comment"
                                     )
                                 }
-                            },
+                            }
                         )
                         comments.value.forEach { comment ->
                             CommentItem(
                                 viewModel,
                                 comment,
                                 { username ->
-                                    viewModel.updateComment("${commentField.value}@${username} ")
+                                    viewModel.updateComment("${commentField.value}@$username ")
                                 }
                             )
                         }
@@ -345,10 +379,10 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column (
+                Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     AsyncImage(
                         model = user.profileImage,
                         contentDescription = "Profile Image",
@@ -370,7 +404,7 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
                     )
                 }
 
-                Column (
+                Column(
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -381,13 +415,13 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
                         color = MaterialTheme.colorScheme.surfaceVariant
                     )
                     Text(
-                        text = user.bio,
+                        text = user.bio.ifEmpty { "Still thinking of something cool to say..." },
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.surfaceVariant
                     )
                 }
             }
-        },
+        }
     )
 }
 
@@ -434,16 +468,13 @@ fun ReportModal(postId: String, reporterId: String, onDismiss: () -> Unit) {
                             reporterId = reporterId,
                             reason = selectedReason!!
                         )
-                        report.submitReport(
-                            onSuccess = {
-                                isReporting = false
-                                onDismiss()
-                            },
-                            onFailure = { error ->
+                        report.submitReport(onSuccess = {
+                            isReporting = false
+                            onDismiss()
+                        }, onFailure = { error ->
                                 isReporting = false
                                 reportError = error
-                            }
-                        )
+                            })
                     },
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.weight(1f),
@@ -493,13 +524,10 @@ fun ReportModal(postId: String, reporterId: String, onDismiss: () -> Unit) {
                     onDismissRequest = { expanded = false }
                 ) {
                     reportReasons.forEach { reason ->
-                        DropdownMenuItem(
-                            text = { Text(reason) },
-                            onClick = {
-                                selectedReason = reason
-                                expanded = false
-                            }
-                        )
+                        DropdownMenuItem(text = { Text(reason) }, onClick = {
+                            selectedReason = reason
+                            expanded = false
+                        })
                     }
                 }
 
@@ -512,16 +540,12 @@ fun ReportModal(postId: String, reporterId: String, onDismiss: () -> Unit) {
                     )
                 }
             }
-        },
+        }
     )
 }
 
 @Composable
-fun CommentItem(
-    viewModel: PostDetailViewModel,
-    comment: Comment,
-    replyOnClick: (String) -> Unit,
-) {
+fun CommentItem(viewModel: PostDetailViewModel, comment: Comment, replyOnClick: (String) -> Unit) {
     var user by remember { mutableStateOf<User?>(null) }
 
     LaunchedEffect(comment.userId) {
@@ -535,6 +559,16 @@ fun CommentItem(
                 user = fetchedUser
             }
         })
+    }
+
+    val highlightColor = MaterialTheme.colorScheme.primary
+
+    val highlightedText by produceState(
+        initialValue = AnnotatedString(comment.text),
+        comment.text,
+        comment.mentions
+    ) {
+        value = highlightMentionsText(comment.text, comment.mentions, highlightColor)
     }
 
     user?.let { user ->
@@ -556,14 +590,15 @@ fun CommentItem(
 
                 Spacer(Modifier.size(10.dp))
 
-                Column (verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     Text(
                         text = "${user.fullName} | @${user.username}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
                     Text(
-                        text = comment.text
+                        text = highlightedText,
+                        fontSize = 16.sp
                     )
 
                     Text(
@@ -577,30 +612,21 @@ fun CommentItem(
     }
 }
 
-
 fun sharePost(context: Context, postId: String) {
     Log.d("PostDetailScreen", "Sharing postId: $postId")
 
-    val deepLink = Uri.Builder()
-        .scheme("https")
-        .authority("agoraapp.page.link")
-        .appendPath("post")
-        .appendQueryParameter("post_id", postId)
-        .build()
+    val deepLink = Uri.Builder().scheme("https").authority("agoraapp.page.link").appendPath("post")
+        .appendQueryParameter("post_id", postId).build()
 
     Log.d("DeepLink", "Constructed Deep Link: $deepLink")
 
-    val longDynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
-        .setLink(deepLink)
-        .setDomainUriPrefix("https://agoraapp.page.link")
-        .setAndroidParameters(
+    val longDynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink().setLink(deepLink)
+        .setDomainUriPrefix("https://agoraapp.page.link").setAndroidParameters(
             DynamicLink.AndroidParameters.Builder("com.example.agora").build()
         ).buildDynamicLink().uri
 
-    FirebaseDynamicLinks.getInstance().createDynamicLink()
-        .setLongLink(longDynamicLink)
-        .buildShortDynamicLink()
-        .addOnSuccessListener { result ->
+    FirebaseDynamicLinks.getInstance().createDynamicLink().setLongLink(longDynamicLink)
+        .buildShortDynamicLink().addOnSuccessListener { result ->
             val shortLink = result.shortLink.toString()
             Log.d("DynamicLink", "Short Link Created: $shortLink")
 
@@ -611,8 +637,7 @@ fun sharePost(context: Context, postId: String) {
             }
             val shareIntent = Intent.createChooser(sendIntent, "Share Post")
             context.startActivity(shareIntent)
-        }
-        .addOnFailureListener { e ->
+        }.addOnFailureListener { e ->
             Log.e("DynamicLink", "Error generating short link: ${e.message}")
 
             val sendIntent = Intent().apply {

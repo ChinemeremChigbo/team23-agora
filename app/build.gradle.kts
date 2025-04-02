@@ -1,8 +1,22 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.ktlint)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+}
+
+ktlint {
+    android.set(true)
+    ignoreFailures.set(false)
+    outputToConsole.set(true)
+    enableExperimentalRules.set(true)
+    reporters {
+        reporter(ReporterType.PLAIN)
+        reporter(ReporterType.HTML)
+    }
 }
 
 android {
@@ -17,8 +31,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "BREVO_API_KEY", "\"${project.findProperty("BREVO_API_KEY") ?: ""}\"")
-        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
+        buildConfigField(
+            "String",
+            "BREVO_API_KEY",
+            "\"${project.findProperty("BREVO_API_KEY") ?: ""}\""
+        )
+        buildConfigField(
+            "String",
+            "GOOGLE_MAPS_API_KEY",
+            "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\""
+        )
     }
 
     buildTypes {
@@ -59,7 +81,6 @@ secrets {
     defaultPropertiesFileName = "local.defaults.properties"
 }
 
-
 dependencies {
     implementation("com.google.maps.android:maps-compose:4.3.3")
     implementation(libs.play.services.maps)
@@ -79,7 +100,6 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
-
 
     val composeBom = platform("androidx.compose:compose-bom:2025.01.01")
     implementation(composeBom)

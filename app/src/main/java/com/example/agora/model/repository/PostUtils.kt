@@ -1,6 +1,5 @@
 package com.example.agora.model.repository
 
-
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
@@ -58,20 +57,17 @@ class PostUtils {
                 .addOnFailureListener { onFailure(it) }
         }
 
-
         /** Get a specific post by ID */
         fun getPostById(postId: String, callback: (Post?) -> Unit) {
             val db = FirebaseFirestore.getInstance()
 
-            db.collection("posts").document(postId)
-                .get()
-                .addOnSuccessListener { post ->
-                    if (post.exists()) {
-                        callback(post.data?.let { Post.convertDBEntryToPostDetail(it) })
-                    } else {
-                        callback(null)
-                    }
+            db.collection("posts").document(postId).get().addOnSuccessListener { post ->
+                if (post.exists()) {
+                    callback(post.data?.let { Post.convertDBEntryToPostDetail(it) })
+                } else {
+                    callback(null)
                 }
+            }
         }
 
         /** Edit an existing post */
@@ -104,30 +100,19 @@ class PostUtils {
                 )
             )
 
-            db.collection("posts").document(postId)
-                .update(updatedPost as Map<String, Any>)
-                .addOnSuccessListener { onSuccess() }
-                .addOnFailureListener { e ->
+            db.collection("posts").document(postId).update(updatedPost as Map<String, Any>)
+                .addOnSuccessListener { onSuccess() }.addOnFailureListener { e ->
                     onFailure(Exception("Failed to edit post: ${e.message}"))
                 }
         }
 
-
         /** Delete an existing post */
-        fun deletePost(
-            postId: String,
-            onSuccess: () -> Unit,
-            onFailure: (Exception) -> Unit
-        ) {
+        fun deletePost(postId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
             updatePostStatus(postId, PostStatus.DELETED, onSuccess, onFailure)
         }
 
         /** Mark a post as resolved */
-        fun resolvePost(
-            postId: String,
-            onSuccess: () -> Unit,
-            onFailure: (Exception) -> Unit
-        ) {
+        fun resolvePost(postId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
             updatePostStatus(postId, PostStatus.RESOLVED, onSuccess, onFailure)
         }
 
@@ -138,12 +123,10 @@ class PostUtils {
             onFailure: (Exception) -> Unit
         ) {
             val db = FirebaseFirestore.getInstance()
-            db.collection("posts").document(postId)
-                .update(mapOf("status" to newStatus.name))
+            db.collection("posts").document(postId).update(mapOf("status" to newStatus.name))
                 .addOnSuccessListener {
                     onSuccess()
-                }
-                .addOnFailureListener { e ->
+                }.addOnFailureListener { e ->
                     onFailure(e)
                 }
         }
@@ -152,11 +135,9 @@ class PostUtils {
         fun getPostsByUser(userId: String, callback: (List<Post>) -> Unit) {
             val db = FirebaseFirestore.getInstance()
 
-            db.collection("posts")
-                .whereEqualTo("userId", userId)
+            db.collection("posts").whereEqualTo("userId", userId)
                 .whereNotIn("status", listOf(PostStatus.DELETED.name))
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .get()
+                .orderBy("createdAt", Query.Direction.DESCENDING).get()
                 .addOnSuccessListener { posts ->
                     val postList = posts.mapNotNull {
                         it.data.let { data ->
@@ -164,8 +145,7 @@ class PostUtils {
                         }
                     }
                     callback(postList)
-                }
-                .addOnFailureListener {
+                }.addOnFailureListener {
                     callback(emptyList())
                 }
         }

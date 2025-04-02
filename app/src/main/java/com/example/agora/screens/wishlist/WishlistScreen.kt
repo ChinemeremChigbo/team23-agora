@@ -48,8 +48,10 @@ fun WishlistScreen(viewModel: WishlistViewModel = viewModel(), parentNavControll
             }
 
             Column(
-                modifier = Modifier.padding(top=21.dp, bottom=0.dp, start=21.dp, end=21.dp).fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(top = 21.dp, bottom = 0.dp, start = 21.dp, end = 21.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
                     modifier = Modifier.height(30.dp),
@@ -83,13 +85,13 @@ fun WishlistScreen(viewModel: WishlistViewModel = viewModel(), parentNavControll
         }
         // Post Detail Screen
         composable(
-            route = "post_detail/{postId}",
+            route = "post_detail/{postId}"
         ) { backStackEntry ->
             val postId = backStackEntry.arguments?.getString("postId") ?: "Unknown"
-            val postDetailViewModel: PostDetailViewModel = viewModel(factory = PostDetailViewModelFactory(postId))
+            val postDetailViewModel: PostDetailViewModel = viewModel(
+                factory = PostDetailViewModelFactory(postId)
+            )
             PostDetailScreen(postDetailViewModel, nestedNavController)
         }
-
     }
-
 }

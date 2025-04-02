@@ -12,11 +12,11 @@ import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
 import com.example.agora.model.repository.SearchFilterUtils
 import com.example.agora.model.repository.SortOptions
 import com.google.firebase.auth.FirebaseAuth
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class SearchViewModel(initialSearchText: String = "") : ViewModel() {
     private val _posts = MutableStateFlow<List<Post>>(emptyList())
@@ -132,7 +132,9 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
                         maxPrice = maxPrice
                     ) { posts ->
                         _posts.value += posts.map { post -> Post.convertDBEntryToPostDetail(post) }
-                       continuation.resume(_posts.value)
+                        if (interval == _selectedPriceIntervals.value.last()) {
+                            continuation.resume(_posts.value)
+                        }
                     }
                 }
             }

@@ -72,5 +72,5 @@ val AgoraTypography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 10.sp,
         letterSpacing = 0.sp
-    ),
+    )
 )

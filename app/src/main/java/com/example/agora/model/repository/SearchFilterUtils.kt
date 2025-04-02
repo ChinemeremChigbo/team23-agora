@@ -14,10 +14,10 @@ enum class SortOptions(val value: String) {
 class SearchFilterUtils {
     companion object {
         val priceFilterOptions = mapOf(
-            "UNDER $25" to Pair(null, 25),
-            "$25 TO $50" to Pair(25, 50),
-            "$50 TO $100" to Pair(50, 100),
-            "$100 TO $200" to Pair(100, 200),
+            "UNDER $25" to Pair(null, 24.99),
+            "$25 TO $50" to Pair(25, 49.99),
+            "$50 TO $100" to Pair(50, 99.99),
+            "$100 TO $200" to Pair(100, 199.99),
             "$200 AND ABOVE" to Pair(200, null)
         )
 
@@ -35,7 +35,11 @@ class SearchFilterUtils {
         ) {
             val db = FirebaseFirestore.getInstance()
 
-            var query: Query = db.collection("posts").whereIn("status", listOf(PostStatus.ACTIVE.name))
+            var query: Query = db.collection("posts").whereIn(
+                "status",
+                listOf(PostStatus.ACTIVE.name)
+            )
+
             minPrice?.let {
                 query = query.whereGreaterThanOrEqualTo("price", minPrice)
             }
@@ -61,23 +65,27 @@ class SearchFilterUtils {
             // query = query.whereNotEqualTo(
             //    "status",
             //    PostStatus.DELETED.name
-            //)
+            // )
 
             if (limit != -1) {
                 query = query.limit(limit.toLong())
             }
-            query.get()
-                .addOnSuccessListener { documents ->
-                    val resultList = mutableListOf<Map<String, Any>>()
-                    val formattedSearchString = searchString?.trim()?.lowercase()
 
-                    for (document in documents) {
-                        val data = document.data
-                        val title = (data["title"] as? String)?.trim()?.lowercase()
+            query.get().addOnSuccessListener { documents ->
+                val resultList = mutableListOf<Map<String, Any>>()
+                val formattedSearchString = searchString?.trim()?.lowercase()
 
-                        if (formattedSearchString.isNullOrEmpty() || (title != null && title.contains(formattedSearchString))) {
-                            resultList.add(data)
-                        }
+                for (document in documents) {
+                    val data = document.data
+                    val title = (data["title"] as? String)?.trim()?.lowercase()
+
+                    if (formattedSearchString.isNullOrEmpty() || (
+                        title != null && title.contains(
+                                formattedSearchString
+                            )
+                        )
+                    ) {
+                        resultList.add(data)
                     }
 
                     val sortedList = if (sortByDistance && selfAddress != null) {
@@ -95,6 +103,11 @@ class SearchFilterUtils {
                     println("Error getting posts: $exception")
                     callback(emptyList())
                 }
+                callback(resultList)
+            }.addOnFailureListener { exception ->
+                println("Error getting posts: $exception")
+                callback(emptyList())
+            }
         }
     }
 }

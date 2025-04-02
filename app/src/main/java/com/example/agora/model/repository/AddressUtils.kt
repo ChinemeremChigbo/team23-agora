@@ -27,14 +27,8 @@ data class Place(
 class AddressUtils {
     companion object {
         suspend fun getGeocoding(address: String): GeocodingService.Result? {
-            return try {
-                val response = GeocodingClient.instance.getGeocoding(address, GeocodingClient.API_KEY)
-                response.results.firstOrNull()
-
-            } catch (e: Exception) {
-                Log.e("Geocoding", "Error: ${e.message}")
-                null
-            }
+            val response = GeocodingClient.instance.getGeocoding(address, GeocodingClient.API_KEY)
+            return response.results.firstOrNull()
         }
 
         suspend fun getLatLongForPostalCode(

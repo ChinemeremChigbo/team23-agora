@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.R
-import com.example.agora.model.data.User
 import com.example.agora.model.data.Address
+import com.example.agora.model.data.User
 import com.example.agora.model.repository.ProfileSettingUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,23 +40,23 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         val userId = auth.currentUser?.uid
         if (userId != null) {
             db.collection("users").document(userId).get().addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val user = document.data?.let { User.convertDBEntryToUser(it) }
-                        if(user != null) {
-                            this.userId = user.userId
-                            fullName.value = user.fullName
-                            phoneNumber.value = user.phoneNumber
-                            bio.value = user.bio
-                            country.value = user.address.getCountry()
-                            state.value = user.address.getState()
-                            city.value = user.address.getCity()
-                            street.value = user.address.getStreet()
-                            postalCode.value = user.address.getPostalCode()
-                        }
+                if (document.exists()) {
+                    val user = document.data?.let { User.convertDBEntryToUser(it) }
+                    if (user != null) {
+                        this.userId = user.userId
+                        fullName.value = user.fullName
+                        phoneNumber.value = user.phoneNumber
+                        bio.value = user.bio
+                        country.value = user.address.getCountry()
+                        state.value = user.address.getState()
+                        city.value = user.address.getCity()
+                        street.value = user.address.getStreet()
+                        postalCode.value = user.address.getPostalCode()
                     }
-                }.addOnFailureListener { e ->
-                    Log.e("ProfileViewModel", "Error loading profile: ${e.message}")
                 }
+            }.addOnFailureListener { e ->
+                Log.e("ProfileViewModel", "Error loading profile: ${e.message}")
+            }
         }
     }
 
@@ -93,9 +93,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         postalCode.value = newVal
     }
 
-    fun saveProfile(
-        onSuccess: () -> Unit, onError: (String) -> Unit
-    ) {
+    fun saveProfile(onSuccess: () -> Unit, onError: (String) -> Unit) {
         if (userId.isEmpty()) {
             onError("User not found")
             return
@@ -104,19 +102,27 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         println("WOOO")
         println(country.value)
 
-        if(!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)){
+        if (!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)) {
             onError("Invalid phone number!")
             return
         }
 
         viewModelScope.launch {
-            val userAddress = Address.createAndValidate(
-                street.value,
-                city.value,
-                state.value,
-                postalCode.value,
-                country.value
-            )
+            var userAddress: Address? = null
+            try {
+                userAddress = Address.createAndValidate(
+                    street.value,
+                    city.value,
+                    state.value,
+                    postalCode.value,
+                    country.value
+                )
+            } catch (e: Exception) {
+                e.localizedMessage?.let {
+                    onError("Unexpected error occurred!")
+                    return@launch
+                }
+            }
             if (userAddress == null) {
                 onError("Invalid address!")
                 return@launch
@@ -131,16 +137,16 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 "address.street" to userAddress.getStreet(),
                 "address.postalCode" to userAddress.getPostalCode(),
                 "address.lat" to userAddress.getLatLng().latitude,
-                "address.lng" to userAddress.getLatLng().longitude,
+                "address.lng" to userAddress.getLatLng().longitude
             )
             db.collection("users").document(userId).update(updatedData).addOnSuccessListener {
-                    Log.d("ProfileViewModel", "Profile updated successfully!")
-                    loadUserProfile()
-                    onSuccess()
-                }.addOnFailureListener { e ->
-                    Log.e("ProfileViewModel", "Error updating profile: ${e.message}")
-                    onError(e.localizedMessage ?: "Profile update failed")
-                }
+                Log.d("ProfileViewModel", "Profile updated successfully!")
+                loadUserProfile()
+                onSuccess()
+            }.addOnFailureListener { e ->
+                Log.e("ProfileViewModel", "Error updating profile: ${e.message}")
+                onError(e.localizedMessage ?: "Profile update failed")
+            }
         }
     }
 }
