@@ -70,8 +70,8 @@ class CommentUtils {
                         }.addOnFailureListener { onFailure(it) }
                 }.addOnFailureListener { onFailure(it) }
             }, onFailure = { exception ->
-                println("Error: ${exception.message}")
-            })
+                    println("Error: ${exception.message}")
+                })
         }
 
         fun deleteComment(
