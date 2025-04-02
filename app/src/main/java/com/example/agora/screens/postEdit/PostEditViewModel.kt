@@ -147,16 +147,24 @@ class PostEditViewModel(
                 onError("No such category found"); return@launch
             }
 
-            val newAddress = try {
-                Address.createAndValidate(
+            var newAddress: Address? = null
+            try {
+                newAddress = Address.createAndValidate(
                     country = country.value,
                     city = city.value,
                     state = state.value,
                     street = streetAddress.value,
                     postalCode = postalCode.value
                 )
-            } catch (e: NoSuchElementException) {
-                onError("Invalid address found"); return@launch
+            } catch (e: Exception) {
+                e.localizedMessage?.let {
+                    onError("Unexpected error occurred!")
+                    return@launch
+                }
+            }
+            if (newAddress == null) {
+                onError("Invalid address!")
+                return@launch
             }
 
             try {
