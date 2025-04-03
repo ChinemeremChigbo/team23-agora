@@ -65,7 +65,7 @@ class SearchFilterUtils {
 
              query = query.whereNotEqualTo(
                 "status",
-                PostStatus.DELETED.name
+                PostStatus.DELETED.value
              )
 
             if (limit != -1) {
