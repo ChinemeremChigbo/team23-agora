@@ -63,11 +63,6 @@ class SearchFilterUtils {
                 query.orderBy("createdAt", Query.Direction.DESCENDING)
             }
 
-             query = query.whereNotEqualTo(
-                "status",
-                PostStatus.DELETED.value
-             )
-
             if (limit != -1) {
                 query = query.limit(limit.toLong())
             }
