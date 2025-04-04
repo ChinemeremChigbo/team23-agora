@@ -40,12 +40,12 @@ date,Justin Freemantle,Samantha Zhan,Cindy Wang,Chinemerem Chigbo,Edward Na,Jenn
 ,,,5,,,,Create and Edit Posts
 ,,,5,,,,Comments
 ,,,5,,,,Post Preview Decorator
-,5,,,,,Post Filtering API
-,3,,,,,Wishlist Utils and API
-,5,,,,,Code Refcatoring
-,5,,,,,Search APIs
-,4,,,,,Comment Utils and API
-,6,,,3,,Notifications Utils and API
+,5,,,,,,Post Filtering API
+,3,,,,,,Wishlist Utils and API
+,5,,,,,,Code Refcatoring
+,5,,,,,,Search APIs
+,4,,,,,,Comment Utils and API
+,6,,,,3,,Notifications Utils and API
 ,2,,,,,Bug Fixes
 ,1,1,1,1,1,1,Team Meeting 9
 ,1,1,1,1,1,1,Team Meeting 10
