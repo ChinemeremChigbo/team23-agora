@@ -6,7 +6,7 @@ import java.util.regex.Pattern
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-class ProfileSettingUtils {
+class ProfileSettingRepository {
     companion object {
         // NOTE: to get current user, DO NOT use this function,
         //      simply call UserManager.fetchUser OR UserManager.currentUser

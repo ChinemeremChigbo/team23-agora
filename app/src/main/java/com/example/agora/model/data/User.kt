@@ -1,6 +1,6 @@
 package com.example.agora.model.data
 
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.agora.model.repository.UserRepository
 import java.sql.Timestamp
 
 enum class UserStatus {
@@ -8,7 +8,7 @@ enum class UserStatus {
 }
 
 class User(
-    private var db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+
     var userId: String = "",
     var status: UserStatus = UserStatus.ACTIVATED,
     var username: String = "",
@@ -24,49 +24,18 @@ class User(
     // Methods
     // NOTE: we don't need login method as Firebase handle password management
     fun register() {
-        // Use the userId as the document ID
-        db.collection("users").document(userId).set(
-            mapOf(
-                "userId" to userId,
-                "status" to status.name, // Convert Enum to String
-                "username" to username,
-                "fullName" to fullName,
-                "bio" to bio,
-                "profileImage" to profileImage,
-                "email" to email,
-                "phoneNumber" to phoneNumber,
-                "address" to mapOf(
-                    "country" to address.getCountry(),
-                    "city" to address.getCity(),
-                    "state" to address.getState(),
-                    "address" to address.getStreet(),
-                    "postalCode" to address.getPostalCode(),
-                    "lat" to address.getLatLng().latitude,
-                    "lng" to address.getLatLng().longitude
-                ),
-                "wishlist" to wishList,
-                "notifications" to emptyList<String>()
-            )
-        ).addOnSuccessListener {
-            println("User successfully added to Firestore!")
-        }.addOnFailureListener { e ->
-            println("Error adding user: ${e.message}")
-        }
+        UserRepository.register(this)
     }
 
     /**
      * sample usage:
-     * val updates = mapOf(
+     * val newInfo = mapOf(
      *     "bio" to "Updated bio",
      *     "phoneNumber" to "9876543210"
      * )
      */
     fun updateInfo(newInfo: Map<String, Any>) {
-        db.collection("users").document(userId).update(newInfo).addOnSuccessListener {
-            println("User information updated successfully!")
-        }.addOnFailureListener { e ->
-            println("Error updating user: ${e.message}")
-        }
+        UserRepository.update(this, newInfo)
     }
 
     fun setUserEmailAsVerified() {

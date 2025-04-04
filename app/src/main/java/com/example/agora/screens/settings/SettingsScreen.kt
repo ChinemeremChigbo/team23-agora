@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -72,7 +71,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.User
-import com.example.agora.model.repository.ProfileSettingUtils
+import com.example.agora.model.repository.ProfileSettingRepository
+import com.example.agora.model.repository.UserRepository
 import com.example.agora.model.util.AccountAuthUtil
 import com.example.agora.screens.settings.appearance.AppearanceScreen
 import com.example.agora.screens.settings.appearance.AppearanceViewModelFactory
@@ -80,7 +80,6 @@ import com.example.agora.screens.settings.profile.ProfileScreen
 import com.example.agora.screens.settings.profile.ProfileViewModel
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +92,7 @@ fun SettingsScreen(
     var currentUser by remember { mutableStateOf(User()) }
     // Refetch user object everytime it navigate to this page
     LaunchedEffect(key1 = Unit) {
-        currentUser = ProfileSettingUtils.getUserByIdSync(auth.currentUser?.uid!!)!!
+        currentUser = ProfileSettingRepository.getUserByIdSync(auth.currentUser?.uid!!)!!
     }
     val text by viewModel.text.observeAsState("Settings")
     val nestedNavController = rememberNavController()
@@ -216,15 +215,6 @@ fun SettingsScreen(
     }
 }
 
-fun updateProfileImageInFirestore(userId: String, imageUrl: String) {
-    val db = FirebaseFirestore.getInstance()
-    db.collection("users").document(userId).update("profileImage", imageUrl).addOnSuccessListener {
-        Log.d("ProfileUpdate", "Profile image updated successfully in Firestore.")
-    }.addOnFailureListener { e ->
-        Log.e("ProfileUpdate", "Error updating profile image: ${e.message}")
-    }
-}
-
 @Composable
 fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
     val context = LocalContext.current
@@ -239,7 +229,7 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
             uploadImageToS3(context, it, onSuccess = { uploadedImageUrl ->
                 isUploading = false
                 onProfileImageChange(uploadedImageUrl)
-                updateProfileImageInFirestore(currentUser.userId, uploadedImageUrl)
+                UserRepository.updateProfileImage(currentUser.userId, uploadedImageUrl)
             }, onFailure = { errorMessage ->
                     isUploading = false
                     Toast.makeText(

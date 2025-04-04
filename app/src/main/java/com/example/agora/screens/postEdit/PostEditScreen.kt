@@ -54,7 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.agora.model.data.Category
-import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.repository.PostRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -155,7 +155,7 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
         // Show selected images in a horizontal scroll
         LazyRow {
             items(imageUris.value) { uri ->
-                if (uri.toString() != PostUtils.DEFAULT_IMAGE) {
+                if (uri.toString() != PostRepository.DEFAULT_IMAGE) {
                     Image(
                         painter = rememberAsyncImagePainter(uri),
                         contentDescription = "Selected Image",
