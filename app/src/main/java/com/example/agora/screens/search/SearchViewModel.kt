@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
-import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
+import com.example.agora.model.repository.AddressRepository.Companion.getUserAddress
 import com.example.agora.model.repository.SearchFilterUtils
 import com.example.agora.model.repository.SortOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -104,6 +104,7 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
 
     suspend fun fetchResults(): List<Post> {
         _posts.value = emptyList()
+
         return suspendCoroutine { continuation ->
             if (_selectedPriceIntervals.value.isEmpty()) {
                 SearchFilterUtils.getPosts(

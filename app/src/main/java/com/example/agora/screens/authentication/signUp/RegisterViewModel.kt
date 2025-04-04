@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.R
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.User
-import com.example.agora.model.repository.ProfileSettingUtils
+import com.example.agora.model.repository.ProfileSettingRepository
 import com.example.agora.model.util.AccountAuthUtil
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,7 +89,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
         viewModelScope.launch {
             // Step 0-4: confirm address + phone number are valid
-            if (!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)) {
+            if (!ProfileSettingRepository.isValidPhoneNumber(phoneNumber.value)) {
                 onError("Invalid phone number!")
                 return@launch
             }

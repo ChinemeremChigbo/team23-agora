@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CommentUtils {
+class CommentRepository {
     companion object {
         private fun findCommentMentions(text: String): List<String> {
             return "@(\\S+)".toRegex().findAll(text).map { it.groupValues[1] }.toList()

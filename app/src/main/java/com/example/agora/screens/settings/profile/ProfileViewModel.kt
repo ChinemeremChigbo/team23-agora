@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.R
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.User
-import com.example.agora.model.repository.ProfileSettingUtils
+import com.example.agora.model.repository.ProfileSettingRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -99,7 +99,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             return
         }
 
-        if (!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)) {
+        if (!ProfileSettingRepository.isValidPhoneNumber(phoneNumber.value)) {
             onError("Invalid phone number!")
             return
         }

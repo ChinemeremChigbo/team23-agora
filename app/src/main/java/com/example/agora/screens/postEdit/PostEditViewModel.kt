@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Address
 import com.example.agora.model.data.Category
-import com.example.agora.model.repository.AddressUtils.Companion.getUserAddress
-import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.repository.AddressRepository.Companion.getUserAddress
+import com.example.agora.model.repository.PostRepository
 import com.example.agora.util.uploadImageToS3
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CompletableDeferred
@@ -108,7 +108,7 @@ class PostEditViewModel(
     }
 
     private fun fetchPostDetails(postId: String) {
-        PostUtils.getPostById(postId, { post ->
+        PostRepository.getPostById(postId, { post ->
             if (post != null) {
                 val uris = post.images.map { Uri.parse(it) }
                 initialImageUris = uris
@@ -172,7 +172,7 @@ class PostEditViewModel(
                 val uploadedUrls = uploadImages()
 
                 if (editing) { // Edit post
-                    PostUtils.editPost(
+                    PostRepository.editPost(
                         postId = postId,
                         title = title.value,
                         description = description.value,
@@ -186,7 +186,7 @@ class PostEditViewModel(
                         onFailure = { e -> onError(e.localizedMessage ?: "Edit Post failed") }
                     )
                 } else { // Create post
-                    PostUtils.createPost(
+                    PostRepository.createPost(
                         title = title.value,
                         description = description.value,
                         price = priceDouble,

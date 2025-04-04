@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.agora.model.data.Comment
 import com.example.agora.model.data.Post
 import com.example.agora.model.data.User
-import com.example.agora.model.repository.CommentUtils
-import com.example.agora.model.repository.PostUtils
-import com.example.agora.model.repository.ProfileSettingUtils
-import com.example.agora.model.repository.WishlistUtils
+import com.example.agora.model.repository.CommentRepository
+import com.example.agora.model.repository.PostRepository
+import com.example.agora.model.repository.ProfileSettingRepository
+import com.example.agora.model.repository.WishlistRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,16 +38,16 @@ class PostDetailViewModel(
     }
 
     private fun fetchPostDetails(postId: String) {
-        PostUtils.getPostById(postId, { post ->
+        PostRepository.getPostById(postId, { post ->
             _post.value = post
-            ProfileSettingUtils.getUserById(post!!.userId, { user -> _user.value = user })
+            ProfileSettingRepository.getUserById(post!!.userId, { user -> _user.value = user })
         })
         fetchComments(postId)
     }
 
     fun checkIfPostInWishlist(postId: String) {
         currentUser?.uid?.let {
-            WishlistUtils.isPostInWishlist(currentUser.uid, postId) { inWishlist ->
+            WishlistRepository.isPostInWishlist(currentUser.uid, postId) { inWishlist ->
                 _inWishlist.value = inWishlist
             }
         }
@@ -58,11 +58,11 @@ class PostDetailViewModel(
     }
 
     fun fetchUser(userId: String, callback: (User?) -> Unit) {
-        ProfileSettingUtils.getUserById(userId, { user -> callback(user) })
+        ProfileSettingRepository.getUserById(userId, { user -> callback(user) })
     }
 
     fun fetchComments(postId: String) {
-        CommentUtils.getPostComments(
+        CommentRepository.getPostComments(
             postId,
             { comments -> _comments.value = comments },
             { _comments.value = emptyList() }

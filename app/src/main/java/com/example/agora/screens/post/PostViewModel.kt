@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Post
 import com.example.agora.model.data.PostStatus
-import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.repository.PostRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +44,7 @@ class PostViewModel : ViewModel() {
     fun getPostsByUser() {
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: return
-        PostUtils.getPostsByUser(userId) { posts ->
+        PostRepository.getPostsByUser(userId) { posts ->
             _activePosts.value = posts.filter { it.status == PostStatus.ACTIVE }
             _resolvedPosts.value = posts.filter { it.status == PostStatus.RESOLVED }
         }
@@ -52,7 +52,7 @@ class PostViewModel : ViewModel() {
 
     fun deletePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            PostUtils.deletePost(postId = postId, onSuccess = {
+            PostRepository.deletePost(postId = postId, onSuccess = {
 //                    val updatedPosts = _activePosts.value.filter { it.postId != postId }
 //                    _activePosts.value = updatedPosts
                 onSuccess()
@@ -65,7 +65,7 @@ class PostViewModel : ViewModel() {
 
     fun resolvePost(postId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            PostUtils.resolvePost(postId = postId, onSuccess = {
+            PostRepository.resolvePost(postId = postId, onSuccess = {
                 onSuccess()
             }, onFailure = { e ->
                     onError(e.localizedMessage ?: "Failed to resolve post")

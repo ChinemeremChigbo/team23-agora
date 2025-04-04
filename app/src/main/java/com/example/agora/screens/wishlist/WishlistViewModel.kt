@@ -2,7 +2,7 @@ package com.example.agora.screens.wishlist
 
 import androidx.lifecycle.ViewModel
 import com.example.agora.model.data.Post
-import com.example.agora.model.repository.WishlistUtils
+import com.example.agora.model.repository.WishlistRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +19,7 @@ class WishlistViewModel : ViewModel() {
 
     fun fetchWishlist() {
         currentUser?.uid?.let {
-            WishlistUtils.getWishList(currentUser.uid) { posts ->
+            WishlistRepository.getWishList(currentUser.uid) { posts ->
                 _posts.value = posts.map { post -> Post.convertDBEntryToPostDetail(post) }
             }
         }
