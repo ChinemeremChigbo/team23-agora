@@ -35,9 +35,8 @@ class SignInViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 if (emailValue.isEmpty() || passwordValue.isEmpty()) {
-//                    passwordValue = "123456"
-//                    emailValue = "j35zhan@uwaterloo.ca"
                     onError("Please enter email and password")
+                    return@launch
                 }
                 // if login failed, auto throw error can will be caught!
                 val currentUser = AccountAuthUtil.accountSignIn(auth, emailValue, passwordValue)
