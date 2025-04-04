@@ -27,13 +27,6 @@ class User(
         UserRepository.register(this)
     }
 
-    /**
-     * sample usage:
-     * val newInfo = mapOf(
-     *     "bio" to "Updated bio",
-     *     "phoneNumber" to "9876543210"
-     * )
-     */
     fun updateInfo(newInfo: Map<String, Any>) {
         UserRepository.update(this, newInfo)
     }
