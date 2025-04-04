@@ -1,6 +1,6 @@
 package com.example.agora.model.data
 
-import com.example.agora.model.repository.PostUtils
+import com.example.agora.model.repository.PostRepository
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 
@@ -21,7 +21,7 @@ class Notification(
         ) {
             val postId = entry["postId"]?.toString() ?: ""
             var preview = ""
-            PostUtils.getPostById(postId) { post ->
+            PostRepository.getPostById(postId) { post ->
                 if (post != null) {
                     preview = post.images[0]
                 }

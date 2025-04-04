@@ -8,7 +8,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
-class PostUtils {
+class PostRepository {
     companion object {
         const val DEFAULT_IMAGE = "https://files.catbox.moe/dtg63k.jpg"
 
@@ -148,6 +148,22 @@ class PostUtils {
                 }.addOnFailureListener {
                     callback(emptyList())
                 }
+        }
+
+        fun reportPost(
+            reportData: Map<String, Any>,
+            onSuccess: () -> Unit,
+            onFailure: (String) -> Unit
+        ) {
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("reports").add(reportData).addOnSuccessListener {
+                println("Report successfully submitted!")
+                onSuccess()
+            }.addOnFailureListener { e ->
+                println("Error submitting report: ${e.message}")
+                onFailure(e.localizedMessage ?: "Unknown error")
+            }
         }
     }
 }

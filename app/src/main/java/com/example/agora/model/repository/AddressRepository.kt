@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class AddressUtils {
+class AddressRepository {
     companion object {
         suspend fun getGeocoding(address: String): GeocodingService.Result? {
             val response = GeocodingClient.instance.getGeocoding(address, GeocodingClient.API_KEY)

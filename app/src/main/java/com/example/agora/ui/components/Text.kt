@@ -5,7 +5,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.example.agora.model.repository.ProfileSettingUtils
+import com.example.agora.model.repository.ProfileSettingRepository
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -42,7 +42,7 @@ private suspend fun formatUsernames(userIds: List<String>): List<String> {
 
 private suspend fun getUsernameById(userId: String): String? {
     return suspendCancellableCoroutine { continuation ->
-        ProfileSettingUtils.getUserById(userId) { user ->
+        ProfileSettingRepository.getUserById(userId) { user ->
             continuation.resume(user?.username)
         }
     }

@@ -1,7 +1,7 @@
 package com.example.agora.model.util
 
 import com.example.agora.model.data.User
-import com.example.agora.model.repository.ProfileSettingUtils
+import com.example.agora.model.repository.ProfileSettingRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
@@ -13,7 +13,7 @@ class AccountAuthUtil {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             var currentUser: User? = null
             result.user?.let {
-                currentUser = ProfileSettingUtils.getUserByIdSync(it.uid)
+                currentUser = ProfileSettingRepository.getUserByIdSync(it.uid)
             }
             if (currentUser == null) {
                 throw Exception("An unexpected error occurred, please try again...")

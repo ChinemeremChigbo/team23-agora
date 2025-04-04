@@ -4,7 +4,7 @@ import com.example.agora.model.data.PostStatus
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 
-class WishlistUtils {
+class WishlistRepository {
     companion object {
         fun addToWishList(userId: String, postId: String, callback: (Boolean) -> Unit) {
             val db = FirebaseFirestore.getInstance()

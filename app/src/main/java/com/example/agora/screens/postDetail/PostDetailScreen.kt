@@ -72,8 +72,8 @@ import coil.compose.AsyncImage
 import com.example.agora.model.data.Comment
 import com.example.agora.model.data.Report
 import com.example.agora.model.data.User
-import com.example.agora.model.repository.CommentUtils
-import com.example.agora.model.repository.WishlistUtils
+import com.example.agora.model.repository.CommentRepository
+import com.example.agora.model.repository.WishlistRepository
 import com.example.agora.ui.components.ImageCarousel
 import com.example.agora.ui.components.MapScreen
 import com.example.agora.ui.components.highlightMentionsText
@@ -184,14 +184,14 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                             IconButton(onClick = {
                                 currentUser?.uid?.let {
                                     if (!inWishlist) {
-                                        WishlistUtils.addToWishList(
+                                        WishlistRepository.addToWishList(
                                             currentUser.uid,
                                             post.postId
                                         ) { added ->
                                             viewModel.checkIfPostInWishlist(post.postId)
                                         }
                                     } else {
-                                        WishlistUtils.removeFromWishList(
+                                        WishlistRepository.removeFromWishList(
                                             currentUser.uid,
                                             post.postId
                                         ) { removed ->
@@ -308,7 +308,7 @@ fun PostDetailScreen(viewModel: PostDetailViewModel = viewModel(), navController
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else if (currentUser != null) {
-                                        CommentUtils.createComment(
+                                        CommentRepository.createComment(
                                             postId = post.postId,
                                             userId = currentUser.uid,
                                             sellerId = post.userId,

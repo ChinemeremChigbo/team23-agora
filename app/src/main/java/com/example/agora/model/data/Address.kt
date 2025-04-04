@@ -1,6 +1,6 @@
 package com.example.agora.model.data
 
-import com.example.agora.model.repository.AddressUtils
+import com.example.agora.model.repository.AddressRepository
 import com.google.android.gms.maps.model.LatLng
 import java.util.Locale
 import kotlin.math.atan2
@@ -47,7 +47,7 @@ class Address constructor(
     fun getLatLng(): LatLng = latLng
 
     suspend fun validateAndParseAddress(): Boolean {
-        val result = AddressUtils.getGeocoding("$street, $city, $state")
+        val result = AddressRepository.getGeocoding("$street, $city, $state")
         val location = result?.geometry?.location ?: return false
         // validate address and populate lat & lng info
         latLng = LatLng(location.lat, location.lng)
