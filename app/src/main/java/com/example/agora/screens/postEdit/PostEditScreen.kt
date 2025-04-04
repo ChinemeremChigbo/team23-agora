@@ -169,7 +169,10 @@ fun PostEditScreen(navController: NavController, viewModel: PostEditViewModel = 
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+        Button(
+            shape = RoundedCornerShape(8.dp),
+            onClick = { imagePickerLauncher.launch("image/*") }
+        ) {
             Icon(Icons.Default.Upload, contentDescription = "Upload")
             Spacer(modifier = Modifier.width(8.dp))
             Text("Pick Images (Up to 3)")
