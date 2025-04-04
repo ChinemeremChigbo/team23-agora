@@ -1,6 +1,5 @@
 package com.example.agora.model.data
 
-import com.example.agora.model.util.DataUtil
 import com.google.firebase.Timestamp
 
 enum class PostStatus(val value: String) {
@@ -30,7 +29,7 @@ class Post(
                 postId = entry["postId"].toString(),
                 title = entry["title"].toString(),
                 price = entry["price"].toString().toDoubleOrNull() ?: 0.0,
-                createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"].toString()),
+                createdAt = entry["createdAt"] as? Timestamp,
                 images = (entry["images"] as? List<*>)?.map { it.toString() }?.toMutableList()
                     ?: mutableListOf("https://picsum.photos/200") // Handle empty images
             )
@@ -45,7 +44,7 @@ class Post(
                 status = PostStatus.entries.find { it.name == entry["status"] }
                     ?: PostStatus.DELETED,
                 category = Category.entries.find { it.name == entry["category"] } ?: Category.OTHER,
-                createdAt = DataUtil.convertStringToTimestamp(entry["createdAt"].toString()),
+                createdAt = entry["createdAt"] as? Timestamp,
                 userId = entry["userId"].toString(),
                 address = (entry["address"] as? Map<String, Any>)?.let {
                     Address.convertDBEntryToAddress(it)
