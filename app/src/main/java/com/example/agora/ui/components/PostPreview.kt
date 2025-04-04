@@ -25,13 +25,20 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.agora.model.data.Post
 
-@Composable
-fun PostPreview(
-    post: Post,
-    onClick: () -> Unit,
-    additionalContent: @Composable ((Modifier, Post) -> Unit)? = null
+abstract class PostPreview(
+    val post: Post,
+    val onClick: () -> Unit
 ) {
-    Box {
+    @Composable
+    abstract fun DisplayPreview()
+}
+
+class DefaultPostPreview(
+    post: Post,
+    onClick: () -> Unit
+) : PostPreview(post, onClick) {
+    @Composable
+    override fun DisplayPreview() {
         Column(
             Modifier
                 .clip(RoundedCornerShape(10.dp))
@@ -71,13 +78,53 @@ fun PostPreview(
                 )
             }
         }
+    }
+}
 
-        if (additionalContent != null) {
-            additionalContent(
+abstract class PostPreviewDecorator(protected val component: PostPreview) : PostPreview(
+    component.post,
+    component.onClick
+) {
+    @Composable
+    override fun DisplayPreview() {
+        component.DisplayPreview()
+    }
+}
+
+class AddMenu(
+    component: PostPreview,
+    private val menu: @Composable (Modifier, Post) -> Unit
+) : PostPreviewDecorator(component) {
+    @Composable
+    override fun DisplayPreview() {
+        Box {
+            super.DisplayPreview()
+            menu(
                 Modifier
                     .align(Alignment.TopEnd)
-                    .offset(x = (10).dp, y = -(5).dp),
-                post
+                    .offset(x = (10).dp, y = (-5).dp),
+                component.post
+            )
+        }
+    }
+}
+
+class AddSoldBanner(
+    component: PostPreview
+) : PostPreviewDecorator(component) {
+    @Composable
+    override fun DisplayPreview() {
+        Box {
+            super.DisplayPreview()
+            Text(
+                text = "SOLD",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
     }

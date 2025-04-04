@@ -1,6 +1,7 @@
 package com.example.agora.screens.post
 
 import android.app.Application
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,14 +20,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -63,6 +59,8 @@ import com.example.agora.screens.postEdit.PostEditViewModel
 import com.example.agora.screens.postEdit.PostEditViewModelFactory
 import com.example.agora.ui.components.BasicPostGrid
 import com.example.agora.ui.components.EmptyState
+import com.example.agora.ui.components.PostMenu
+import com.example.agora.ui.components.PostMenuItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,9 +158,12 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                                 { modifier, post ->
                                     PostMenu(
                                         modifier,
-                                        post,
-                                        nestedNavController,
-                                        viewModel
+                                        activeMenuItems(
+                                            post,
+                                            nestedNavController,
+                                            viewModel,
+                                            LocalContext.current
+                                        )
                                     )
                                 }
                             )
@@ -183,7 +184,18 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
                         } else {
                             BasicPostGrid(
                                 resolvedPosts,
-                                nestedNavController
+                                nestedNavController,
+                                { modifier, post ->
+                                    PostMenu(
+                                        modifier,
+                                        resolvedMenuItems(
+                                            post,
+                                            nestedNavController,
+                                            viewModel,
+                                            LocalContext.current
+                                        )
+                                    )
+                                }
                             )
                         }
                     }
@@ -212,73 +224,51 @@ fun PostScreen(parentNavController: NavController, viewModel: PostViewModel = vi
     }
 }
 
-@Composable
-fun PostMenu(
-    modifier: Modifier,
+fun activeMenuItems(
     post: Post,
     navController: NavController,
-    postViewModel: PostViewModel
-) {
-    val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
-    Box(
-        modifier = modifier
-    ) {
-        IconButton(
-            onClick = { expanded = !expanded },
-            modifier = Modifier.size(48.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .width(20.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Black.copy(alpha = 0.2f))
-            ) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More options",
-                    modifier = Modifier.size(30.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+    postViewModel: PostViewModel,
+    context: Context
+): List<PostMenuItem> {
+    return listOf(
+        PostMenuItem("Edit") {
+            navController.navigate("post_edit/${post.postId}")
+        },
+        PostMenuItem("Mark Resolved") {
+            postViewModel.resolvePost(postId = post.postId, onSuccess = {
+                postViewModel.getPostsByUser()
+                Toast.makeText(context, "Post resolved successfully!", Toast.LENGTH_SHORT).show()
+            }, onError = { errorMessage ->
+                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                })
+        },
+        PostMenuItem("Delete") {
+            postViewModel.deletePost(postId = post.postId, onSuccess = {
+                postViewModel.getPostsByUser()
+                Toast.makeText(context, "Post deleted successfully!", Toast.LENGTH_SHORT).show()
+            }, onError = { errorMessage ->
+                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                })
         }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.align(Alignment.TopEnd)
-        ) {
-            DropdownMenuItem(text = { Text("Edit") }, onClick = {
-                expanded = false
-                navController.navigate("post_edit/${post.postId}")
-            })
-            DropdownMenuItem(text = { Text("Mark Resolved") }, onClick = {
-                expanded = false
-                postViewModel.resolvePost(postId = post.postId, onSuccess = {
-                    postViewModel.getPostsByUser()
-                    Toast.makeText(
-                        context,
-                        "Post resolved successfully!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }, onError = { errorMessage ->
-                        Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
-                    })
-            })
-            DropdownMenuItem(text = { Text("Delete") }, onClick = {
-                expanded = false
-                postViewModel.deletePost(postId = post.postId, onSuccess = {
-                    postViewModel.getPostsByUser()
-                    Toast.makeText(
-                        context,
-                        "Post deleted successfully!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }, onError = { errorMessage ->
-                        Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
-                    })
-            })
+    )
+}
+
+fun resolvedMenuItems(
+    post: Post,
+    navController: NavController,
+    postViewModel: PostViewModel,
+    context: Context
+): List<PostMenuItem> {
+    return listOf(
+        PostMenuItem("Delete") {
+            postViewModel.deletePost(postId = post.postId, onSuccess = {
+                postViewModel.getPostsByUser()
+                Toast.makeText(context, "Post deleted successfully!", Toast.LENGTH_SHORT).show()
+            }, onError = { errorMessage ->
+                    Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                })
         }
-    }
+    )
 }
 
 @Composable
