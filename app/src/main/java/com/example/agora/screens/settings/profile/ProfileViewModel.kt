@@ -99,9 +99,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             return
         }
 
-        println("WOOO")
-        println(country.value)
-
         if (!ProfileSettingUtils.isValidPhoneNumber(phoneNumber.value)) {
             onError("Invalid phone number!")
             return
