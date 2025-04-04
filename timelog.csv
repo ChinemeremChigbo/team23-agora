@@ -36,3 +36,7 @@ date,Justin Freemantle,Samantha Zhan,Cindy Wang,Chinemerem Chigbo,Edward Na,Jenn
 2025-03-05,,5,,,,,Registration page + email verification
 2025-03-05,,4,,,,,User Feed API + Refactor
 2025-03-05,,3,,,,,Misc tasks demo 2
+,,,5,,,,Posts Screen
+,,,5,,,,Create and Edit Posts
+,,,5,,,,Comments
+,,,5,,,,Post Preview Decorator
