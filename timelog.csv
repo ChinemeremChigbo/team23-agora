@@ -36,6 +36,7 @@ date,Justin Freemantle,Samantha Zhan,Cindy Wang,Chinemerem Chigbo,Edward Na,Jenn
 2025-03-05,,5,,,,,Registration page + email verification
 2025-03-05,,4,,,,,User Feed API + Refactor
 2025-03-05,,3,,,,,Misc tasks demo 2
+2025-03-12,,3,,,,,Project management (roadmap/issue creation)
 ,,,5,,,,Posts Screen
 ,,,5,,,,Create and Edit Posts
 ,,,5,,,,Comments
@@ -46,7 +47,11 @@ date,Justin Freemantle,Samantha Zhan,Cindy Wang,Chinemerem Chigbo,Edward Na,Jenn
 ,5,,,,,,Search APIs
 ,4,,,,,,Comment Utils and API
 ,6,,,,3,,Notifications Utils and API
-,2,,,,,,Bug Fixes
+,,4,,,,,Embedded Map Display
+,,4,,,,,Address Validation (Geocoding)
+,,4,,,,,Final Presentation
+,,5,,,,,Final Report
+,2,2,,,,,Bug Fixes
 ,1,1,1,1,1,1,Team Meeting 9
 ,1,1,1,1,1,1,Team Meeting 10
 ,1,1,1,1,1,1,Team Meeting 11
