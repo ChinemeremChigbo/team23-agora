@@ -9,7 +9,7 @@ import com.example.agora.model.data.Address
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
 import com.example.agora.model.repository.AddressRepository.Companion.getUserAddress
-import com.example.agora.model.repository.SearchFilterUtils
+import com.example.agora.model.repository.SearchFilterRepository
 import com.example.agora.model.repository.SortOptions
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.coroutines.resume
@@ -107,7 +107,7 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
 
         return suspendCoroutine { continuation ->
             if (_selectedPriceIntervals.value.isEmpty()) {
-                SearchFilterUtils.getPosts(
+                SearchFilterRepository.getPosts(
                     category = _selectedCategory.value,
                     searchString = _searchText.value,
                     sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,
@@ -120,9 +120,9 @@ class SearchViewModel(initialSearchText: String = "") : ViewModel() {
                 }
             } else {
                 for (interval in _selectedPriceIntervals.value) {
-                    val minPrice = SearchFilterUtils.priceFilterOptions[interval]?.first
-                    val maxPrice = SearchFilterUtils.priceFilterOptions[interval]?.second
-                    SearchFilterUtils.getPosts(
+                    val minPrice = SearchFilterRepository.priceFilterOptions[interval]?.first
+                    val maxPrice = SearchFilterRepository.priceFilterOptions[interval]?.second
+                    SearchFilterRepository.getPosts(
                         category = _selectedCategory.value,
                         searchString = _searchText.value,
                         sortByPrice = if (_sortBy.value != SortOptions.NEWEST) true else false,

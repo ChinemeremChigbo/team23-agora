@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.agora.model.data.Notification
-import com.example.agora.model.repository.NotificationUtils
+import com.example.agora.model.repository.NotificationRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -46,7 +46,7 @@ class InboxViewModel : ViewModel() {
     private suspend fun getNotifications(): List<Notification> {
         return suspendCoroutine { continuation ->
             if (userId != null) {
-                NotificationUtils.getUserNotifications(userId, callback = { result ->
+                NotificationRepository.getUserNotifications(userId, callback = { result ->
                     _notifications.value = result
                     continuation.resume(_notifications.value)
                 }, onFailure = {})

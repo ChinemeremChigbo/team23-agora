@@ -13,7 +13,7 @@ enum class SortOptions(val value: String) {
     )
 }
 
-class SearchFilterUtils {
+class SearchFilterRepository {
     companion object {
         val priceFilterOptions = mapOf(
             "UNDER $25" to Pair(null, 24.99),

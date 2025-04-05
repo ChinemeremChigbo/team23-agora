@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.data.Category
 import com.example.agora.model.data.Post
-import com.example.agora.model.repository.SearchFilterUtils
+import com.example.agora.model.repository.SearchFilterRepository
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -62,7 +62,7 @@ class ExploreViewModel : ViewModel() {
             val remainingCalls = AtomicInteger(Category.entries.size)
             for (category in Category.entries) {
                 feed.add(category.value to listOf())
-                SearchFilterUtils.getPosts(
+                SearchFilterRepository.getPosts(
                     category = category,
                     limit = 5,
                     callback = { result ->

@@ -10,7 +10,7 @@ enum class NotificationType {
     POSTER, MENTION
 }
 
-class NotificationUtils {
+class NotificationRepository {
     companion object {
         fun addNotification(
             userId: String,

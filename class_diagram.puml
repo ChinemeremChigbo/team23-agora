@@ -1,0 +1,318 @@
+@startuml
+
+package com.example.agora.screens {
+    top to bottom direction
+    class wishlist.WishlistViewModel {
+    +  currentUser
+    +  posts
+    + void fetchWishlist()
+    }
+
+    class authentication.signUp.RegisterViewModel {
+    +  countries
+    +  provinces
+    +  states
+    +  fullName
+    +  email
+    +  country
+    +  state
+    +  city
+    +  address
+    +  postalCode
+    +  password
+    +  confirmPassword
+    +  phoneNumber
+    +  userId
+    + void register(FirebaseAuth,(User) -> Unit,(String) -> Unit)
+    }
+    class authentication.signIn.SignInViewModel {
+    +  email
+    +  password
+    + void updateEmail(String)
+    + void updatePassword(String)
+    + void signIn(FirebaseAuth,() -> Unit,(User) -> Unit,(String) -> Unit)
+    }
+
+    class inbox.InboxViewModel {
+    +  auth
+    +  userId
+    + StateFlow<List<Notification>> notifications
+    + void getSuspendedResults()
+    + void viewNotification(Notification,NavController)
+    }
+
+    class postDetail.PostDetailViewModel {
+    +  currentUser
+    +  post
+    +  user
+    +  inWishlist
+    +  comments
+    +  commentField
+    + void checkIfPostInWishlist(String)
+    + void updateComment(String)
+    + void fetchUser(String,(User?) -> Unit)
+    + void fetchComments(String)
+    }
+
+    class postEdit.PostEditViewModel {
+    +  auth
+    +  userId
+    +  images
+    +  title
+    +  price
+    +  category
+    +  description
+    +  streetAddress
+    +  city
+    +  state
+    +  postalCode
+    +  country
+    +  editing
+    + void upsertPost((String) -> Unit,(String) -> Unit)
+    }
+
+    class explore.ExploreViewModel {
+    +  searchText
+    + StateFlow<List<Pair<String, List<Post>>>> postList
+    + void onSearchTextChange(String)
+    + void onExpandedChange(Boolean)
+    + void refreshFeed()
+    }
+    class post.PostViewModel {
+    + StateFlow<List<Post>> activePosts
+    + StateFlow<List<Post>> resolvedPosts
+    + void getPostsByUser()
+    + void deletePost(String,() -> Unit,(String) -> Unit)
+    + void resolvePost(String,() -> Unit,(String) -> Unit)
+    + void refreshPosts()
+    }
+
+    class settings.profile.ProfileViewModel {
+    +  countries
+    +  provinces
+    +  states
+    +  fullName
+    +  phoneNumber
+    +  bio
+    +  country
+    +  state
+    +  city
+    +  street
+    +  postalCode
+    +  userId
+    + void saveProfile(() -> Unit,(String) -> Unit)
+    }
+
+    class search.SearchViewModel {
+    +  posts
+    +  searchText
+    +  selectedCategory
+    +  sortBy
+    +  selectedPriceIntervals
+    + void changeCategory(Category?)
+    + void changeSort(SortOptions)
+    + void togglePriceInterval(String)
+    + void clearFilters()
+    + void onSearchTextChange(String)
+    + void onExpandedChange(Boolean)
+    + void onSearchSubmitted(String)
+    + void getSuspendedResults()
+    + List<Post> fetchResults()
+    }
+}
+
+
+
+
+package com.example.agora.model{
+top to bottom direction
+    package repository {
+            class WishlistRepository {
+            + void addToWishList(String,String,(Boolean) -> Unit)
+            + void removeFromWishList(String,String,(Boolean) -> Unit)
+            + void getWishList(String,(List<Map<String, Any>>) -> Unit)
+            + void isPostInWishlist(String,String,(Boolean) -> Unit)
+            }
+            class WishlistRepository {
+            }
+            class ProfileSettingRepository {
+            + void getUserById(String,(User?) -> Unit)
+            + User? getUserByIdSync(String)
+            + Boolean isValidPhoneNumber(String)
+            }
+
+            class ProfileSettingRepository {
+            }
+            class NotificationRepository {
+            + void addNotification(String,String,String,String,NotificationType,() -> Unit,(Exception) -> Unit)
+            + void getUserNotifications(String,(List<Notification>) -> Unit,(Exception) -> Unit)
+            + void removeNotification(String,String,() -> Unit,(Exception) -> Unit)
+            }
+
+            class NotificationRepository {
+            }
+            class PostRepository {
+            }
+            class PostRepository {
+            +  DEFAULT_IMAGE
+            + void createPost(String,String,Double,Category,List<String>,Address,String,(String) -> Unit,(Exception) -> Unit)
+            + void getPostById(String,(Post?) -> Unit)
+            + void editPost(String,String,String,Double,Category,List<String>,Address,() -> Unit,(Exception) -> Unit)
+            + void deletePost(String,() -> Unit,(Exception) -> Unit)
+            + void resolvePost(String,() -> Unit,(Exception) -> Unit)
+            + void getPostsByUser(String,(List<Post>) -> Unit)
+            + void reportPost(Map<String, Any>,() -> Unit,(String) -> Unit)
+            }
+
+            class CommentRepository {
+            + void createComment(String,String,String,String,(String) -> Unit,(Exception) -> Unit)
+            + void deleteComment(String,String,() -> Unit,(Exception) -> Unit)
+            + void getComment(String,(Comment?) -> Unit)
+            + void getPostComments(String,(List<Comment>) -> Unit,(Exception) -> Unit)
+            }
+
+            class CommentRepository {
+            }
+
+            class AddressRepository {
+            + GeocodingService.Result? getGeocoding(String)
+            + Address? getUserAddress(String)
+            }
+
+            class AddressRepository {
+            }
+            class CommentEventManager {
+            + void addObserver(CommentObserver)
+            + void removeObserver(CommentObserver)
+            + void notifyCommentAdded(String,String,String,String,List<String>)
+            }
+
+            class SearchFilterRepository {
+            +  priceFilterOptions
+            + void getPosts(Double?,Double?,Category?,Boolean,Boolean,Boolean,Address?,String?,Int,(List<Map<String, Any>>) -> Unit)
+            }
+
+
+            class SearchFilterRepository {
+            }
+            class UserRepository {
+            + void updateProfileImage(String,String)
+            + void register(User)
+            + void update(User,Map<String, Any>)
+            }
+
+            class UserRepository {
+            }
+            interface CommentObserver {
+            + void onCommentAdded(String,String,String,String,List<String>)
+            }
+    }
+
+    package data {
+            class Notification {
+            + void convertDBEntryToNotification(Map<String, Any>,(Notification) -> Unit)
+            }
+
+            class Notification {
+            }
+
+            class Report {
+            + void submitReport(() -> Unit,(String) -> Unit)
+            }
+            class Post {
+            + Post convertDBEntryToPostPreview(Map<String, Any>)
+            + Post convertDBEntryToPostDetail(Map<String, Any>)
+            }
+
+            class Post {
+            }
+
+
+            class Address {
+            + Address? create(String,String,String,String,String,LatLng)
+            + Address? createAndValidate(String,String,String,String,String)
+            + String? getCountryCode(String)
+            + Address? convertDBEntryToAddress(Map<String, Any>)
+            }
+
+            class Address {
+            + Boolean validateAndParseAddress()
+            + String? getFormattedAddress()
+            + Double distanceTo(Address)
+            }
+
+            class User {
+            + User convertDBEntryToUser(Map<String, Any>)
+            }
+
+            class User {
+            + void register()
+            + void updateInfo(Map<String, Any>)
+            + void setUserEmailAsVerified()
+            + void updateUserStatus(UserStatus)
+            }
+            class Comment {
+            + Comment convertDBEntryToComment(Map<String, Any>)
+            }
+
+            class Comment {
+            }
+    }
+
+    package util {
+        class BrevoClient {
+        + BrevoApiService service
+        }
+
+        interface BrevoApiService {
+        + Call<EmailResponse> sendEmail(EmailRequest)
+        }
+        class AccountAuthUtil {
+        + User accountSignIn(FirebaseAuth,String,String)
+        + String accountSignUp(FirebaseAuth,String,String)
+        + void signOut(FirebaseAuth)
+        + void updatePassword(FirebaseAuth,String,() -> Unit,(String) -> Unit)
+        + void sendVerificationEmail(String)
+        + void deleteAccount(FirebaseAuth)
+        }
+
+        class GeocodingClient {
+        +  API_KEY
+        + GeocodingService instance
+        }
+        interface GeocodingService {
+        + GeocodingResponse getGeocoding(String,String)
+        }
+
+    }
+}
+
+
+
+
+'com.example.agora.screens --[hidden]--> com.example.agora.model
+com.example.agora.model.repository.CommentObserver -[hidden]-> com.example.agora.model.data.Comment
+com.example.agora.model.data.Notification -[hidden]-> com.example.agora.model.util.BrevoClient
+
+com.example.agora.screens.wishlist.WishlistViewModel .. com.example.agora.model.repository.WishlistRepository
+com.example.agora.screens.authentication.signIn.SignInViewModel .. com.example.agora.model.repository.UserRepository
+com.example.agora.screens.authentication.signUp.RegisterViewModel .. com.example.agora.model.repository.UserRepository
+com.example.agora.screens.inbox.InboxViewModel .. com.example.agora.model.repository.NotificationRepository
+com.example.agora.screens.settings.profile.ProfileViewModel .. com.example.agora.model.repository.ProfileSettingRepository
+com.example.agora.model.repository.CommentEventManager - com.example.agora.model.repository.CommentObserver : notifies
+com.example.agora.model.repository.CommentRepository .. com.example.agora.model.repository.CommentEventManager
+com.example.agora.screens.explore.ExploreViewModel .. com.example.agora.model.repository.PostRepository
+com.example.agora.screens.postEdit.PostEditViewModel .. com.example.agora.model.repository.PostRepository
+com.example.agora.screens.post.PostViewModel .. com.example.agora.model.repository.PostRepository
+com.example.agora.screens.postDetail.PostDetailViewModel .. com.example.agora.model.repository.PostRepository
+com.example.agora.screens.search.SearchViewModel .. com.example.agora.model.repository.SearchFilterRepository
+com.example.agora.screens.postDetail.PostDetailViewModel .. com.example.agora.model.repository.CommentRepository
+com.example.agora.screens.settings.profile.ProfileViewModel .. com.example.agora.model.repository.AddressRepository
+com.example.agora.screens.post.PostViewModel .. com.example.agora.model.repository.AddressRepository
+com.example.agora.model.data.Post o-- com.example.agora.model.data.Address : has-a
+com.example.agora.model.data.User o-- com.example.agora.model.data.Address : has-a
+com.example.agora.model.data.User *-- com.example.agora.model.data.Post : owns
+com.example.agora.model.data.User --> com.example.agora.model.data.Report : submits
+com.example.agora.model.data.User --> com.example.agora.model.data.Notification : receives
+com.example.agora.model.data.Comment --> com.example.agora.model.data.Notification : triggers
+@enduml

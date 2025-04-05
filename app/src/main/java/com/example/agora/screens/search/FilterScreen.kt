@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.agora.model.repository.SearchFilterUtils
+import com.example.agora.model.repository.SearchFilterRepository
 import com.example.agora.ui.components.FilterPill
 
 @Composable
@@ -70,7 +70,7 @@ fun FilterScreen(viewModel: SearchViewModel = viewModel(), onCancel: () -> Unit)
                 Spacer(Modifier.size(20.dp))
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    SearchFilterUtils.priceFilterOptions.keys.take(3).forEach { option ->
+                    SearchFilterRepository.priceFilterOptions.keys.take(3).forEach { option ->
                         FilterPill(
                             option,
                             { viewModel.togglePriceInterval(option) },
@@ -80,7 +80,7 @@ fun FilterScreen(viewModel: SearchViewModel = viewModel(), onCancel: () -> Unit)
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    SearchFilterUtils.priceFilterOptions.keys.drop(3).take(2).forEach { option ->
+                    SearchFilterRepository.priceFilterOptions.keys.drop(3).take(2).forEach { option ->
                         FilterPill(
                             option,
                             { viewModel.togglePriceInterval(option) },

@@ -43,7 +43,7 @@ class PostAuthorNotifier : CommentObserver {
         mentionedUserIds: List<String>
     ) {
         if (commenterId != posterId) {
-            NotificationUtils.addNotification(
+            NotificationRepository.addNotification(
                 userId = posterId,
                 postId = postId,
                 commentId = commentId,
@@ -66,7 +66,7 @@ class MentionNotifier : CommentObserver {
         mentionedUserIds: List<String>
     ) {
         for (uid in mentionedUserIds) {
-            NotificationUtils.addNotification(
+            NotificationRepository.addNotification(
                 userId = uid,
                 postId = postId,
                 commentId = commentId,
