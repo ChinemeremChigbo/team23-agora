@@ -80,13 +80,15 @@ fun FilterScreen(viewModel: SearchViewModel = viewModel(), onCancel: () -> Unit)
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    SearchFilterRepository.priceFilterOptions.keys.drop(3).take(2).forEach { option ->
-                        FilterPill(
-                            option,
-                            { viewModel.togglePriceInterval(option) },
-                            selectedPriceIntervals.contains(option)
-                        )
-                    }
+                    SearchFilterRepository
+                        .priceFilterOptions.keys
+                        .drop(3).take(2).forEach { option ->
+                            FilterPill(
+                                option,
+                                { viewModel.togglePriceInterval(option) },
+                                selectedPriceIntervals.contains(option)
+                            )
+                        }
                 }
             }
         }
