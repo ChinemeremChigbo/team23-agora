@@ -4,54 +4,54 @@ date,Justin Freemantle,Samantha Zhan,Cindy Wang,Chinemerem Chigbo,Edward Na,Jenn
 2025-01-22,1,1,1,1,1,1,Team Meeting 2
 2025-01-27,1,1,1,1,1,1,Team Meeting 3
 2025-01-29,1,1,1,1,1,1,Team Meeting 4
-2025-01-29,,,,4,,,Preliminary Figma Designs for Project Proposal
+2025-01-29,0,0,0,4,0,0,Preliminary Figma Designs for Project Proposal
 2025-01-31,2,1,1,1,1,1,Project Proposal
-2025-02-01,,,,3,,,Figma Designs
-2025-02-01,,,,3,,,Figma Designs
+2025-02-01,0,0,0,3,0,0,Figma Designs
+2025-02-01,0,0,0,3,0,0,Figma Designs
 2025-02-03,1,1,1,1,1,1,Team Meeting 5
-2025-02-04,,,2,,2,2,Database Schema
+2025-02-04,0,0,2,0,2,2,Database Schema
 2025-02-05,1,1,1,1,1,1,Team Meeting 6
-2025-02-05,,,,5,,,Adjust Figma Designs According to Meeting Feedback
-2025-02-06,,,,3,,,Continue Modifying Figma Designs
-2025-02-06,5,,,,,,Project Setup/Demo
-2025-02-06,4,4,,,,,Project Architecture + Class Diagram
-2025-02-07,,3,,,,,Project setup (firebase auth/firestore & jetpack compose)
-2025-02-08,,,,7,,,Figma Designs
-2025-02-09,,,,,,2,Review Figma Designs
-2025-02-10,,,,,,5,Home Page Frontend
+2025-02-05,0,0,0,5,0,0,Adjust Figma Designs According to Meeting Feedback
+2025-02-06,0,0,0,3,0,0,Continue Modifying Figma Designs
+2025-02-06,5,0,0,0,0,0,Project Setup/Demo
+2025-02-06,4,4,0,0,0,0,Project Architecture + Class Diagram
+2025-02-07,0,3,0,0,0,0,Project setup (firebase auth/firestore & jetpack compose)
+2025-02-08,0,0,0,7,0,0,Figma Designs
+2025-02-09,0,0,0,0,0,2,Review Figma Designs
+2025-02-10,0,0,0,0,0,5,Home Page Frontend
 2025-02-10,1,1,1,1,1,1,Team Meeting 7
-2025-02-11,,,8,,,,Jetpack Compose + Login Page
-2025-02-10,,,,2,,,Login Page Frontend
-2025-02-11,,,,2,,,Login Page Frontend
-2025-02-11,,,,2,,,App Icon and Splash Screen
-2025-02-11,,,,,,4,Home Page Frontend
+2025-02-11,0,0,8,0,0,0,Jetpack Compose + Login Page
+2025-02-10,0,0,0,2,0,0,Login Page Frontend
+2025-02-11,0,0,0,2,0,0,Login Page Frontend
+2025-02-11,0,0,0,2,0,0,App Icon and Splash Screen
+2025-02-11,0,0,0,0,0,4,Home Page Frontend
 2025-02-12,1,1,1,1,1,1,Team Meeting 8
-2025-02-12,,,,3,,,Adjust Figma Designs According to Meeting Feedback
-2025-02-07,,3,,,,,Project management (roadmap/issue creation)
-2025-02-13,,,,3,,,Continue Modifying Figma Designs
-2025-02-23,,4,,,,,Coding(user auth)
-2025-02-28,,,5,,,,Registration page UI
-2025-03-04,,,2,,,,Create post page UI
-2025-03-05,,3,,,,,User Setting Backend
-2025-03-05,,5,,,,,Registration page + email verification
-2025-03-05,,4,,,,,User Feed API + Refactor
-2025-03-05,,3,,,,,Misc tasks demo 2
-2025-03-12,,3,,,,,Project management (roadmap/issue creation)
-,,,5,,,,Posts Screen
-,,,5,,,,Create and Edit Posts
-,,,5,,,,Comments
-,,,5,,,,Post Preview Decorator
-,5,,,,,,Post Filtering API
-,3,,,,,,Wishlist Utils and API
-,5,,,,,,Code Refcatoring
-,5,,,,,,Search APIs
-,4,,,,,,Comment Utils and API
-,6,,,,3,,Notifications Utils and API
-,,4,,,,,Embedded Map Display
-,,4,,,,,Address Validation (Geocoding)
-,,4,,,,,Final Presentation
-,,5,,,,,Final Report
-,2,2,,,,,Bug Fixes
+2025-02-12,0,0,0,3,0,0,Adjust Figma Designs According to Meeting Feedback
+2025-02-07,0,3,0,0,0,0,Project management (roadmap/issue creation)
+2025-02-13,0,0,0,3,0,0,Continue Modifying Figma Designs
+2025-02-23,0,4,0,0,0,0,Coding(user auth)
+2025-02-28,0,0,5,0,0,0,Registration page UI
+2025-03-04,0,0,2,0,0,0,Create post page UI
+2025-03-05,0,3,0,0,0,0,User Setting Backend
+2025-03-05,0,5,0,0,0,0,Registration page + email verification
+2025-03-05,0,4,0,0,0,0,User Feed API + Refactor
+2025-03-05,0,3,0,0,0,0,Misc tasks demo 2
+2025-03-12,0,3,0,0,0,0,Project management (roadmap/issue creation)
+,0,0,5,0,0,0,Posts Screen
+,0,0,5,0,0,0,Create and Edit Posts
+,0,0,5,0,0,0,Comments
+,0,0,5,0,0,0,Post Preview Decorator
+,5,0,0,0,0,0,Post Filtering API
+,3,0,0,0,0,0,Wishlist Utils and API
+,5,0,0,0,0,0,Code Refcatoring
+,5,0,0,0,0,0,Search APIs
+,4,0,0,0,0,0,Comment Utils and API
+,6,0,0,0,3,0,Notifications Utils and API
+,0,4,0,0,0,0,Embedded Map Display
+,0,4,0,0,0,0,Address Validation (Geocoding)
+,0,4,0,0,0,0,Final Presentation
+,0,5,0,0,0,0,Final Report
+,2,2,0,0,0,0,Bug Fixes
 ,1,1,1,1,1,1,Team Meeting 9
 ,1,1,1,1,1,1,Team Meeting 10
 ,1,1,1,1,1,1,Team Meeting 11
