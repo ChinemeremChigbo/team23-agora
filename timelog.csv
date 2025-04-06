@@ -16,44 +16,45 @@ date,Justin Freemantle,Samantha Zhan,Cindy Wang,Chinemerem Chigbo,Edward Na,Jenn
 2025-02-06,5,0,0,0,0,0,Project Setup/Demo
 2025-02-06,4,4,0,0,0,0,Project Architecture + Class Diagram
 2025-02-07,0,3,0,0,0,0,Project setup (firebase auth/firestore & jetpack compose)
+2025-02-07,0,3,0,0,0,0,Project management (roadmap/issue creation)
 2025-02-08,0,0,0,7,0,0,Figma Designs
 2025-02-09,0,0,0,0,0,2,Review Figma Designs
 2025-02-10,0,0,0,0,0,5,Home Page Frontend
 2025-02-10,1,1,1,1,1,1,Team Meeting 7
-2025-02-11,0,0,8,0,0,0,Jetpack Compose + Login Page
 2025-02-10,0,0,0,2,0,0,Login Page Frontend
+2025-02-11,0,0,8,0,0,0,Jetpack Compose + Login Page
 2025-02-11,0,0,0,2,0,0,Login Page Frontend
 2025-02-11,0,0,0,2,0,0,App Icon and Splash Screen
 2025-02-11,0,0,0,0,0,4,Home Page Frontend
 2025-02-12,1,1,1,1,1,1,Team Meeting 8
 2025-02-12,0,0,0,3,0,0,Adjust Figma Designs According to Meeting Feedback
-2025-02-07,0,3,0,0,0,0,Project management (roadmap/issue creation)
 2025-02-13,0,0,0,3,0,0,Continue Modifying Figma Designs
 2025-02-23,0,4,0,0,0,0,Coding(user auth)
+2025-02-24,1,1,1,1,1,1,Team Meeting 9
+2025-02-26,1,1,1,1,1,1,Team Meeting 10
 2025-02-28,0,0,5,0,0,0,Registration page UI
+2025-03-02,5,0,0,0,0,0,Post Filtering API
+2025-03-03,1,1,1,1,1,1,Team Meeting 11
+2025-03-03,5,0,0,0,0,0,Search APIs
+2025-03-03,3,0,0,0,0,0,Wishlist Utils and API
 2025-03-04,0,0,2,0,0,0,Create post page UI
 2025-03-05,0,3,0,0,0,0,User Setting Backend
 2025-03-05,0,5,0,0,0,0,Registration page + email verification
 2025-03-05,0,4,0,0,0,0,User Feed API + Refactor
 2025-03-05,0,3,0,0,0,0,Misc tasks demo 2
+2025-03-06,0,0,5,0,0,0,Create and Edit Posts
+2025-03-10,1,1,1,1,1,1,Team Meeting 12
 2025-03-12,0,3,0,0,0,0,Project management (roadmap/issue creation)
-,0,0,5,0,0,0,Posts Screen
-,0,0,5,0,0,0,Create and Edit Posts
-,0,0,5,0,0,0,Comments
-,0,0,5,0,0,0,Post Preview Decorator
-,5,0,0,0,0,0,Post Filtering API
-,3,0,0,0,0,0,Wishlist Utils and API
-,5,0,0,0,0,0,Code Refcatoring
-,5,0,0,0,0,0,Search APIs
-,4,0,0,0,0,0,Comment Utils and API
-,6,0,0,0,3,0,Notifications Utils and API
-,0,4,0,0,0,0,Embedded Map Display
-,0,4,0,0,0,0,Address Validation (Geocoding)
-,0,4,0,0,0,0,Final Presentation
-,0,5,0,0,0,0,Final Report
-,2,2,0,0,0,0,Bug Fixes
-,1,1,1,1,1,1,Team Meeting 9
-,1,1,1,1,1,1,Team Meeting 10
-,1,1,1,1,1,1,Team Meeting 11
-,1,1,1,1,1,1,Team Meeting 12
-,5,10,5,5,5,5,PR Reviews
+2025-03-16,0,0,5,0,0,0,Posts Screen
+2025-03-17,0,4,0,0,0,0,Embedded Map Display
+2025-03-18,0,4,0,0,0,0,Address Validation (Geocoding)
+2025-03-19,4,0,0,0,0,0,Comment Utils and API
+2025-03-19,6,0,0,0,3,0,Notifications Utils and API
+2025-03-19,0,0,5,0,0,0,Comments
+2025-03-24,1,1,1,1,1,1,Team Meeting 13
+2025-04-01,5,10,5,5,5,5,PR Reviews
+2025-04-01,5,0,0,0,0,0,Code Refactoring
+2025-04-01,0,4,0,4,0,0,Final Presentation
+2025-04-01,2,2,0,0,0,0,Bug Fixes
+2025-04-04,0,0,5,0,0,0,Post Preview Decorator
+2025-04-04,0,5,0,0,0,0,Final Report
