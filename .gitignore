@@ -34,3 +34,4 @@ app/src/main/assets/local.properties
 
 # Ignore all Firebase debug logs
 *-debug.log
+google-services.json
