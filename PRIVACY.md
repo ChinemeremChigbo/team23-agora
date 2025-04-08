@@ -68,7 +68,7 @@ You have the right to:
 - Request access to or deletion of your data
 - Request deletion of your account and all associated data
 
-To submit a data deletion or account deletion request, please visit our [Data Deletion Request Page](https://github.com/name/team23-agora/blob/main/DELETE_DATA.md)  
+To submit a data deletion or account deletion request, please visit our [Data Deletion Request Page](https://github.com/ChinemeremChigbo/team23-agora/blob/main/DELETE_DATA.md)  
 or contact us at **eggsploding@gmail.com**.
 
 ---
