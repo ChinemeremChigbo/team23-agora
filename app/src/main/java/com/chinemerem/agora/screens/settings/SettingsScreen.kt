@@ -12,6 +12,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -102,100 +103,99 @@ fun SettingsScreen(
         startDestination = "settings"
     ) {
         composable("settings") {
-            Scaffold { _ ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(21.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Box(
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(21.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = text,
+                            fontSize = 19.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    ProfileSection(currentUser) { newImageUrl ->
+                        currentUser.profileImage = newImageUrl
+                        currentUser.updateInfo(mapOf("profileImage" to newImageUrl))
+                    }
+
+                    // Settings Options
+                    SettingsOption(
+                        title = "Profile",
+                        icon = Icons.Default.Person
+                    ) {
+                        nestedNavController.navigate("settings/profile")
+                    }
+                    HorizontalDivider()
+                    SettingsOption(
+                        title = "Appearance",
+                        icon = Icons.Default.Image
+                    ) {
+                        nestedNavController.navigate("settings/appearance")
+                    }
+                    HorizontalDivider()
+                    SettingsOption(
+                        title = "Update Password",
+                        icon = Icons.Default.VisibilityOff
+                    ) {
+                        nestedNavController.navigate("settings/update_password")
+                    }
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(40.dp))
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                AccountAuthUtil.signOut(auth)
+                                val activity = context as? Activity
+                                activity?.let {
+                                    it.finish()
+                                    it.startActivity(it.intent)
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(30.dp),
-                            contentAlignment = Alignment.Center
+                                .height(60.dp),
+                            border = BorderStroke(1.dp, Color(0xFFED3241)),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color(0xFFED3241)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text(
-                                text = text,
-                                fontSize = 19.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(24.dp))
-                        ProfileSection(currentUser) { newImageUrl ->
-                            currentUser.profileImage = newImageUrl
-                            currentUser.updateInfo(mapOf("profileImage" to newImageUrl))
-                        }
-
-                        // Settings Options
-                        SettingsOption(
-                            title = "Profile",
-                            icon = Icons.Default.Person
-                        ) {
-                            nestedNavController.navigate("settings/profile")
-                        }
-                        HorizontalDivider()
-                        SettingsOption(
-                            title = "Appearance",
-                            icon = Icons.Default.Image
-                        ) {
-                            nestedNavController.navigate("settings/appearance")
-                        }
-                        HorizontalDivider()
-                        SettingsOption(
-                            title = "Update Password",
-                            icon = Icons.Default.VisibilityOff
-                        ) {
-                            nestedNavController.navigate("settings/update_password")
-                        }
-                        HorizontalDivider()
-                        Spacer(modifier = Modifier.height(40.dp))
-
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            OutlinedButton(
-                                onClick = {
-                                    AccountAuthUtil.signOut(auth)
-                                    val activity = context as? Activity
-                                    activity?.let {
-                                        it.finish()
-                                        it.startActivity(it.intent)
-                                    }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(60.dp),
-                                border = BorderStroke(1.dp, Color(0xFFED3241)),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = Color(0xFFED3241)
-                                ),
-                                shape = RoundedCornerShape(12.dp)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Logout,
-                                        contentDescription = "Logout Icon",
-                                        modifier = Modifier.size(26.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "Logout",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Logout,
+                                    contentDescription = "Logout Icon",
+                                    modifier = Modifier.size(26.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Logout",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
                 }
             }
         }
+
 
         composable(
             route = "settings/profile"
@@ -221,34 +221,27 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
     var isUploading by remember { mutableStateOf(false) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
+        contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         uri?.let {
             isUploading = true
-
-            uploadImageToS3(context, it, onSuccess = { uploadedImageUrl ->
-                isUploading = false
-                onProfileImageChange(uploadedImageUrl)
-                UserRepository.updateProfileImage(currentUser.userId, uploadedImageUrl)
-            }, onFailure = { errorMessage ->
+            uploadImageToS3(
+                context,
+                it,
+                onSuccess = { uploadedImageUrl ->
+                    isUploading = false
+                    onProfileImageChange(uploadedImageUrl)
+                    UserRepository.updateProfileImage(currentUser.userId, uploadedImageUrl)
+                },
+                onFailure = { errorMessage ->
                     isUploading = false
                     Toast.makeText(
                         context,
                         "Image upload failed: $errorMessage",
                         Toast.LENGTH_SHORT
                     ).show()
-                })
-        }
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            imagePickerLauncher.launch("image/*")
-        } else {
-            Toast.makeText(context, "Permission required to select images", Toast.LENGTH_SHORT)
-                .show()
+                }
+            )
         }
     }
 
@@ -262,7 +255,7 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
             modifier = Modifier
                 .size(90.dp)
                 .clickable {
-                    checkAndRequestPermission(context, permissionLauncher, imagePickerLauncher)
+                    imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
             contentAlignment = Alignment.BottomEnd
         ) {
@@ -291,10 +284,10 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
                         .clip(CircleShape)
                         .background(Color(0xFF006FFD))
                         .clickable {
-                            checkAndRequestPermission(
-                                context,
-                                permissionLauncher,
-                                imagePickerLauncher
+                            imagePickerLauncher.launch(
+                                PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
                             )
                         },
                     contentAlignment = Alignment.Center
@@ -322,26 +315,6 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
             fontSize = 14.sp,
             color = Color(0xFF71727A)
         )
-    }
-}
-
-private fun checkAndRequestPermission(
-    context: Context,
-    permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
-    imagePickerLauncher: ManagedActivityResultLauncher<String, Uri?>
-) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_MEDIA_IMAGES
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            imagePickerLauncher.launch("image/*")
-        } else {
-            permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-        }
-    } else {
-        imagePickerLauncher.launch("image/*")
     }
 }
 
