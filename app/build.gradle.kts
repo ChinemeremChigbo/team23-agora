@@ -20,11 +20,11 @@ ktlint {
 }
 
 android {
-    namespace = "com.agora.agora"
+    namespace = "com.chinemerem.agora"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.agora.agora"
+        applicationId = "com.chinemerem.agora"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

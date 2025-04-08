@@ -1,6 +1,6 @@
 @startuml
 
-package com.agora.agora.screens {
+package com.chinemerem.agora.screens {
     top to bottom direction
     class wishlist.WishlistViewModel {
     +  currentUser
@@ -124,7 +124,7 @@ package com.agora.agora.screens {
 
 
 
-package com.agora.agora.model{
+package com.chinemerem.agora.model{
 top to bottom direction
     package repository {
             class WishlistRepository {
@@ -290,29 +290,29 @@ top to bottom direction
 
 
 
-'com.agora.agora.screens --[hidden]--> com.agora.agora.model
-com.agora.agora.model.repository.CommentObserver -[hidden]-> com.agora.agora.model.data.Comment
-com.agora.agora.model.data.Notification -[hidden]-> com.agora.agora.model.util.BrevoClient
+'com.chinemerem.agora.screens --[hidden]--> com.chinemerem.agora.model
+com.chinemerem.agora.model.repository.CommentObserver -[hidden]-> com.chinemerem.agora.model.data.Comment
+com.chinemerem.agora.model.data.Notification -[hidden]-> com.chinemerem.agora.model.util.BrevoClient
 
-com.agora.agora.screens.wishlist.WishlistViewModel .. com.agora.agora.model.repository.WishlistRepository
-com.agora.agora.screens.authentication.signIn.SignInViewModel .. com.agora.agora.model.repository.UserRepository
-com.agora.agora.screens.authentication.signUp.RegisterViewModel .. com.agora.agora.model.repository.UserRepository
-com.agora.agora.screens.inbox.InboxViewModel .. com.agora.agora.model.repository.NotificationRepository
-com.agora.agora.screens.settings.profile.ProfileViewModel .. com.agora.agora.model.repository.ProfileSettingRepository
-com.agora.agora.model.repository.CommentEventManager - com.agora.agora.model.repository.CommentObserver : notifies
-com.agora.agora.model.repository.CommentRepository .. com.agora.agora.model.repository.CommentEventManager
-com.agora.agora.screens.explore.ExploreViewModel .. com.agora.agora.model.repository.PostRepository
-com.agora.agora.screens.postEdit.PostEditViewModel .. com.agora.agora.model.repository.PostRepository
-com.agora.agora.screens.post.PostViewModel .. com.agora.agora.model.repository.PostRepository
-com.agora.agora.screens.postDetail.PostDetailViewModel .. com.agora.agora.model.repository.PostRepository
-com.agora.agora.screens.search.SearchViewModel .. com.agora.agora.model.repository.SearchFilterRepository
-com.agora.agora.screens.postDetail.PostDetailViewModel .. com.agora.agora.model.repository.CommentRepository
-com.agora.agora.screens.settings.profile.ProfileViewModel .. com.agora.agora.model.repository.AddressRepository
-com.agora.agora.screens.post.PostViewModel .. com.agora.agora.model.repository.AddressRepository
-com.agora.agora.model.data.Post o-- com.agora.agora.model.data.Address : has-a
-com.agora.agora.model.data.User o-- com.agora.agora.model.data.Address : has-a
-com.agora.agora.model.data.User *-- com.agora.agora.model.data.Post : owns
-com.agora.agora.model.data.User --> com.agora.agora.model.data.Report : submits
-com.agora.agora.model.data.User --> com.agora.agora.model.data.Notification : receives
-com.agora.agora.model.data.Comment --> com.agora.agora.model.data.Notification : triggers
+com.chinemerem.agora.screens.wishlist.WishlistViewModel .. com.chinemerem.agora.model.repository.WishlistRepository
+com.chinemerem.agora.screens.authentication.signIn.SignInViewModel .. com.chinemerem.agora.model.repository.UserRepository
+com.chinemerem.agora.screens.authentication.signUp.RegisterViewModel .. com.chinemerem.agora.model.repository.UserRepository
+com.chinemerem.agora.screens.inbox.InboxViewModel .. com.chinemerem.agora.model.repository.NotificationRepository
+com.chinemerem.agora.screens.settings.profile.ProfileViewModel .. com.chinemerem.agora.model.repository.ProfileSettingRepository
+com.chinemerem.agora.model.repository.CommentEventManager - com.chinemerem.agora.model.repository.CommentObserver : notifies
+com.chinemerem.agora.model.repository.CommentRepository .. com.chinemerem.agora.model.repository.CommentEventManager
+com.chinemerem.agora.screens.explore.ExploreViewModel .. com.chinemerem.agora.model.repository.PostRepository
+com.chinemerem.agora.screens.postEdit.PostEditViewModel .. com.chinemerem.agora.model.repository.PostRepository
+com.chinemerem.agora.screens.post.PostViewModel .. com.chinemerem.agora.model.repository.PostRepository
+com.chinemerem.agora.screens.postDetail.PostDetailViewModel .. com.chinemerem.agora.model.repository.PostRepository
+com.chinemerem.agora.screens.search.SearchViewModel .. com.chinemerem.agora.model.repository.SearchFilterRepository
+com.chinemerem.agora.screens.postDetail.PostDetailViewModel .. com.chinemerem.agora.model.repository.CommentRepository
+com.chinemerem.agora.screens.settings.profile.ProfileViewModel .. com.chinemerem.agora.model.repository.AddressRepository
+com.chinemerem.agora.screens.post.PostViewModel .. com.chinemerem.agora.model.repository.AddressRepository
+com.chinemerem.agora.model.data.Post o-- com.chinemerem.agora.model.data.Address : has-a
+com.chinemerem.agora.model.data.User o-- com.chinemerem.agora.model.data.Address : has-a
+com.chinemerem.agora.model.data.User *-- com.chinemerem.agora.model.data.Post : owns
+com.chinemerem.agora.model.data.User --> com.chinemerem.agora.model.data.Report : submits
+com.chinemerem.agora.model.data.User --> com.chinemerem.agora.model.data.Notification : receives
+com.chinemerem.agora.model.data.Comment --> com.chinemerem.agora.model.data.Notification : triggers
 @enduml
