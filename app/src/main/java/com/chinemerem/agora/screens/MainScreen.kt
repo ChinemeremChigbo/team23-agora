@@ -74,6 +74,6 @@ fun NavigationHost(
             val inboxViewModel: InboxViewModel = viewModel()
             InboxScreen(inboxViewModel, navController)
         }
-        composable(BottomNavItem.Settings.route) { SettingsScreen(auth, navController) }
+        composable(BottomNavItem.Settings.route) { SettingsScreen(auth) }
     }
 }

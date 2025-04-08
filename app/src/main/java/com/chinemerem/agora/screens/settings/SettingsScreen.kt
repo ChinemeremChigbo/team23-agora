@@ -3,14 +3,8 @@ package com.chinemerem.agora.screens.settings
 import AppearanceViewModel
 import UpdatePasswordScreen
 import UpdatePasswordViewModel
-import android.Manifest
 import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +27,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
@@ -45,7 +40,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,9 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -84,11 +76,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
-    auth: FirebaseAuth,
-    navController: NavController,
-    viewModel: SettingsViewModel = viewModel()
-) {
+fun SettingsScreen(auth: FirebaseAuth, viewModel: SettingsViewModel = viewModel()) {
     val context = LocalContext.current
     var currentUser by remember { mutableStateOf(User()) }
     // Refetch user object everytime it navigate to this page
@@ -179,7 +167,7 @@ fun SettingsScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Logout,
+                                    imageVector = Icons.AutoMirrored.Filled.Logout,
                                     contentDescription = "Logout Icon",
                                     modifier = Modifier.size(26.dp)
                                 )
@@ -195,7 +183,6 @@ fun SettingsScreen(
                 }
             }
         }
-
 
         composable(
             route = "settings/profile"
@@ -255,7 +242,9 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
             modifier = Modifier
                 .size(90.dp)
                 .clickable {
-                    imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    imagePickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
                 },
             contentAlignment = Alignment.BottomEnd
         ) {
@@ -305,13 +294,13 @@ fun ProfileSection(currentUser: User, onProfileImageChange: (String) -> Unit) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = currentUser.fullName ?: "N/A",
+            text = currentUser.fullName,
             fontSize = 18.sp,
             fontWeight = FontWeight.ExtraBold
         )
 
         Text(
-            text = currentUser.email ?: "N/A",
+            text = currentUser.email,
             fontSize = 14.sp,
             color = Color(0xFF71727A)
         )
