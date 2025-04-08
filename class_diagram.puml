@@ -1,6 +1,6 @@
 @startuml
 
-package com.example.agora.screens {
+package com.agora.agora.screens {
     top to bottom direction
     class wishlist.WishlistViewModel {
     +  currentUser
@@ -124,7 +124,7 @@ package com.example.agora.screens {
 
 
 
-package com.example.agora.model{
+package com.agora.agora.model{
 top to bottom direction
     package repository {
             class WishlistRepository {
@@ -290,29 +290,29 @@ top to bottom direction
 
 
 
-'com.example.agora.screens --[hidden]--> com.example.agora.model
-com.example.agora.model.repository.CommentObserver -[hidden]-> com.example.agora.model.data.Comment
-com.example.agora.model.data.Notification -[hidden]-> com.example.agora.model.util.BrevoClient
+'com.agora.agora.screens --[hidden]--> com.agora.agora.model
+com.agora.agora.model.repository.CommentObserver -[hidden]-> com.agora.agora.model.data.Comment
+com.agora.agora.model.data.Notification -[hidden]-> com.agora.agora.model.util.BrevoClient
 
-com.example.agora.screens.wishlist.WishlistViewModel .. com.example.agora.model.repository.WishlistRepository
-com.example.agora.screens.authentication.signIn.SignInViewModel .. com.example.agora.model.repository.UserRepository
-com.example.agora.screens.authentication.signUp.RegisterViewModel .. com.example.agora.model.repository.UserRepository
-com.example.agora.screens.inbox.InboxViewModel .. com.example.agora.model.repository.NotificationRepository
-com.example.agora.screens.settings.profile.ProfileViewModel .. com.example.agora.model.repository.ProfileSettingRepository
-com.example.agora.model.repository.CommentEventManager - com.example.agora.model.repository.CommentObserver : notifies
-com.example.agora.model.repository.CommentRepository .. com.example.agora.model.repository.CommentEventManager
-com.example.agora.screens.explore.ExploreViewModel .. com.example.agora.model.repository.PostRepository
-com.example.agora.screens.postEdit.PostEditViewModel .. com.example.agora.model.repository.PostRepository
-com.example.agora.screens.post.PostViewModel .. com.example.agora.model.repository.PostRepository
-com.example.agora.screens.postDetail.PostDetailViewModel .. com.example.agora.model.repository.PostRepository
-com.example.agora.screens.search.SearchViewModel .. com.example.agora.model.repository.SearchFilterRepository
-com.example.agora.screens.postDetail.PostDetailViewModel .. com.example.agora.model.repository.CommentRepository
-com.example.agora.screens.settings.profile.ProfileViewModel .. com.example.agora.model.repository.AddressRepository
-com.example.agora.screens.post.PostViewModel .. com.example.agora.model.repository.AddressRepository
-com.example.agora.model.data.Post o-- com.example.agora.model.data.Address : has-a
-com.example.agora.model.data.User o-- com.example.agora.model.data.Address : has-a
-com.example.agora.model.data.User *-- com.example.agora.model.data.Post : owns
-com.example.agora.model.data.User --> com.example.agora.model.data.Report : submits
-com.example.agora.model.data.User --> com.example.agora.model.data.Notification : receives
-com.example.agora.model.data.Comment --> com.example.agora.model.data.Notification : triggers
+com.agora.agora.screens.wishlist.WishlistViewModel .. com.agora.agora.model.repository.WishlistRepository
+com.agora.agora.screens.authentication.signIn.SignInViewModel .. com.agora.agora.model.repository.UserRepository
+com.agora.agora.screens.authentication.signUp.RegisterViewModel .. com.agora.agora.model.repository.UserRepository
+com.agora.agora.screens.inbox.InboxViewModel .. com.agora.agora.model.repository.NotificationRepository
+com.agora.agora.screens.settings.profile.ProfileViewModel .. com.agora.agora.model.repository.ProfileSettingRepository
+com.agora.agora.model.repository.CommentEventManager - com.agora.agora.model.repository.CommentObserver : notifies
+com.agora.agora.model.repository.CommentRepository .. com.agora.agora.model.repository.CommentEventManager
+com.agora.agora.screens.explore.ExploreViewModel .. com.agora.agora.model.repository.PostRepository
+com.agora.agora.screens.postEdit.PostEditViewModel .. com.agora.agora.model.repository.PostRepository
+com.agora.agora.screens.post.PostViewModel .. com.agora.agora.model.repository.PostRepository
+com.agora.agora.screens.postDetail.PostDetailViewModel .. com.agora.agora.model.repository.PostRepository
+com.agora.agora.screens.search.SearchViewModel .. com.agora.agora.model.repository.SearchFilterRepository
+com.agora.agora.screens.postDetail.PostDetailViewModel .. com.agora.agora.model.repository.CommentRepository
+com.agora.agora.screens.settings.profile.ProfileViewModel .. com.agora.agora.model.repository.AddressRepository
+com.agora.agora.screens.post.PostViewModel .. com.agora.agora.model.repository.AddressRepository
+com.agora.agora.model.data.Post o-- com.agora.agora.model.data.Address : has-a
+com.agora.agora.model.data.User o-- com.agora.agora.model.data.Address : has-a
+com.agora.agora.model.data.User *-- com.agora.agora.model.data.Post : owns
+com.agora.agora.model.data.User --> com.agora.agora.model.data.Report : submits
+com.agora.agora.model.data.User --> com.agora.agora.model.data.Notification : receives
+com.agora.agora.model.data.Comment --> com.agora.agora.model.data.Notification : triggers
 @enduml
