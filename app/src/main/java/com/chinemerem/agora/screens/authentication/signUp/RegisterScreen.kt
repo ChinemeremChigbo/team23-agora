@@ -374,7 +374,9 @@ fun RegisterScreen(
             }
             RegistrationSuccessDialog(showSuccessDialog) {
                 showSuccessDialog = false
-                if (navController.previousBackStackEntry != null) { navController.popBackStack() }
+                if (navController.previousBackStackEntry != null) {
+                    navController.popBackStack()
+                }
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -394,18 +396,44 @@ fun RegistrationSuccessDialog(showDialog: Boolean, onDismiss: () -> Unit) {
         }
 
         if (isVisible) {
-            AlertDialog(
-                onDismissRequest = { isVisible = false },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                title = { Text("Success") },
-                text = {
-                    Text(
-                        "Your registration is complete. Redirecting...",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                },
-                confirmButton = {}
-            )
+            @Composable
+            fun SuccessDialog(isVisible: Boolean, onDismiss: () -> Unit) {
+                if (!isVisible) return
+
+                AlertDialog(
+                    onDismissRequest = onDismiss,
+                    shape = RoundedCornerShape(21.dp),
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    confirmButton = {
+                        Button(
+                            onClick = onDismiss,
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
+                        ) {
+                            Text("OK")
+                        }
+                    },
+                    text = {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Success",
+                                fontSize = 21.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Text(
+                                text = "Your registration is complete. Redirecting...",
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                )
+            }
         }
     }
 }

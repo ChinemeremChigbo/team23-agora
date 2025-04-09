@@ -362,8 +362,8 @@ fun ContactModal(user: User, onDismiss: () -> Unit) {
 
     AlertDialog(
         shape = RoundedCornerShape(21.dp),
-        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = { onDismiss() },
+        containerColor = MaterialTheme.colorScheme.surface,
         confirmButton = {
             Button(
                 onClick = {
@@ -444,8 +444,8 @@ fun ReportModal(postId: String, reporterId: String, onDismiss: () -> Unit) {
 
     AlertDialog(
         shape = RoundedCornerShape(21.dp),
-        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = { onDismiss() },
+        containerColor = MaterialTheme.colorScheme.surface,
         confirmButton = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -485,8 +485,7 @@ fun ReportModal(postId: String, reporterId: String, onDismiss: () -> Unit) {
                 ) {
                     if (isReporting) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            color = Color.White
+                            modifier = Modifier.size(16.dp)
                         )
                     } else {
                         Text("Report")

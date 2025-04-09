@@ -1,17 +1,17 @@
 package com.chinemerem.agora.ui.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,10 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.chinemerem.agora.model.util.EmailTemplate
 
 @Composable
@@ -33,72 +35,82 @@ fun EmailVerificationDialog(onSuccess: () -> Unit, onDismiss: (() -> Unit)? = nu
     var isCodeValid by remember { mutableStateOf(true) }
 
     AlertDialog(
-        onDismissRequest = {
-            if (onDismiss != null) {
-                onDismiss()
+        shape = RoundedCornerShape(21.dp),
+        onDismissRequest = { onDismiss?.invoke() },
+        containerColor = MaterialTheme.colorScheme.surface,
+        confirmButton = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedButton(
+                    onClick = { onDismiss?.invoke() },
+                    border = BorderStroke(1.dp, Color(0xFF006FFD)),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Cancel", color = Color(0xFF006FFD))
+                }
+                Button(
+                    onClick = {
+                        if (verificationCode.text.length == 6 &&
+                            verificationCode.text == EmailTemplate.verificationCode
+                        ) {
+                            onSuccess()
+                        } else {
+                            isCodeValid = false
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF006FFD),
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Verify")
+                }
             }
         },
-        title = { Text("Enter Verification Code") },
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Please enter the 6-digit verification code sent to your email.",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    text = "Email Verification",
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.ExtraBold
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Enter the 6-digit verification code sent to your email.",
+                    textAlign = TextAlign.Center
+                )
                 TextField(
                     value = verificationCode,
                     onValueChange = {
-                        // Ensure only digits are entered and it's a 6-digit code
-                        if (it.text.length <= 6 && it.text.all { char -> char.isDigit() }) {
+                        if (it.text.length <= 6 && it.text.all(Char::isDigit)) {
                             verificationCode = it
+                            isCodeValid = true
                         }
                     },
                     label = { Text("Verification Code") },
                     placeholder = { Text("Enter 6 digits") },
                     singleLine = true,
-                    keyboardActions = KeyboardActions.Default,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    )
+                    isError = !isCodeValid,
+                    modifier = Modifier.fillMaxWidth()
+
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+
                 if (!isCodeValid) {
-                    Text("Invalid code!", color = Color.Red)
+                    Text(
+                        text = "Invalid code!",
+                        color = Color.Red,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center
+                    )
                 }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    if (verificationCode.text.length == 6 && verificationCode.text.equals(
-                            EmailTemplate.verificationCode
-                        )
-                    ) {
-                        // Handle successful verification here
-                        onSuccess()
-                    } else {
-                        isCodeValid = false // Show error if the code is not valid
-                    }
-                }
-            ) {
-                Text("Verify")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    if (onDismiss != null) {
-                        onDismiss()
-                    }
-                },
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text("Cancel")
             }
         }
     )
