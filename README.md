@@ -1,44 +1,26 @@
 # Agora
 
-## Team Name ##
-I Have No Opinion
+## Description
 
-## Team Number ##
-23
+Agora is a campus-exclusive community platform where students can exchange
+goods, offer services, and coordinate activities in a trusted environment.
+Verified through student email authentication, the platform ensures that all
+users are part of the same university, making transactions safer and more
+relevant. Students can use Agora to buy and sell items, request or offer rides,
+find sublets, and much more. By focusing on campus-specific needs, Agora
+provides a streamlined way for students to connect and supptort each other.
 
-## Team Members' Information ##
-
-* Justin Freemantle
-* j8freema
-* 20889672
-* jdkfree
-<br/>
-
-* Samantha Zhan
-* j35zhan
-* 20881240
-* Samantha-Zhan
-<br/>
-
-* Cindy Wang
-* c674wang
-* 20890487
-* cin-day
-<br/>
-
-* Chinemerem Chigbo
-* cchigbo
-* 20881820
-* ChinemeremChigbo
-<br/>
-
-* Edward Na
-* ena
-* 20896101
-* edwardna1
-<br/>
-
-* Jennifer Yu
-* j455yu
-* 20895798
-* jenniferyu12
+<table>
+  <tr>
+    <td><img src="Agora1.png" width="100%"></td>
+    <td><img src="Agora2.png" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="Agora3.png" width="100%"></td>
+    <td><img src="Agora4.png" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="Agora5.png" width="100%"></td>
+    <td><img src="Agora6.png" width="100%"></td>
+  </tr>
+</table>
