@@ -10,17 +10,11 @@ relevant. Students can use Agora to buy and sell items, request or offer rides,
 find sublets, and much more. By focusing on campus-specific needs, Agora
 provides a streamlined way for students to connect and supptort each other.
 
-<table>
-  <tr>
-    <td><img src="Agora1.png" width="100%"></td>
-    <td><img src="Agora2.png" width="100%"></td>
-  </tr>
-  <tr>
-    <td><img src="Agora3.png" width="100%"></td>
-    <td><img src="Agora4.png" width="100%"></td>
-  </tr>
-  <tr>
-    <td><img src="Agora5.png" width="100%"></td>
-    <td><img src="Agora6.png" width="100%"></td>
-  </tr>
-</table>
+<div style="display: flex; justify-content: center; gap: 5px;">
+  <img src="Agora1.png" width="16%" alt="API Documentation">
+  <img src="Agora2.png" width="16%" alt="Web UI Screenshot">
+  <img src="Agora3.png" width="16%" alt="Web UI Screenshot">
+  <img src="Agora5.png" width="16%" alt="API Documentation">
+  <img src="Agora6.png" width="16%" alt="Web UI Screenshot">
+  <img src="Agora4.png" width="16%" alt="Web UI Screenshot">
+</div>
